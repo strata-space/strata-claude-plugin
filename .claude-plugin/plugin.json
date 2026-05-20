@@ -1,0 +1,11 @@
+{
+  "name": "strata",
+  "description": "Mount and manage Strata Spaces as local Markdown folders, and register the Strata MCP server for in-conversation document tools. Two skills: strata-spaces (filesystem mount lifecycle) and strata-mcp-setup (MCP server registration).",
+  "author": {
+    "name": "Strata",
+    "url": "https://strata.space"
+  },
+  "version": "0.1.0",
+  "homepage": "https://strata.space",
+  "repository": "https://github.com/strata-space/strata"
+}
