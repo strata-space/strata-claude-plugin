@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "strata": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.strata.space/mcp"]
+    }
+  }
+}
