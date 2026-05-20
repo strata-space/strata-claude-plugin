@@ -1,0 +1,41 @@
+name: Smoke tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: shellcheck tests/
+        run: shellcheck tests/*.sh
+
+  cross-platform:
+    name: ${{ matrix.os }} cross-platform smokes
+    needs: shellcheck
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: git-mount-gitignore
+        run: bash tests/git-mount-gitignore.sh
+      - name: snapshot-fallback (skips without strata CLI installed)
+        run: bash tests/snapshot-fallback.sh
+      - name: unmount-lifecycle (skips without strata CLI installed)
+        run: bash tests/unmount-lifecycle.sh
+      - name: permission-denied (skips without strata CLI installed)
+        run: bash tests/permission-denied.sh
+      - name: mcp-setup
+        run: bash tests/mcp-setup.sh
