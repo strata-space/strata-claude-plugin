@@ -3,7 +3,7 @@
 
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=plugins/strata/tests/_common.sh
+# shellcheck source=_common.sh
 . "$HERE/_common.sh"
 
 log "=== T019 linux-debian-first-mount ==="
@@ -11,6 +11,7 @@ log "=== T019 linux-debian-first-mount ==="
 if [ "$(uname -s)" != "Linux" ]; then
   log "skipped: not Linux"; exit 0
 fi
+# shellcheck disable=SC1091
 . /etc/os-release
 case "${ID_LIKE:-$ID}" in
   *debian*|*ubuntu*) ;;

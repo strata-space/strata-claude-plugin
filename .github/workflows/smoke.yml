@@ -34,7 +34,7 @@ jobs:
       - name: install shellcheck
         run: sudo apt-get update && sudo apt-get install -y shellcheck
       - name: shellcheck tests/
-        run: shellcheck tests/*.sh
+        run: shellcheck -x tests/*.sh
 
   cross-platform:
     name: ${{ matrix.os }} cross-platform smokes

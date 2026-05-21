@@ -3,7 +3,7 @@
 
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=plugins/strata/tests/_common.sh
+# shellcheck source=_common.sh
 . "$HERE/_common.sh"
 
 log "=== T056 mcp-setup ==="
@@ -46,10 +46,12 @@ else
   ok "strata CLI absent — confirms no-CLI verification (FR-039)"
 fi
 
-# Endpoint URL the SKILL.md hardcodes is the canonical user-facing MCP URL.
-case 'https://api.strata.space/mcp' in
-  https://api.strata.space/mcp) ok "MCP endpoint URL pinned" ;;
-  *) fail "MCP endpoint URL drift" ;;
-esac
+# Endpoint URL the SKILL.md hardcodes must stay in sync with the test literal.
+skill_md="$HERE/../skills/strata-mcp-setup/SKILL.md"
+if [ -f "$skill_md" ] && grep -qF 'https://api.strata.space/mcp' "$skill_md"; then
+  ok "MCP endpoint URL pinned in SKILL.md"
+else
+  fail "MCP endpoint URL drift: not found in $skill_md"
+fi
 
 summarize
