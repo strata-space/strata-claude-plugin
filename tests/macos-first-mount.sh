@@ -8,7 +8,7 @@
 
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=plugins/strata/tests/_common.sh
+# shellcheck source=tests/_common.sh
 . "$HERE/_common.sh"
 
 log "=== T018 macos-first-mount ==="
@@ -36,11 +36,13 @@ assert_cmd_present curl
 assert_cmd_present sw_vers
 assert_cmd_present systemextensionsctl
 
-# Deep-link URL the SKILL.md emits is well-formed.
-case "x-apple.systempreferences:com.apple.LoginItems-Settings.extension" in
-  x-apple.systempreferences:com.apple.LoginItems-Settings.extension) ok "deep link URL pinned" ;;
-  *) fail "deep link URL drift" ;;
-esac
+# Deep-link URL the SKILL.md emits must stay in sync with the test literal.
+skill_md="$HERE/../skills/strata-spaces/SKILL.md"
+if [ -f "$skill_md" ] && grep -qF 'x-apple.systempreferences:com.apple.LoginItems-Settings.extension' "$skill_md"; then
+  ok "deep link URL pinned in SKILL.md"
+else
+  fail "deep link URL drift: not found in $skill_md"
+fi
 
 # Cask tap reachable.
 if brew tap | grep -qF strata-space/strata; then
@@ -67,7 +69,7 @@ if command -v strata >/dev/null 2>&1; then
   assert_jq_field "status." '.mounts | type' 'array' "$status"
   assert_jq_field "status." '.recentWriteErrors | type' 'array' "$status"
 else
-  log "  (strata not yet installed; SKILL.md install flow runs `brew install --cask strata-space/strata/strata`)"
+  log "  (strata not yet installed; SKILL.md install flow runs 'brew install --cask strata-space/strata/strata')"
 fi
 
 summarize
