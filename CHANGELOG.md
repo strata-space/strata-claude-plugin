@@ -6,6 +6,14 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-05-20
+
+### Changed
+- MCP endpoint URL updated from `https://api.strata.space/mcp` to
+  `https://api.prod.us-east-2.strata.space/mcp` (the actual deployment).
+  The `api.strata.space` host did not resolve, so the previous release
+  registered a dead MCP server with users' Claude clients.
+
 ## [0.1.0] - 2026-05-20
 
 ### Added

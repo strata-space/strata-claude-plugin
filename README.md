@@ -3,7 +3,7 @@
 Mount your [Strata](https://strata.space) Spaces as local folders of Markdown files, or register the Strata MCP server so Claude can read and edit your Strata documents directly in conversation. Two skills ship in v1:
 
 - **`strata-spaces`** — install the Strata CLI on first run, grant the macOS FSKit extension permission (or install the Linux FUSE userspace helper), log in, pick a Space, mount it Git-safely, and manage the lifecycle (list, unmount, force-recover). Falls back to a static-snapshot pull on environments that cannot host a live mount.
-- **`strata-mcp-setup`** — register `https://api.strata.space/mcp` with Claude (Desktop, Code, Cursor, VS Code, Zed, Continue, Cline, Windsurf) via the `mcp-remote` bridge or, where supported, a direct streamable-HTTP config. No CLI install required.
+- **`strata-mcp-setup`** — register `https://api.prod.us-east-2.strata.space/mcp` with Claude (Desktop, Code, Cursor, VS Code, Zed, Continue, Cline, Windsurf) via the `mcp-remote` bridge or, where supported, a direct streamable-HTTP config. No CLI install required.
 
 ## Install
 
