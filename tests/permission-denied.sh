@@ -8,7 +8,7 @@
 
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=_common.sh
+# shellcheck source=tests/_common.sh
 . "$HERE/_common.sh"
 
 log "=== T037 permission-denied ==="
