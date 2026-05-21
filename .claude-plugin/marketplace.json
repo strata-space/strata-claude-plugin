@@ -1,0 +1,17 @@
+{
+  "name": "strata-space",
+  "description": "Plugins published by Strata — currently the `strata` plugin for mounting Strata Spaces and registering the Strata MCP server.",
+  "owner": {
+    "name": "Strata",
+    "url": "https://strata.space"
+  },
+  "plugins": [
+    {
+      "name": "strata",
+      "description": "Mount and manage Strata Spaces as local Markdown folders, and register the Strata MCP server for in-conversation document tools.",
+      "source": "./",
+      "homepage": "https://strata.space",
+      "category": "knowledge"
+    }
+  ]
+}

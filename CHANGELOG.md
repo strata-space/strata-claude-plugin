@@ -6,6 +6,13 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- `.claude-plugin/marketplace.json` makes this repo a self-hosted
+  marketplace. Users can now add it directly with
+  `/plugin marketplace add strata-space/strata-claude-plugin` and install
+  with `/plugin install strata@strata-space`, independent of any
+  Anthropic-operated catalog.
+
 ## [0.1.1] - 2026-05-20
 
 ### Changed
