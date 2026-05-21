@@ -48,7 +48,7 @@ fi
 
 # Endpoint URL the SKILL.md hardcodes must stay in sync with the test literal.
 skill_md="$HERE/../skills/strata-mcp-setup/SKILL.md"
-if [ -f "$skill_md" ] && grep -qF 'https://api.strata.space/mcp' "$skill_md"; then
+if [ -f "$skill_md" ] && grep -qF 'https://api.prod.us-east-2.strata.space/mcp' "$skill_md"; then
   ok "MCP endpoint URL pinned in SKILL.md"
 else
   fail "MCP endpoint URL drift: not found in $skill_md"

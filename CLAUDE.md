@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Claude Code plugin (`strata`, v0.1.0) that ships **two skills** and a set of bash smoke tests. There is no application code, no build step, and no package manager — the deliverables are the two `SKILL.md` files plus their test runners.
+A Claude Code plugin (`strata`, v0.1.1) that ships **two skills** and a set of bash smoke tests. There is no application code, no build step, and no package manager — the deliverables are the two `SKILL.md` files plus their test runners.
 
 - `skills/strata-spaces/SKILL.md` — operates the user's `strata` CLI to mount a Space as a local Markdown folder (macOS FSKit / Linux FUSE), with a static-snapshot fallback when live mount is impossible.
-- `skills/strata-mcp-setup/SKILL.md` — registers `https://api.strata.space/mcp` with the user's Claude client (Desktop, Code, Cursor, VS Code, Zed, Continue, Cline, Windsurf), usually via the `mcp-remote` npm bridge.
+- `skills/strata-mcp-setup/SKILL.md` — registers `https://api.prod.us-east-2.strata.space/mcp` with the user's Claude client (Desktop, Code, Cursor, VS Code, Zed, Continue, Cline, Windsurf), usually via the `mcp-remote` npm bridge.
 - `.claude-plugin/plugin.json` — marketplace manifest.
 
 When editing skills, remember they are **executed by Claude at runtime**, not by a script. The SKILL.md body is prompt content + reference bash snippets that Claude reads and adapts. Treat changes to it like changes to a runbook, not like refactoring source code.
@@ -40,7 +40,7 @@ These are load-bearing rules the SKILL.md files spell out; don't soften or remov
 - **SHA-256 verification.** The Linux CLI install path fetches the GitHub release asset, reads the matching `digest` from the release JSON, and refuses to extract on mismatch. Keep this check intact.
 - **Destructive-path refusal.** `strata-spaces` must reject `/`, `/usr`, `/var`, `/tmp`, `/etc`, `/bin`, `/sbin`, `/dev`, `/sys`, `/proc`, `$HOME`, `.`, and any path that already contains `*.md` content. `git-mount-gitignore.sh` asserts the refusal list.
 - **Git-tree safety.** When mounting inside a git work tree, `spaces/` must be added to `.gitignore` (or `.git/info/exclude`) before the mount is created. The skill must never `git add` or `git commit` the change — the user owns commits.
-- **No environment-specific URLs hardcoded.** Read endpoints from the CLI's auth state. The one allowed literal is the public MCP endpoint `https://api.strata.space/mcp` in `strata-mcp-setup`.
+- **Endpoints come from the CLI's auth state.** The only hardcoded URL is the MCP endpoint `https://api.prod.us-east-2.strata.space/mcp` in `strata-mcp-setup`. That literal is environment-specific and will move when a stable customer-facing alias is in place — when it does, update every reference and bump the plugin version.
 - **`strata-mcp-setup` must not touch the CLI.** It must complete without `strata` on `PATH`, and never invoke or check for it. Mount requests hand off to the `strata-spaces` sibling.
 - **Snapshot-fallback triggers.** `strata-spaces` falls back to `strata sync pull` when: platform is `macos-too-old` (< 15.4), `wsl`, `container`, `unsupported` (Windows native), the user declined a CLI/`fuse3`/`usermod` consent, or distro detection returned an unknown ID.
 

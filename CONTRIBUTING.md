@@ -51,7 +51,7 @@ Don't soften or remove them in a PR:
   `.git/info/exclude` before creating the mount. Never `git add` or
   `git commit` on the user's behalf.
 - No environment-specific URLs hardcoded. The only allowed literal is
-  the public MCP endpoint `https://api.strata.space/mcp` in
+  the public MCP endpoint `https://api.prod.us-east-2.strata.space/mcp` in
   `strata-mcp-setup`.
 - `strata-mcp-setup` must not invoke or check for the `strata` CLI.
 

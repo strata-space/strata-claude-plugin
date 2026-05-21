@@ -11,7 +11,7 @@ allowed-tools: Bash, Read, Write, Edit, Grep, AskUserQuestion
 
 # Strata MCP setup
 
-Register `https://api.strata.space/mcp` with the user's Claude client so
+Register `https://api.prod.us-east-2.strata.space/mcp` with the user's Claude client so
 Strata document tools work directly in conversation. No CLI install, no
 filesystem mount.
 
@@ -47,12 +47,12 @@ works for every client above, and is what Strata's own docs recommend.
 For **Claude Code**, the canonical command is:
 
 ```bash
-claude mcp add strata -- npx -y mcp-remote https://api.strata.space/mcp
+claude mcp add strata -- npx -y mcp-remote https://api.prod.us-east-2.strata.space/mcp
 ```
 
 Propose it with explicit consent, run on accept:
 
-> Plugin proposes: `claude mcp add strata -- npx -y mcp-remote https://api.strata.space/mcp`.
+> Plugin proposes: `claude mcp add strata -- npx -y mcp-remote https://api.prod.us-east-2.strata.space/mcp`.
 > Run it? [y/N]
 
 For **Claude Desktop**, edit `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -64,7 +64,7 @@ For **Claude Desktop**, edit `~/Library/Application Support/Claude/claude_deskto
   "mcpServers": {
     "strata": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://api.strata.space/mcp"]
+      "args": ["-y", "mcp-remote", "https://api.prod.us-east-2.strata.space/mcp"]
     }
   }
 }
@@ -76,7 +76,7 @@ object without disturbing other servers. Show the user the diff before
 saving and request consent to write.
 
 For **Cursor / VS Code / Zed / Continue / Cline / Windsurf**, render the
-same `{ "command": "npx", "args": ["-y", "mcp-remote", "https://api.strata.space/mcp"] }`
+same `{ "command": "npx", "args": ["-y", "mcp-remote", "https://api.prod.us-east-2.strata.space/mcp"] }`
 fragment into the client's MCP servers config file. The file locations vary
 per client; ask the user to confirm the path you propose before writing.
 
@@ -93,7 +93,7 @@ bridge and register the URL natively:
 {
   "mcpServers": {
     "strata": {
-      "url": "https://api.strata.space/mcp",
+      "url": "https://api.prod.us-east-2.strata.space/mcp",
       "transport": "http"
     }
   }
