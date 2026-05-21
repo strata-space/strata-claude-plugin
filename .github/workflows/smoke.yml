@@ -9,11 +9,28 @@ permissions:
   contents: read
 
 jobs:
+  manifest:
+    name: validate manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: validate JSON syntax
+        run: |
+          jq empty .claude-plugin/plugin.json
+          jq empty .mcp.json
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+      - name: install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+      - name: claude plugin validate
+        run: claude plugin validate ./
+
   shellcheck:
     name: shellcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: install shellcheck
         run: sudo apt-get update && sudo apt-get install -y shellcheck
       - name: shellcheck tests/
@@ -21,14 +38,14 @@ jobs:
 
   cross-platform:
     name: ${{ matrix.os }} cross-platform smokes
-    needs: shellcheck
+    needs: [manifest, shellcheck]
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: git-mount-gitignore
         run: bash tests/git-mount-gitignore.sh
       - name: snapshot-fallback (skips without strata CLI installed)
