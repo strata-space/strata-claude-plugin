@@ -17,14 +17,17 @@ jobs:
       - name: validate JSON syntax
         run: |
           jq empty .claude-plugin/plugin.json
+          jq empty .claude-plugin/marketplace.json
           jq empty .mcp.json
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "20"
       - name: install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
-      - name: claude plugin validate
-        run: claude plugin validate ./
+      - name: claude plugin validate (plugin manifest)
+        run: claude plugin validate .claude-plugin/plugin.json
+      - name: claude plugin validate (marketplace manifest)
+        run: claude plugin validate .claude-plugin/marketplace.json
 
   shellcheck:
     name: shellcheck
