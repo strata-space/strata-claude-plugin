@@ -11,11 +11,9 @@
 #   - Settings -> Actions -> General -> Workflow permissions: enable
 #     "Allow GitHub Actions to create and approve pull requests" so the PR can
 #     be opened.
-#   - For smoke.yml to run on the release PR: GITHUB_TOKEN-authored PRs do not
-#     trigger workflows. To get CI on the release PR, create a PAT or GitHub
-#     App token, store it as RELEASE_PLEASE_TOKEN, and switch the `token:`
-#     below to ${{ secrets.RELEASE_PLEASE_TOKEN }}. Until then the PR is still
-#     opened with GITHUB_TOKEN; it just won't auto-run CI.
+#   - This workflow opens the PR with the RELEASE_PLEASE_TOKEN secret (a PAT or
+#     GitHub App token), which must stay set: GITHUB_TOKEN-authored PRs do not
+#     trigger workflows, so smoke.yml would not run on the release PR.
 
 name: release-please
 
@@ -37,7 +35,7 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@8b8fd2cc23b2e18957157a9d923d75aa0c6f6ad5 # v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
           # PR-only: never tag or create a GitHub Release (claude plugin tag
