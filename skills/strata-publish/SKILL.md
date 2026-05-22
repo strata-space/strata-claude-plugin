@@ -18,8 +18,9 @@ is asking for before doing anything:
 - **One document** (a draft in the conversation, or a single file): use the
   Strata MCP `edit_document` tool. No CLI needed.
 - **A folder of Markdown** (many files, possibly nested): use the `strata`
-  CLI's `sync push`. This is the only path that preserves folder structure and
-  handles creates, updates, and deletes in one operation.
+  CLI's `sync push`. This is the only path that handles creates, updates, and
+  deletes in one operation, and the only one that can preserve a nested folder
+  structure (with `--folders`; see below).
 
 This skill writes to the user's Strata content. Confirm the target and the
 scope of the change before the first write, every time.
@@ -123,8 +124,16 @@ also bypasses the CLI's own interactive prompt, which cannot be answered when
 the command runs non-interactively. Do **not** pass `--force` for any other
 reason: the conversation consent above is the gate.
 
+By default the push is **flat**: every document lands at the Space root,
+regardless of local subdirectories. If the folder is nested and the user wants
+that structure mirrored in Strata, add `--folders`. It recreates each
+subdirectory as a Strata folder and files documents into them. Confirm with the
+user which they want when the folder has subdirectories; mention that without
+`--folders`, nested files flatten to the root.
+
 ```bash
-strata sync push "$space_id" "$dir" --json
+strata sync push "$space_id" "$dir" --json            # flat: all docs at Space root
+strata sync push "$space_id" "$dir" --folders --json  # mirror the nested folder tree
 ```
 
 Report the result honestly from the JSON
