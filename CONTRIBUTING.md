@@ -4,9 +4,9 @@ Thanks for helping improve the Strata Claude plugin.
 
 ## What this repo ships
 
-Two skills (`skills/strata-spaces/SKILL.md`, `skills/strata-mcp-setup/SKILL.md`),
-a plugin manifest, and bash smoke tests. There is no application code, no
-build step, and no package manager.
+Four skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
+registers the Strata MCP server, and bash smoke tests. There is no application
+code, no build step, and no package manager.
 
 Skills are **executed by Claude at runtime**, not by a script. Treat changes
 to `SKILL.md` like changes to a runbook, not refactoring source code.
@@ -28,7 +28,6 @@ to `SKILL.md` like changes to a runbook, not refactoring source code.
 3. **Run the cross-platform smokes.**
    ```bash
    bash tests/git-mount-gitignore.sh
-   bash tests/mcp-setup.sh
    ```
 4. **If you touched a runbook step**, replay the exact bash snippet from the
    relevant `SKILL.md` in `tests/`. The point of the tests is to catch drift
@@ -40,8 +39,10 @@ These are spelled out in the `SKILL.md` files and asserted in `tests/`.
 Don't soften or remove them in a PR:
 
 - Every privileged command must be shown verbatim and gated on explicit
-  `[y/N]` consent. If declined, route to snapshot-fallback
-  (`strata-spaces`) or exit (`strata-mcp-setup`). Never retry silently.
+  `[y/N]` consent. If declined, route to snapshot-fallback (`strata-spaces`)
+  or stop. Never retry silently. Skills that write to Strata content
+  (`strata-publish`, `strata-review`) confirm in conversation before the
+  first write.
 - The Linux CLI install path reads the GitHub release `digest` and refuses
   to extract on SHA-256 mismatch. Keep this check intact.
 - `strata-spaces` rejects mounting over destructive paths (`/`, `/usr`,
@@ -50,10 +51,10 @@ Don't soften or remove them in a PR:
 - Mounting inside a git work tree must add `spaces/` to `.gitignore` or
   `.git/info/exclude` before creating the mount. Never `git add` or
   `git commit` on the user's behalf.
-- No environment-specific URLs hardcoded. The only allowed literal is
-  the public MCP endpoint `https://api.prod.us-east-2.strata.space/mcp` in
-  `strata-mcp-setup`.
-- `strata-mcp-setup` must not invoke or check for the `strata` CLI.
+- No environment-specific URLs hardcoded in skills. The public MCP endpoint
+  `https://api.prod.us-east-2.strata.space/mcp` lives in the bundled
+  `.mcp.json` (and the README's other-clients snippet); document links use the
+  `https://strata.space/app/documents/<docId>` form.
 
 ## Test helper conventions
 

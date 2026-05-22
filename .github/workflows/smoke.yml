@@ -57,5 +57,3 @@ jobs:
         run: bash tests/unmount-lifecycle.sh
       - name: permission-denied (skips without strata CLI installed)
         run: bash tests/permission-denied.sh
-      - name: mcp-setup
-        run: bash tests/mcp-setup.sh

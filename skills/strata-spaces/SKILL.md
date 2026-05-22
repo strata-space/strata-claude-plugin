@@ -53,15 +53,16 @@ case "$(uname -s)" in
     fi
     ;;
   *)
-    platform="unsupported"  # Windows native, etc: route to MCP setup or snapshot
+    platform="unsupported"  # Windows native, etc: route to snapshot or MCP skills
     ;;
 esac
 ```
 
 If `platform` is `macos-too-old`, `wsl`, `container`, or `unsupported`, jump to
-"Snapshot fallback". For Windows specifically, also point the user at the
-`strata-mcp-setup` sibling skill: a live mount is not possible but they can
-use Strata's MCP tools inside the conversation.
+"Snapshot fallback". For Windows specifically, tell the user a live mount is not
+possible, but the plugin already registers the Strata MCP server, so they can
+read, search, and edit their documents in the conversation through the
+`strata-research`, `strata-publish`, and `strata-review` siblings.
 
 ## macOS install + FSKit enablement
 
