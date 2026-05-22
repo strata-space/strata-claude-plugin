@@ -69,12 +69,16 @@ Don't soften or remove them in a PR:
 
 ## Releasing
 
-1. Bump `version` in `.claude-plugin/plugin.json` following
-   [SemVer](https://semver.org/spec/v2.0.0.html). MAJOR for breaking
-   runbook changes, MINOR for new skills or platforms, PATCH for fixes.
-2. Add a `## [X.Y.Z] - YYYY-MM-DD` section to `CHANGELOG.md`.
-3. Open a PR, get it merged.
-4. On `main` after merge:
+The version bump and changelog are automated. [release-please](https://github.com/googleapis/release-please)
+watches `main` and opens (or updates) a "release PR" that bumps `version` in
+`.claude-plugin/plugin.json` and adds a `CHANGELOG.md` entry, derived from the
+[Conventional Commits](https://www.conventionalcommits.org/) since the last
+release (`fix:` → PATCH, `feat:` → MINOR, `feat!:` / `BREAKING CHANGE:` →
+MAJOR). Follow Conventional Commits in commit messages so this works.
+
+1. Review the open release PR (edit the changelog wording if you like), then
+   merge it. That commits the version bump.
+2. On `main` after merge:
    ```bash
    claude plugin tag ./ --push
    ```
