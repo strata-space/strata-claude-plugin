@@ -53,7 +53,7 @@ case "$(uname -s)" in
     fi
     ;;
   *)
-    platform="unsupported"  # Windows native, etc: route to MCP setup or snapshot
+    platform="unsupported"  # Windows native, etc: route to snapshot or MCP skills
     ;;
 esac
 ```

@@ -96,8 +96,18 @@ Branch on what you find:
 
 ### Seed the manifest, then push
 
+`sync push` needs a manifest, so seed one with `sync pull` when none exists. For
+an empty target Space the pull changes nothing and needs no consent. For the
+non-empty, no-overlap case above, the pull writes the Space's documents into the
+local folder, so gate it as its own step first:
+
+> Plugin proposes: `strata sync pull <space> <dir>` to seed the sync manifest.
+> This writes the Space's existing documents into `<dir>`. Proceed? [y/N]
+
+Run the pull only when there is no manifest yet (and, for a non-empty target,
+only after the consent above):
+
 ```bash
-# Only when no manifest exists yet:
 [ -f "$dir/.strata-sync.json" ] || strata sync pull "$space_id" "$dir"
 ```
 

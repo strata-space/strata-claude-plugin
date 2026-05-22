@@ -18,8 +18,9 @@ This skill is read-only: it never edits, comments on, or publishes anything.
 For those, use the `strata-publish` or `strata-review` siblings.
 
 The Strata MCP server is registered automatically by the plugin's `.mcp.json`.
-If its tools are not available, the MCP connection is not live; point the user
-at the `strata-doctor` flow rather than guessing.
+If its tools are not available, the MCP connection is not live: tell the user to
+confirm the plugin is installed and to reconnect their client (the bundled
+`.mcp.json` registers the server on install), rather than guessing.
 
 ## Pick the scope
 

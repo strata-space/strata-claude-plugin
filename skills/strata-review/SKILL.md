@@ -34,8 +34,10 @@ MCP registration enables, and it is a write operation, so the MCP session also
 needs write scope. If the `manage_comments` tool is not available:
 
 - The `comments` group is not enabled on this connection, or the OAuth grant
-  has no write scope. Point the user at the `strata-doctor` flow to diagnose,
-  rather than falling back to editing the document.
+  has no write scope. Tell the user their MCP connection needs the
+  `X-Strata-Tool-Groups:core,comments` header (the bundled `.mcp.json` sets it;
+  reconnect after confirming it) and write scope. Do not fall back to editing
+  the document.
 
 ## Read first, with existing threads
 
