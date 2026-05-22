@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "strata",
   "displayName": "Strata",
-  "description": "Mount and manage Strata Spaces as local Markdown folders, and register the Strata MCP server for in-conversation document tools. Two skills: strata-spaces (filesystem mount lifecycle) and strata-mcp-setup (MCP server registration).",
-  "version": "0.1.1",
+  "description": "Mount Strata Spaces as local Markdown folders, and work with your Strata documents in conversation through the bundled MCP server: research with citations, publish local content, and review with comments. Skills: strata-spaces (mount lifecycle), strata-research, strata-publish, strata-review.",
+  "version": "0.2.0",
   "license": "MIT",
   "keywords": [
     "strata",

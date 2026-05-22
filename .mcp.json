@@ -2,7 +2,13 @@
   "mcpServers": {
     "strata": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://api.prod.us-east-2.strata.space/mcp"]
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://api.prod.us-east-2.strata.space/mcp",
+        "--header",
+        "X-Strata-Tool-Groups:core,comments"
+      ]
     }
   }
 }

@@ -4,14 +4,32 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2026-05-21
 
 ### Added
+- `strata-research` skill: answer a question from your Spaces with citations,
+  over the bundled MCP server. Read-only, no CLI install required.
+- `strata-publish` skill: create a document from a draft, or `sync push` a
+  folder of Markdown into a Space (creates, updates, and trashes to match).
+- `strata-review` skill: leave anchored comments on a document via the MCP
+  `manage_comments` tool. Reviews by commenting; never rewrites the body.
 - `.claude-plugin/marketplace.json` makes this repo a self-hosted
   marketplace. Users can now add it directly with
   `/plugin marketplace add strata-space/strata-claude-plugin` and install
   with `/plugin install strata@strata-space`, independent of any
   Anthropic-operated catalog.
+
+### Changed
+- `.mcp.json` now enables the `comments` tool group via the
+  `X-Strata-Tool-Groups` header, which unlocks `manage_comments` (and, on the
+  same group, `manage_suggestions`) for `strata-review`. This affects every
+  existing user on upgrade, not just new installers.
+
+### Removed
+- `strata-mcp-setup` skill: redundant. The bundled `.mcp.json` auto-registers
+  the Strata MCP server on install, so there is no manual setup step in Claude
+  Code or Claude Desktop. Configuration notes for other MCP clients moved to
+  the README.
 
 ## [0.1.1] - 2026-05-20
 

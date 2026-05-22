@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "strata",
-      "description": "Mount and manage Strata Spaces as local Markdown folders, and register the Strata MCP server for in-conversation document tools.",
+      "description": "Mount Strata Spaces as local Markdown folders, and research, publish, and review your Strata documents in conversation through the bundled MCP server.",
       "source": "./",
       "homepage": "https://strata.space",
       "category": "knowledge"
