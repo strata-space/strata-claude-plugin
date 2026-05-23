@@ -57,3 +57,5 @@ jobs:
         run: bash tests/unmount-lifecycle.sh
       - name: permission-denied (skips without strata CLI installed)
         run: bash tests/permission-denied.sh
+      - name: doctor-linux-fuse-probe (skips off Linux)
+        run: bash tests/doctor-linux-fuse-probe.sh

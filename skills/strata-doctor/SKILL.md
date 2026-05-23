@@ -172,6 +172,54 @@ the only authoritative enabled-test.
 - **No strata line**: the FSKit module is not installed. The CLI is missing or
   installed incorrectly; hand off to `strata-spaces` to (re)install.
 
+### FUSE runtime (Linux only)
+
+On Linux, every mount goes through FUSE: the kernel `/dev/fuse` device plus the
+`fusermount3` userspace helper from the `fuse3` package. Unlike macOS — where the
+FSKit module ships *inside* the CLI, so a present CLI implies a present module —
+`fuse3` is a separate system package. You are already in Layer 2, so the CLI is
+on `PATH`; that says nothing about whether the FUSE runtime is present. Probe it
+read-only, in the same order `strata-spaces` runs its preflight:
+
+```bash
+if [ "$(uname -s)" = Linux ]; then
+  command -v fusermount3 >/dev/null 2>&1 || printf 'fuse3-missing\n'
+  if [ ! -e /dev/fuse ]; then printf 'dev-fuse-absent\n'; fi
+  if [ -e /dev/fuse ] && [ ! -r /dev/fuse ]; then printf 'dev-fuse-unreadable\n'; fi
+  if getent group fuse >/dev/null 2>&1 && ! getent group fuse | grep -q "\b$USER\b"; then
+    printf 'not-in-fuse-group\n'
+  fi
+fi
+```
+
+Map each finding to a fix the **user** runs — the same shape as the `brew
+upgrade` / `strata login` fixes above, never a command this skill executes:
+
+- **`fuse3-missing`** (no `fusermount3`): the FUSE userspace helper is not
+  installed. The package is named `fuse3` on every distro `strata-spaces`
+  supports, so tell the user to install it with their package manager — e.g.
+  `sudo apt install fuse3` on Debian/Ubuntu, or the `dnf` / `pacman` / `zypper` /
+  `apk` equivalent for their distro. If they would rather not run it by hand,
+  `strata-spaces` installs `fuse3` under explicit consent as part of its
+  preflight; hand off there.
+
+- **`dev-fuse-absent`** (no `/dev/fuse`): the kernel exposes no FUSE device. This
+  is the WSL / container / locked-down-kernel case, where a live mount is not
+  possible at all. Do not propose a fix — report that mounting is impossible on
+  this system and point at the `strata-spaces` snapshot fallback (`strata sync
+  pull`), which is where that skill already routes these platforms.
+
+- **`dev-fuse-unreadable`** / **`not-in-fuse-group`**: FUSE is installed but the
+  current user cannot open the device (group membership / udev). Both map to one
+  fix; tell the user, verbatim:
+
+  > Run `sudo usermod -aG fuse $USER`, then log out and back in for the group
+  > change to take effect.
+
+- **No token printed**: the FUSE runtime is ready. If a mount still fails, the
+  problem is elsewhere (auth, the Space, or the mount itself) — fall through to
+  mount health.
+
 ### Mount health
 
 ```bash
@@ -220,7 +268,7 @@ single highest-priority fix — so the user is not left to triage a list:
 | CLI installed        | yes / no          |
 | CLI / MCP same env   | yes / no / n-a    |
 | CLI auth             | logged_in / …     |
-| FSKit module (macOS) | installed / missing / n-a |
+| Mount backend ready  | FSKit installed / FUSE ready / missing / n-a |
 | Active mounts        | N                 |
 | Recent write error   | none / <doc>      |
 ```
