@@ -141,34 +141,36 @@ opens a browser; do not run it for them):
 > Please run `strata login` in your terminal — it opens a browser to sign you
 > in — then tell me when you are signed in.
 
-### FSKit system extension (macOS only)
+### FSKit module (macOS only)
 
-On macOS, every mount needs the bundled FSKit system extension to be approved.
-A missing or unapproved extension is the most common reason a mount silently
-does nothing, so probe it before blaming auth or the document:
+On macOS, every mount needs the bundled FSKit module installed and approved. The
+module is a `pluginkit`-managed app extension, **not** a classic system
+extension, so probe with `pluginkit` (the FSKit extension point is
+`com.apple.fskit.fsmodule`). `systemextensionsctl` never lists FSKit modules and
+will report a false negative:
 
 ```bash
-[ "$(uname -s)" = Darwin ] && systemextensionsctl list 2>/dev/null | grep -i strata || true
+[ "$(uname -s)" = Darwin ] && pluginkit -m -p com.apple.fskit.fsmodule 2>/dev/null | grep -i strata || true
 ```
 
-`systemextensionsctl` is authoritative only for the *approved* state. An
-installed-but-unapproved FSKit module often does not appear in its output at all
-yet still shows up in System Settings, so treat anything short of `[activated
-enabled]` as "not confirmed on" and route the user to the toggle:
+macOS does **not** expose the System-Settings on/off toggle state to any CLI
+(`pluginkit` shows a blank status flag whether the module is enabled or not, the
+same as Apple's own msdos/exfat modules), so do not try to read "enabled" and do
+not loop on a probe. Presence is all the CLI can tell you; a successful mount is
+the only authoritative enabled-test.
 
-- **`[activated enabled]`**: the extension is approved; mounting is not blocked
-  here. Move on.
-- **Anything else** (a non-enabled state, or no strata line at all): tell the
-  user, verbatim:
+- **A `space.strata.cli.fskit` line prints**: the module is installed and
+  registered. If mounting works, this is not the problem. If a mount silently
+  does nothing or fails with a permission/extension error, the module is
+  installed but not approved; tell the user, verbatim:
 
   > Open **System Settings → General → Login Items & Extensions**. In the
   > **Extensions** section, switch from **By App** to **By Category** (the By App
   > view has a broken toggle that will not turn on and wrongly shows off). Open
   > **File System Extensions** and turn on **Strata CLI**.
 
-  Re-run the probe after they confirm; it should then read `[activated enabled]`.
-  If **Strata CLI** is not even listed under File System Extensions, the CLI is
-  not installed correctly: hand off to `strata-spaces` to (re)install.
+- **No strata line**: the FSKit module is not installed. The CLI is missing or
+  installed incorrectly; hand off to `strata-spaces` to (re)install.
 
 ### Mount health
 
@@ -218,7 +220,7 @@ single highest-priority fix — so the user is not left to triage a list:
 | CLI installed        | yes / no          |
 | CLI / MCP same env   | yes / no / n-a    |
 | CLI auth             | logged_in / …     |
-| FSKit ext (macOS)    | enabled / off / n-a |
+| FSKit module (macOS) | installed / missing / n-a |
 | Active mounts        | N                 |
 | Recent write error   | none / <doc>      |
 ```
