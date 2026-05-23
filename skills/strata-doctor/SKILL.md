@@ -93,19 +93,25 @@ Do not install it here.
 
 ### Environment consistency (CLI host vs MCP)
 
-The CLI talks to whatever `STRATA_API_URL` / `--api-url` points at (default is a
-local dev URL); the MCP server talks to the endpoint baked into the plugin's
-`.mcp.json`. If those are different environments, the two surfaces see different
-data and nothing lines up — a silent, total failure.
+The released CLI defaults to production (`https://api.prod.us-east-2.strata.space`),
+the same endpoint the plugin's `.mcp.json` registers the MCP server against, so
+the two surfaces are consistent out of the box. A mismatch only arises when the
+user overrides the CLI with `--api-url` / `STRATA_API_URL`, or runs a non-release
+build (debug builds default to beta; localhost is never a default, only an
+explicit override). When the surfaces point at different environments they see
+different data and nothing lines up: a silent, total failure.
+
+Read the URL the CLI is actually using (`apiUrl`, populated once logged in)
+rather than guessing from the env var, which is unset for normal users:
 
 ```bash
-printf 'CLI API URL: %s\n' "${STRATA_API_URL:-<binary default>}"
+strata status --json | jq -r '.apiUrl // "<not logged in; release builds default to prod>"'
 ```
 
-If `STRATA_API_URL` is set to a localhost or staging host while the MCP tools
-are reaching production, that mismatch is the bug: the CLI and the MCP server
-are looking at different backends. Tell the user to unset the override (or point
-both at the same environment) rather than chasing per-document errors.
+If that URL is anything other than the production host the MCP server uses, the
+mismatch is the bug: the CLI and the MCP server are looking at different
+backends. Tell the user to unset the override (or point both at the same
+environment) rather than chasing per-document errors.
 
 ### CLI version / sidecar capability
 
