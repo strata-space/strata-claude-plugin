@@ -4,12 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Claude Code plugin (`strata`) that ships four skills, a bundled `.mcp.json` that registers the Strata MCP server, and a set of bash smoke tests. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files plus their test runners.
+A Claude Code plugin (`strata`) that ships five skills, a bundled `.mcp.json` that registers the Strata MCP server, and a set of bash smoke tests. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files plus their test runners.
 
 - `skills/strata-research/SKILL.md`: answer a question from the user's Spaces with citations, over the MCP server (read-only, no CLI).
 - `skills/strata-publish/SKILL.md`: push local content up. `edit_document` for a single doc, `strata sync push` for a folder.
 - `skills/strata-review/SKILL.md`: leave anchored comments on a document via the MCP `manage_comments` tool; never rewrites the body.
 - `skills/strata-spaces/SKILL.md`: operates the user's `strata` CLI to mount a Space as a local Markdown folder (macOS FSKit / Linux FUSE), with a static-snapshot fallback when a live mount is impossible.
+- `skills/strata-doctor/SKILL.md`: diagnose why Strata is not working — MCP connectivity (registered, signed in, write scope, tool groups) and, when the CLI is present, auth state, mount health, and the permission-denied (write-failure) diagnosis. Read-only: it routes to a fix, never remediates by side effect.
 - `.mcp.json`: registers the Strata MCP server, with the `comments` tool group enabled, on install.
 - `.claude-plugin/plugin.json`: marketplace manifest.
 
@@ -43,7 +44,8 @@ These are load-bearing rules the SKILL.md files spell out; don't soften or remov
 - **Destructive-path refusal.** `strata-spaces` must reject `/`, `/usr`, `/var`, `/tmp`, `/etc`, `/bin`, `/sbin`, `/dev`, `/sys`, `/proc`, `$HOME`, `.`, and any path that already contains `*.md` content. `git-mount-gitignore.sh` asserts the refusal list.
 - **Git-tree safety.** When mounting inside a git work tree, `spaces/` must be added to `.gitignore` (or `.git/info/exclude`) before the mount is created. The skill must never `git add` or `git commit` the change — the user owns commits.
 - **Endpoints come from the CLI's auth state.** The only hardcoded URL is the MCP endpoint `https://api.prod.us-east-2.strata.space/mcp` in `.mcp.json` (and the README's other-clients snippet). That literal is environment-specific and will move when a stable customer-facing alias is in place; when it does, update every reference and bump the plugin version. Document links in skills use `https://strata.space/app/documents/<docId>`.
-- **MCP skills must not require the CLI.** `strata-research` and `strata-review` operate purely over the MCP server and must complete without `strata` on `PATH`. `strata-publish` needs the CLI only for folder sync; its single-document path is MCP-only.
+- **MCP skills must not require the CLI.** `strata-research` and `strata-review` operate purely over the MCP server and must complete without `strata` on `PATH`. `strata-publish` needs the CLI only for folder sync; its single-document path is MCP-only. `strata-doctor`'s MCP-connectivity half (Layer 1) runs without the CLI; its Layer 2 (CLI auth, mount health, write-failure diagnosis) is skipped cleanly when `strata` is absent.
+- **Doctor diagnoses, never remediates.** `strata-doctor` is read-only: it probes (`find`, `command -v`, `strata status --json`, reading config) and routes to a fix, but never installs the CLI, never `strata login`s for the user, never force-unmounts, and never edits `.mcp.json`. Each fix is a user action or a hand-off to the owning skill (`strata-spaces` for install and stuck-mount recovery).
 - **Snapshot-fallback triggers.** `strata-spaces` falls back to `strata sync pull` when: platform is `macos-too-old` (< 15.4), `wsl`, `container`, `unsupported` (Windows native), the user declined a CLI/`fuse3`/`usermod` consent, or distro detection returned an unknown ID.
 
 ## Test helper conventions

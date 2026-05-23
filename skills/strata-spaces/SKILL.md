@@ -4,10 +4,9 @@ description: >
   Mount or sync a Strata Space (strata.space) as a local folder of Markdown
   files. First-run install of the strata CLI, macOS FSKit / Linux FUSE
   preflight, browser login, Space pick, Git-safe mount, lifecycle (list,
-  unmount, recover stuck mounts), permission-denied diagnosis, and a static-
-  snapshot fallback when live mounting is not possible. Use for "mount my
-  Space", "open my Strata docs as files", "sync Strata locally", "why did my
-  save fail", or any mount-lifecycle request.
+  unmount, recover stuck mounts), and a static-snapshot fallback when live
+  mounting is not possible. Use for "mount my Space", "open my Strata docs as
+  files", "sync Strata locally", or any mount-lifecycle request.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, AskUserQuestion
 ---
 
@@ -262,32 +261,6 @@ Tell the user what writable means in their next sentence:
 
 On non-zero exit, show the CLI's stderr in a fenced block and offer two
 choices: retry, or fall back to the snapshot path.
-
-## Permission-denied diagnosis
-
-Triggers: the user says their save failed, or mentions "permission denied",
-"EACCES", "could not write", "save error", or any editor-side failure on a
-mounted file.
-
-Read the most-recent failure from `strata status --json`:
-
-```bash
-strata status --json | jq -r '
-  .recentWriteErrors[0] // empty |
-  "Document: \(.docTitle // .docId) (\(.docId))\nOwner: \(.ownerEmail // .ownerId)\nRequest access: https://strata.space/app/documents/\(.docId)"'
-```
-
-If `recentWriteErrors` is missing entirely (older CLI without the sidecar),
-tell the user:
-
-> I cannot retrieve owner information from this CLI version. Run `brew
-> upgrade --cask strata-space/strata/strata` (macOS) or download the latest
-> Linux release, then retry the save.
-
-If `recentWriteErrors[0]` exists, render owner + the webapp link verbatim.
-Tell the user their unsaved edits are still in the editor buffer (POSIX
-guarantees the kernel did not commit) so they can retry the save against a
-different document if needed.
 
 ## List active mounts
 

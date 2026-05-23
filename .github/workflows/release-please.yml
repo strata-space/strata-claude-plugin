@@ -1,0 +1,43 @@
+# Opens/updates a "release PR" that bumps the plugin version
+# (.claude-plugin/plugin.json $.version) and CHANGELOG.md from Conventional
+# Commits since the last release. PR-only: skip-github-release means it does
+# NOT tag or create a GitHub Release.
+#
+# This automates the manual version-bump + changelog edit (CONTRIBUTING steps
+# 1-2). Tagging stays owned by `claude plugin tag`: after merging the release
+# PR on main, run `claude plugin tag ./ --push` to push strata--v<version>.
+#
+# One-time prerequisites (owner action required):
+#   - Settings -> Actions -> General -> Workflow permissions: enable
+#     "Allow GitHub Actions to create and approve pull requests" so the PR can
+#     be opened.
+#   - This workflow opens the PR with the RELEASE_PLEASE_TOKEN secret (a PAT or
+#     GitHub App token), which must stay set: GITHUB_TOKEN-authored PRs do not
+#     trigger workflows, so smoke.yml would not run on the release PR.
+
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-please-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: googleapis/release-please-action@8b8fd2cc23b2e18957157a9d923d75aa0c6f6ad5 # v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          # PR-only: never tag or create a GitHub Release (claude plugin tag
+          # owns tagging). release-type lives in release-please-config.json.
+          skip-github-release: true
