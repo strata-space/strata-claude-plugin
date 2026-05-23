@@ -80,17 +80,12 @@ Propose the cask install. Tap is `strata-space/strata`:
 > [y/N]
 
 If declined, jump to "Snapshot fallback". If accepted, run it. On macOS, the
-CLI ships an FSKit system extension that must be approved by the user before
-the first mount works.
+CLI ships an FSKit module that needs a one-time approval before the first mount
+works. Do **not** probe for it here; detecting the module is `strata-doctor`'s
+job, and macOS does not expose the enabled state to any CLI anyway. Just guide
+the approval and let the mount be the test.
 
-Check whether it is already enabled:
-
-```bash
-systemextensionsctl list 2>/dev/null | grep -i strata
-```
-
-If the entry shows `[activated enabled]`, proceed to "Login and Space pick".
-Otherwise, open the System Settings pane and ask the user to toggle Strata on:
+Open the System Settings pane and ask the user to turn the module on:
 
 ```bash
 open 'x-apple.systempreferences:com.apple.LoginItems-Settings.extension' 2>/dev/null
@@ -104,11 +99,10 @@ Tell the user verbatim:
 > **File System Extensions** and turn on **Strata CLI**. Reply when you have done
 > it.
 
-After the user confirms, re-run `systemextensionsctl list | grep -i strata`.
-Loop until the entry shows `[activated enabled]`, with a friendly nudge if the
-user reports done but the check still fails (most often: they are still in the
-**By App** view, whose toggle is broken; ask them to switch to **By Category**
-and turn on **Strata CLI** under **File System Extensions**).
+The mount is the verification; proceed to "Login and Space pick". If the mount
+later fails because the module is not approved, send the user back to the **By
+Category** toggle above, or hand off to `strata-doctor` to confirm the module is
+even installed (`pluginkit`).
 
 ## Linux distro detection + FUSE preflight
 
