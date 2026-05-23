@@ -24,7 +24,8 @@ Skills:
   possible.
 - **`strata-doctor`** — diagnose why Strata is not working in Claude. Probes the
   MCP connection (registered, signed in, write scope, tool groups) and, when the
-  CLI is present, its auth state, mount health, and the most recent write
+  CLI is present, its auth state, mount-backend prerequisites (the macOS FSKit
+  module / the Linux FUSE runtime), mount health, and the most recent write
   failure (owner + request-access link). Read-only: it routes to a fix, never
   remediates by side effect. No CLI install for the MCP half.
 
