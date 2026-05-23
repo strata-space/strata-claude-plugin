@@ -22,6 +22,11 @@ Skills:
   helper, logs in, mounts Git-safely, and manages the lifecycle (list, unmount,
   recover). Falls back to a static-snapshot pull where a live mount is not
   possible.
+- **`strata-doctor`** — diagnose why Strata is not working in Claude. Probes the
+  MCP connection (registered, signed in, write scope, tool groups) and, when the
+  CLI is present, its auth state, mount health, and the most recent write
+  failure (owner + request-access link). Read-only: it routes to a fix, never
+  remediates by side effect. No CLI install for the MCP half.
 
 ## Install
 
@@ -38,8 +43,8 @@ first tool call it opens a browser once for sign-in.
 ## Requirements
 
 - **MCP skills** (`strata-research`, `strata-publish` single-doc,
-  `strata-review`) — `node` and `npm` for the bundled `mcp-remote` bridge.
-  No Strata CLI needed.
+  `strata-review`, `strata-doctor` connectivity half) — `node` and `npm` for the
+  bundled `mcp-remote` bridge. No Strata CLI needed.
 - **Filesystem mount** (`strata-spaces`) and **folder publish**
   (`strata-publish` bulk) — macOS 15.4+ (FSKit backend) or Linux with kernel
   ≥ 4.18 and the `fuse3` userspace helper (FUSE backend). Windows is detected
@@ -101,6 +106,7 @@ skills/
   strata-publish/SKILL.md    # push local content up (MCP + CLI)
   strata-review/SKILL.md     # comment on a document (MCP)
   strata-spaces/SKILL.md     # mount lifecycle (CLI)
+  strata-doctor/SKILL.md     # diagnose connectivity & write failures (MCP + CLI)
 tests/                       # VM smoke runners (bash)
 ```
 

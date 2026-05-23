@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# T037 (US2): smoke test for the permission-denied diagnostic flow.
+# T037 (US2): smoke test for the permission-denied diagnostic flow, which the
+# strata-doctor skill owns (the render snippet lives in
+# skills/strata-doctor/SKILL.md). This validates the CLI-side `status` sidecar
+# contract that diagnosis reads, independent of which skill renders it.
 #
 # Runs on either macOS (FSKit backend) or Linux (FUSE backend). Assumes the
 # environment can simulate a refused save (`STRATA_TEST_FORCE_403` for the

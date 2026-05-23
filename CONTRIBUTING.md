@@ -4,7 +4,7 @@ Thanks for helping improve the Strata Claude plugin.
 
 ## What this repo ships
 
-Four skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
+Five skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
 registers the Strata MCP server, and bash smoke tests. There is no application
 code, no build step, and no package manager.
 
