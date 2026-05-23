@@ -98,13 +98,17 @@ open 'x-apple.systempreferences:com.apple.LoginItems-Settings.extension' 2>/dev/
 
 Tell the user verbatim:
 
-> Go to **System Settings → General → Login Items & Extensions → File System
-> Extensions** and turn on **Strata**. Reply when you have done it.
+> Open **System Settings → General → Login Items & Extensions**. In the
+> **Extensions** section, switch from **By App** to **By Category** (the By App
+> view has a broken toggle that will not turn on and wrongly shows off). Open
+> **File System Extensions** and turn on **Strata CLI**. Reply when you have done
+> it.
 
 After the user confirms, re-run `systemextensionsctl list | grep -i strata`.
-Loop until the entry shows `[activated enabled]`, with a friendly nudge if
-the user reports done but the check still fails (most often: the deep link
-opened the wrong pane; ask them to scroll to "File System Extensions").
+Loop until the entry shows `[activated enabled]`, with a friendly nudge if the
+user reports done but the check still fails (most often: they are still in the
+**By App** view, whose toggle is broken; ask them to switch to **By Category**
+and turn on **Strata CLI** under **File System Extensions**).
 
 ## Linux distro detection + FUSE preflight
 
