@@ -4,6 +4,26 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-22
+
+### Added
+- `strata-doctor` skill: diagnose why Strata is not working in Claude and map
+  each failure to a concrete next step. Probes MCP connectivity (registered,
+  signed in, write scope, tool groups) and, when the CLI is present, its auth
+  state, FSKit system-extension state, mount health, and the most recent write
+  failure. Read-only: it routes to a fix, never remediates by side effect.
+
+### Fixed
+- `strata-doctor` no longer claims the CLI defaults to a local dev URL. The
+  released CLI defaults to production (matching the bundled MCP endpoint), so
+  the environment-consistency check now reads the effective `apiUrl` from
+  `strata status --json` instead of guessing from an unset env var.
+- macOS FSKit enablement advice (in `strata-spaces` and `strata-doctor`) now
+  routes through the **By Category** view in System Settings, since the **By
+  App** toggle is broken on macOS Tahoe, and enables the **Strata CLI** module
+  under File System Extensions. `strata-doctor` also gains an FSKit
+  system-extension probe, the most common cause of a silent mount failure.
+
 ## [0.2.0] - 2026-05-21
 
 ### Added
