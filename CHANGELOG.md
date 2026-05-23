@@ -4,6 +4,23 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0](https://github.com/strata-space/strata-claude-plugin/compare/v0.3.0...v0.4.0) (2026-05-23)
+
+
+### Added
+
+* **085:** plugin scaffolding + MountState enrichment (Phases 1-2) ([9967679](https://github.com/strata-space/strata-claude-plugin/commit/9967679f9b779221eb9c3b30f3bfa33c8073bc66))
+* **085:** SKILL.md content + VM smoke tests (Phases 3-8) ([81c05a3](https://github.com/strata-space/strata-claude-plugin/commit/81c05a3615d01e42d72b8bb2e0d77ad1cae3835f))
+* self-host as a custom marketplace ([#4](https://github.com/strata-space/strata-claude-plugin/issues/4)) ([67c2ba5](https://github.com/strata-space/strata-claude-plugin/commit/67c2ba501b01db7abbec7d6f49a349ff6fac31a9))
+* strata-doctor diagnostic skill (+ pending release-please CI) ([#7](https://github.com/strata-space/strata-claude-plugin/issues/7)) ([a70f600](https://github.com/strata-space/strata-claude-plugin/commit/a70f600cb03e8960fe3b78f2eb9bdcd5e7afaba9))
+* Tier-1 skills (research, publish, review); retire strata-mcp-setup ([#5](https://github.com/strata-space/strata-claude-plugin/issues/5)) ([29ac9b0](https://github.com/strata-space/strata-claude-plugin/commit/29ac9b09cb1fb3dc8a01dd260bad821a2c7a3572))
+
+
+### Fixed
+
+* **fskit:** correct system-extension enablement advice + add doctor probe ([#9](https://github.com/strata-space/strata-claude-plugin/issues/9)) ([29d2d6c](https://github.com/strata-space/strata-claude-plugin/commit/29d2d6c896a8e0c00fee7a42454b852a885ef23e))
+* **strata-doctor:** correct CLI default-URL claim; probe effective apiUrl ([#8](https://github.com/strata-space/strata-claude-plugin/issues/8)) ([73de68d](https://github.com/strata-space/strata-claude-plugin/commit/73de68d581128730709c2797320214e6d255eea2))
+
 ## [0.3.0] - 2026-05-22
 
 ### Added
