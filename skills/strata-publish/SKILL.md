@@ -16,7 +16,8 @@ Get local content into Strata. Two shapes, two paths. Decide which the user
 is asking for before doing anything:
 
 - **One document** (a draft in the conversation, or a single file): use the
-  Strata MCP `edit_document` tool. No CLI needed.
+  Strata MCP `edit_document` tool. No CLI needed, unless you are filing it into
+  a Space (see "Into a Space" below).
 - **A folder of Markdown** (many files, possibly nested): use the `strata`
   CLI's `sync push`. This is the only path that handles creates, updates, and
   deletes in one operation, and the only one that can preserve a nested folder
@@ -29,17 +30,38 @@ scope of the change before the first write, every time.
 
 For a draft the user wrote in the conversation, or one file:
 
-1. Confirm the title and target. New documents land in the user's default
-   location and are visible to their org; mention that.
-2. Call `edit_document` with `action="create"`, the `title`, and the Markdown
-   `content`. Pass `folderId` only if the user named a folder.
-3. Report the new document's title and link
+1. Pick the scope. New documents are **private** (only the user can see them)
+   by default. Unless the user already said where it should go, ask:
+   - **Private** — only you. The default; use it when unsure.
+   - **Workspace** — everyone in the user's workspace can see it.
+   - **A Space** — to file it into a shared knowledge base; see "Into a Space"
+     below (that path needs the CLI).
+2. Call `edit_document` with `action="create"`, the `title`, the Markdown
+   `content`, and `scope` (`"private"` or `"workspace"`; omit it for private).
+   Pass `folderId` only if the user named a folder.
+3. Report the new document's title, its scope, and link
    (`https://strata.space/app/documents/<documentId>` from the result).
+
+To change a document's scope afterward, call `edit_document` with
+`action="setScope"`, the `documentId`, and `scope`. The CLI mirrors this:
+`strata api documents set-scope <documentId> <private|workspace>`.
 
 To replace the body of a document that already exists, use `edit_document`
 with `action="edit"` (targeted `oldString`/`newString`) or `action="write"`
 (full replacement) instead of creating a duplicate. Search with the Strata
 `find` tool first if you are unsure whether the document already exists.
+
+### Into a Space
+
+To put a single new document into a Space, create it workspace-scoped, then
+file it in with the CLI (the MCP cannot add to a Space; this needs an
+authenticated `strata` session — see the Preflight below):
+
+```bash
+strata api spaces add-documents "$space_id" "$documentId"
+```
+
+For many files at once, use the folder path below instead.
 
 ## Folder of Markdown (CLI)
 
