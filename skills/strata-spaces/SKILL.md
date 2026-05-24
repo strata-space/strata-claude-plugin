@@ -177,10 +177,12 @@ strata status --json | jq -r '.status'
 ```
 
 If `logged_out` or `expired`, ask the user to run `strata login` themselves
-(it opens a browser; you should not run it for them):
+(you should not run it for them):
 
-> Please run `strata login` in your terminal. It opens a browser to sign you
-> in. Tell me when you are signed in.
+> Please run `strata login` in your terminal, then tell me when you are signed
+> in. On a local machine it opens a browser; over SSH or on a headless host it
+> prints a URL and asks you to paste back the code shown in the browser (or run
+> `strata login --no-browser` to force that).
 
 Then re-check. Once `logged_in`, list Spaces:
 
