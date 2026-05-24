@@ -40,9 +40,10 @@ by what you can observe:
   point at it, do not modify it.
 - **The tools exist but a call fails.** The server is registered but
   unreachable or not yet authorized. Run a minimal probe — call the Strata
-  `find` tool with a trivial query (intent `recent`, scope `all`, a small
-  limit) — and read the error. A network/5xx error means the endpoint is down;
-  an auth error routes to the next check.
+  `find` tool with intent `list`, scope `spaces`, a small `limit` — and read
+  the error. A network/5xx error means the endpoint is down; an auth error
+  routes to the next check. (Use `list`, not `recent`: `recent` is plan-gated,
+  so a `Feature gated` error there is a healthy server, not a fault.)
 
 ### Signed in?
 
