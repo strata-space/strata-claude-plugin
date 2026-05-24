@@ -135,11 +135,13 @@ On `cli-too-old`, tell the user:
 strata status --json | jq -r '.status'
 ```
 
-If `logged_out` or `expired`, ask the user to run `strata login` themselves (it
-opens a browser; do not run it for them):
+If `logged_out` or `expired`, ask the user to run `strata login` themselves (do
+not run it for them):
 
-> Please run `strata login` in your terminal — it opens a browser to sign you
-> in — then tell me when you are signed in.
+> Please run `strata login` in your terminal, then tell me when you are signed
+> in. On a local machine it opens a browser; over SSH or on a headless host it
+> prints a URL and asks you to paste back the code shown in the browser (or run
+> `strata login --no-browser` to force that).
 
 ### FSKit module (macOS only)
 

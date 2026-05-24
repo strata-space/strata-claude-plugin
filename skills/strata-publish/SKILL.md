@@ -57,7 +57,8 @@ strata status --json | jq -r '.status'
   release on Linux). Hand off to it, then return here. Do not reimplement the
   install.
 - If status is `logged_out` or `expired`, ask the user to run `strata login`
-  themselves (it opens a browser; do not run it for them). Re-check after.
+  themselves (do not run it for them; it opens a browser locally, or prints a
+  URL to paste a code from over SSH or on a headless host). Re-check after.
 
 ### Pick the target Space
 
