@@ -187,7 +187,7 @@ If `logged_out` or `expired`, ask the user to run `strata login` themselves
 Then re-check. Once `logged_in`, list Spaces:
 
 ```bash
-strata spaces --json | jq '.items[] | {id, name, scope}'
+strata spaces --json | jq '.[] | {id, name, scope}'
 ```
 
 If the user gave you an explicit Space name or ID in their request, skip the

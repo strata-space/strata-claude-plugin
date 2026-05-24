@@ -91,7 +91,9 @@ strata spaces --json | jq -r '.[] | "\(.name)\t\(.id)\t\(.documentCount)"'
 If the user named a Space, match it. Otherwise present the list and ask. Save
 the Space `id`. (To publish into a brand-new Space, the user creates it in the
 web app first, or you run `strata api raw POST /api/v1/spaces --body
-'{"name":"..."}'` with their consent.)
+'{"name":"..."}'` with their consent. A bare `{"name":...}` body creates a
+personal Space, which works on any plan; a workspace-visible Space needs a
+typed `scope` and a paid plan, and 403s otherwise.)
 
 ### Decide whether a pull is safe
 
@@ -103,7 +105,7 @@ existing documents into the folder, which can co-mingle two sources of truth.
 Check the target Space's contents before pulling:
 
 ```bash
-strata api spaces documents "$space_id" --json | jq '.items | length'
+strata api spaces documents "$space_id" --json | jq 'length'
 ```
 
 Branch on what you find:
@@ -153,6 +155,10 @@ that structure mirrored in Strata, add `--folders`. It recreates each
 subdirectory as a Strata folder and files documents into them. Confirm with the
 user which they want when the folder has subdirectories; mention that without
 `--folders`, nested files flatten to the root.
+
+Each newly created document takes its title from the filename (minus `.md`),
+not from any `# heading` inside it — so `lighthouse-roadmap.md` becomes a doc
+titled "lighthouse-roadmap". Name files the way the titles should read.
 
 ```bash
 strata sync push "$space_id" "$dir" --json            # flat: all docs at Space root
