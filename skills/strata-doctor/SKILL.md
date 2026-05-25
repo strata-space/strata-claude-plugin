@@ -231,10 +231,32 @@ strata status --json | jq -r '
   "| \(.spaceName) | \(.mountpoint) | \(.backend) | \(if .writable then "writable" else "read-only" end) |"'
 ```
 
-Render as a Markdown table (Space, Path, Backend, Mode). If a mount is stuck
-(the user reports it hangs, or an unmount fails with `Resource busy` / `EBUSY`),
-do **not** force it here — hand off to the `strata-spaces` stuck-mount recovery,
-which proposes the platform-specific force unmount under explicit consent.
+Render as a Markdown table (Space, Path, Backend, Mode).
+
+On macOS, also probe for a stuck mount or a leaked carrier disk — the residue of
+a failed teardown. CLI versions before the escalating-unmount fix printed
+`✓ Unmounted` even when `umount` returned `EBUSY` (Spotlight indexing the fresh
+volume), leaving the volume mounted and its carrier `/dev/diskN` attached:
+
+```bash
+[ "$(uname -s)" = Darwin ] && {
+  /sbin/mount | grep -i fskit || true                                  # Strata volumes still mounted
+  hdiutil info 2>/dev/null | grep -i 'strata/fskit/.*carrier' || true   # carriers still attached
+}
+```
+
+A `fskit` mount line, or a carrier image with no matching mount, is the signal.
+Map it to a fix the **user** runs:
+
+- **Recoverable (a mount or carrier is present):** first step is `strata unmount
+  <mountpoint>`. On a current CLI this escalates `umount` → `diskutil unmount` →
+  `diskutil unmount force` and detaches the carrier, clearing most stuck states
+  on its own. Tell the user to run it, then re-probe.
+- **`strata unmount` cannot find it** (mount state was lost when a killed
+  foreground process never recorded it): clear it by hand — `diskutil unmount
+  force <mountpoint>` then `hdiutil detach <diskN>`. That is a forced unmount, so
+  do **not** run it here; hand off to the `strata-spaces` stuck-mount recovery,
+  which proposes it under explicit consent.
 
 ### Write refused (permission-denied)
 
