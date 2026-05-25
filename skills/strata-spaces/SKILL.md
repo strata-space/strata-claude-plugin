@@ -239,10 +239,10 @@ decisions; the plugin owns avoiding accidental commits of mount contents.
 
 ## Mount execution and summary
 
-Run the mount. Default is writable:
+Run the mount. Writable is the default; pass `--readonly` for a read-only mount:
 
 ```bash
-strata mount "$space_id" "$mount_path" --writable
+strata mount "$space_id" "$mount_path"
 ```
 
 On exit code 0, re-read status and present a summary:
