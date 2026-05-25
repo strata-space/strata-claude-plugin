@@ -30,21 +30,27 @@ scope of the change before the first write, every time.
 
 For a draft the user wrote in the conversation, or one file:
 
-1. Pick the scope. New documents are **private** (only the user can see them)
-   by default. Unless the user already said where it should go, ask:
-   - **Private** — only you. The default; use it when unsure.
-   - **Workspace** — everyone in the user's workspace can see it.
-   - **A Space** — to file it into a shared knowledge base; see "Into a Space"
-     below (that path needs the CLI).
+1. Pick where it goes — a document's audience **is its folder**. New documents
+   default to the user's **personal** folder (owner-only), so doing nothing
+   keeps it private. To share it, file it into a **tier** folder, visible to
+   that tier node's members (the workspace, or an enterprise team/org). Unless
+   the user already said where, ask. To browse the available folders and their
+   scopes, use the CLI (if the user has an authenticated session):
+   ```bash
+   strata api folders list   # each folder's `scope.kind` is "personal" or "tier"
+   ```
+   MCP-only (no CLI): default to private, or pass a `folderId` the user names.
 2. Call `edit_document` with `action="create"`, the `title`, the Markdown
-   `content`, and `scope` (`"private"` or `"workspace"`; omit it for private).
-   Pass `folderId` only if the user named a folder.
-3. Report the new document's title, its scope, and link
-   (`https://strata.space/app/documents/<documentId>` from the result).
+   `content`, and `folderId` for the chosen folder. Omit `folderId` to keep it
+   private (the personal default).
+3. Report the new document's title, its `effectiveAudience` (from the result —
+   `{ kind: "private" }` or `{ kind: "tier", nodeId }`), and link
+   (`https://strata.space/app/documents/<documentId>`).
 
-To change a document's scope afterward, call `edit_document` with
-`action="setScope"`, the `documentId`, and `scope`. The CLI mirrors this:
-`strata api documents set-scope <documentId> <private|workspace>`.
+To change a document's audience afterward, **move it to a different folder**:
+`edit_document` with `action="move"`, the `documentId`, and `folderId` (omit
+`folderId` to move it to the space root). The CLI mirrors this:
+`strata api documents move <documentId> --folder-id <folderId>`.
 
 To replace the body of a document that already exists, use `edit_document`
 with `action="edit"` (targeted `oldString`/`newString`) or `action="write"`
@@ -53,9 +59,10 @@ with `action="edit"` (targeted `oldString`/`newString`) or `action="write"`
 
 ### Into a Space
 
-To put a single new document into a Space, create it workspace-scoped, then
-file it in with the CLI (the MCP cannot add to a Space; this needs an
-authenticated `strata` session — see the Preflight below):
+To put a single new document into a Space, create it (any folder — Space
+membership is separate from folder audience), then file it in with the CLI
+(the MCP cannot add to a Space; this needs an authenticated `strata` session —
+see the Preflight below):
 
 ```bash
 strata api spaces add-documents "$space_id" "$documentId"
