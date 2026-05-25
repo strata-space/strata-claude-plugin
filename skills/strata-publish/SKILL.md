@@ -48,8 +48,9 @@ For a draft the user wrote in the conversation, or one file:
    (`https://strata.space/app/documents/<documentId>`).
 
 To change a document's audience afterward, **move it to a different folder**:
-`edit_document` with `action="move"`, the `documentId`, and `folderId` (omit
-`folderId` to move it to the space root). The CLI mirrors this:
+`edit_document` with `action="move"`, the `documentId`, and the destination
+`folderId`. To make a shared document private again, move it to the user's
+personal folder (from `strata api folders list`). The CLI mirrors this:
 `strata api documents move <documentId> --folder-id <folderId>`.
 
 To replace the body of a document that already exists, use `edit_document`
