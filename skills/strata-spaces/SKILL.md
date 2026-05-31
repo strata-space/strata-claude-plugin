@@ -4,9 +4,11 @@ description: >
   Mount or sync a Strata Space (strata.space) as a local folder of Markdown
   files. First-run install of the strata CLI, macOS FSKit / Linux FUSE
   preflight, browser login, Space pick, Git-safe mount, lifecycle (list,
-  unmount, recover stuck mounts), and a static-snapshot fallback when live
-  mounting is not possible. Use for "mount my Space", "open my Strata docs as
-  files", "sync Strata locally", or any mount-lifecycle request.
+  unmount, recover stuck mounts), live two-way folder sync without a mount
+  (`strata sync run` / `install`, works where FUSE/FSKit can't), and a
+  static-snapshot fallback when neither is possible. Use for "mount my Space",
+  "open my Strata docs as files", "sync Strata locally", "keep a folder in sync",
+  or any mount/sync-lifecycle request.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, AskUserQuestion
 ---
 
@@ -317,6 +319,80 @@ On Linux:
 After the force unmount succeeds, run `strata status --json` to confirm the
 mount entry is gone.
 
+## Live folder sync (no FUSE/FSKit)
+
+There are three ways to get a Space onto disk, not two. A **mount** (above) is a
+virtual filesystem and needs FSKit/FUSE. A **snapshot** (below) is a one-time
+copy with no live updates. Between them is **live folder sync**: an ordinary
+folder of real `.md` files kept in continuous two-way CRDT sync by a background
+process — no kernel filesystem, so it runs where a mount cannot (macOS without
+FSKit approval, WSL, containers) as long as the process itself can run. Edits on
+either side merge with no clobber window (the daemon does a base-aware three-way
+merge and pauses a local overwrite while you are mid-edit), so concurrent web +
+local editing is safe.
+
+Prefer live folder sync over the static snapshot whenever the user wants ongoing
+two-way sync but a mount is unavailable or unwanted. The same safety rails as a
+mount apply, because it writes real files into a folder: reuse the **Mount path
+selection** destructive-path refusal and the **Git-tree** `.gitignore` handling
+above before creating the folder.
+
+Two ways to run it:
+
+- **Foreground** (the user watches it; stops on Ctrl-C):
+
+  ```bash
+  strata sync run "$folder" --space "$space_id"
+  ```
+
+- **Supervised** (restarts at login via `launchd` / `systemd`). This installs a
+  login service, so get explicit consent first:
+
+  > Plugin proposes: `strata sync install "$folder" --space "$space_id"` — a
+  > background service that keeps the folder synced and restarts at login. Add
+  > `--no-autostart` to install without starting. Run it? [y/N]
+
+Either way, tell the user what continuous sync means before the first run:
+
+> This keeps the folder and the Space in two-way sync: your local saves push to
+> Strata and remote edits land in the files within seconds. Deletes propagate to
+> Strata's trash (recoverable for 30 days). Stop it any time with Ctrl-C (`run`)
+> or `strata sync stop <space>` (supervised).
+
+### Sync lifecycle
+
+```bash
+strata sync status "$folder" --json   # session state, pending count, errors
+strata sync stop "$space_id"          # stop a supervised service (keeps it installed)
+strata sync uninstall "$space_id"     # remove the supervised service entirely
+```
+
+For a deeper read of a stuck, paused, or degraded session, hand off to
+`strata-doctor` (it owns the `syncSessions` / `pendingJournal` diagnosis).
+
+### Mass-delete guard
+
+If a local change would unlink a large fraction of the Space's documents, sync
+**pauses** instead of propagating a possible accident, and `strata sync status`
+shows `paused (mass-delete guard …)`. The held deletions are not applied until
+the user confirms. Surface the count and let them run it themselves — never run
+it for them, it deletes documents:
+
+> Sync paused: a batch of deletions is being held so an accidental bulk delete
+> doesn't propagate. If the deletions are intended, run `strata sync resume
+> "$folder"` to confirm and apply them.
+
+### One-time push with folders
+
+The snapshot path below pulls; the inverse one-time upload is `strata sync push`.
+By default push is flat (new docs land at the Space root). Pass `--folders` to
+recreate the local directory tree as Strata folders and file new documents into
+them:
+
+```bash
+strata sync push "$space_id" "$folder" --folders
+```
+
 ## Snapshot fallback
 
 Trigger this path when any of the following is true:
@@ -326,12 +402,20 @@ Trigger this path when any of the following is true:
 - User declined the `usermod -aG fuse` consent.
 - Distro detection returned an unknown ID.
 
+Before settling for a static snapshot, consider **live folder sync** (above): on
+`macos-too-old`, `wsl`, and `container` the mount is impossible but the sync
+daemon still runs, giving live two-way sync without FUSE/FSKit. Offer it as the
+live option when the user wants ongoing sync; fall through to the static snapshot
+only when even that is unwanted, or when the user explicitly asked for a one-time
+copy.
+
 Explain the tradeoff in one short paragraph:
 
 > Live mounting is not available on this system. I can pull your Space's
 > documents as static Markdown files instead. You will not get live sync
 > (edits to the files will not push back to Strata), but you keep local
-> read and edit access for offline use.
+> read and edit access for offline use. If you'd rather keep it in sync, I can
+> set up live folder sync instead — it works here without a mount.
 
 Use the same path-selection logic as the live mount (in-git → `./spaces/...`,
 out-of-git → `~/Strata/...`). Run the pull:

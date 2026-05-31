@@ -4,11 +4,14 @@ description: >
   Diagnose why Strata is not working in Claude and map each failure to a
   concrete next step. Probes the Strata MCP connection (registered, signed in,
   write scope, tool groups), and — when the strata CLI is present — its auth
-  state, mount health, and the most recent write failure (owner + request-access
-  link). Use for "Strata isn't working in Claude", "why can't I see my docs",
-  "my save failed", "permission denied on a Strata file", "is Strata connected",
-  or "the Strata tools are missing". No CLI install required for the MCP half;
-  the CLI half degrades gracefully when strata is not on PATH.
+  state, mount health, live folder-sync health (stuck/paused/degraded sync
+  sessions, pending write journal, blocked supervised mounts), and the most
+  recent write failure (owner + request-access link). Use for "Strata isn't
+  working in Claude", "why can't I see my docs", "my save failed", "my edits
+  aren't syncing", "sync is stuck/paused", "permission denied on a Strata file",
+  "is Strata connected", or "the Strata tools are missing". No CLI install
+  required for the MCP half; the CLI half degrades gracefully when strata is not
+  on PATH.
 ---
 
 # Strata doctor
@@ -258,6 +261,96 @@ Map it to a fix the **user** runs:
   do **not** run it here; hand off to the `strata-spaces` stuck-mount recovery,
   which proposes it under explicit consent.
 
+### Blocked supervised mounts
+
+A supervised mount (one that restarts at login) records why it could not come up
+in a `.blockedMounts` sidecar, so a mount that silently never appears is not a
+mystery — read the reason:
+
+```bash
+strata status --json | jq -r '
+  .blockedMounts[]? |
+  "| \(.spaceId) | \(.reason | gsub("\n"; " — ")) | \(.at) |"'
+```
+
+Each entry is a supervised `strata mount` child that failed to start. The
+`reason` string already names the cause; map it to the user fix and re-run the
+mount (a successful `strata mount` clears the sidecar — you never clear it here):
+
+- **FSKit extension disabled / not approved** → the System-Settings fix under
+  *FSKit module* above, then re-run `strata mount`.
+- **Bad / expired credentials** → `strata login`, then re-run `strata mount`.
+- **Already mounted elsewhere** → `strata unmount <space>` at the other path
+  first.
+- **FUSE not available** (Linux) → the `fuse3` / `usermod` fixes under *FUSE
+  runtime* above.
+
+If `.blockedMounts` is empty, no supervised mount is wedged at startup; a
+missing mount is a fresh-install or auth problem, not a blocked supervisor.
+
+### Live folder-sync health (`strata sync run` / `install`)
+
+Live folder sync is the **other** way a Space syncs locally — ordinary Markdown
+files kept in two-way CRDT sync by a daemon (`strata sync run` in the foreground,
+or `strata sync install` as a login-supervised service), distinct from a FUSE /
+FSKit mount. It has its own health sidecar. Read every session:
+
+```bash
+strata status --json | jq -r '
+  .syncSessions[]? |
+  "| \(.folder) | alive=\(.alive) | \(.sessionState) | degraded=\(.degraded) | pending=\(.pendingCount)\(if .oldestPendingSecs then " (oldest \(.oldestPendingSecs)s)" else "" end) |"'
+```
+
+For a single folder the user names, `strata sync status <folder> --json` reads the
+same sidecar. Map what you see — every fix is the **user**'s to run:
+
+- **`sessionState: "live"`, `degraded: false`, `pendingCount: 0`** — healthy and
+  caught up. If edits still aren't appearing, the problem is auth or the document,
+  not the daemon.
+- **`degraded: true`** (always `Live` with a backlog older than 30s) — pushes are
+  queuing but not draining. This is usually a transient network/transport stall
+  that self-heals. A **supervised** session (installed via `strata sync install`)
+  that stays wedged ~3 minutes exits and is auto-restarted by `launchd` /
+  `systemd`, which drains the backlog — tell the user to wait and re-check. A
+  **foreground** `strata sync run` has no supervisor: if it stays degraded, the
+  user stops it (Ctrl-C) and re-runs `strata sync run <folder> --space <id>`, or
+  switches to `strata sync install` for auto-restart.
+- **`sessionState` contains `paused (mass-delete guard …)`** — a local change
+  would unlink a large fraction of the Space's documents, so sync paused rather
+  than propagate a possible accident. The held deletions are **not** applied
+  until the user confirms. Surface the count and tell them to run, themselves,
+  after verifying the deletions are intended:
+
+  > Sync paused: a batch of deletions is being held so an accidental bulk delete
+  > doesn't propagate. If those deletions are intended, run `strata sync resume
+  > <folder>` to confirm and apply them. This skill won't run it — it deletes
+  > documents.
+
+- **`sessionState` contains `paused (re-login required)`** — the session's token
+  expired and could not refresh. Route to the *Auth state* fix: `strata login`,
+  then the daemon resumes.
+- **`alive: false`** while `sessionState` is non-terminal (not `stopping`) — the
+  daemon process died and the sidecar is stale. For a supervised service, restart
+  it: `strata sync stop <space_id>` then `strata sync install <folder> --space
+  <space_id>`. For a foreground run, the user re-runs `strata sync run`.
+- **`recentPushErrors`** lists per-document push failures (`error`, `count`,
+  `lastSeen`); a 403 there is the same permission-denied case as *Write refused*
+  below — surface the owner + request-access link. Entries self-clear after five
+  minutes, so a stale one next to `pendingCount: 0` is already resolved.
+
+The durable write journal is the companion signal — file saves captured on disk
+but not yet pushed:
+
+```bash
+strata status --json | jq -r '.pendingJournal | to_entries[]? | select(.value > 0) | "\(.key): \(.value) queued"'
+```
+
+A small, shrinking count is normal (writes drain within seconds). A count that
+**stays** nonzero means saves aren't reaching the server — cross-check
+`syncSessions` (degraded / paused / dead) and `recentWriteErrors`; the journal is
+durable, so nothing is lost, but the daemon needs the restart or re-login above
+to drain it.
+
 ### Write refused (permission-denied)
 
 Triggers: the user says their save failed, or mentions "permission denied",
@@ -295,8 +388,15 @@ single highest-priority fix — so the user is not left to triage a list:
 | CLI auth             | logged_in / …     |
 | Mount backend ready  | FSKit installed / FUSE ready / missing / n-a |
 | Active mounts        | N                 |
+| Blocked mounts       | none / <space>:<reason> |
+| Live sync sessions   | N (live / degraded / paused / dead) |
+| Sync backlog         | drained / N queued |
 | Recent write error   | none / <doc>      |
 ```
+
+Only the rows that apply belong in the table — drop the mount / sync rows
+entirely when the user has neither a mount nor a sync session, rather than
+padding the report with `n-a`.
 
 > **Next step:** <the one thing to do, e.g. "re-run `strata login` — your token
 > expired">
@@ -314,3 +414,8 @@ user with no resolution path:
   the tool-group header; doctor reports on it but never rewrites it.
 - Installing the CLI, enabling FSKit/FUSE, or force-unmounting. Those belong to
   `strata-spaces`; hand off rather than reimplement.
+- Mutating sync state. Doctor never runs `strata sync resume` (it confirms and
+  applies held deletions), never restarts a daemon, and never `strata login`s.
+  It surfaces the held-deletion count, the restart command, or the re-login
+  prompt, and the **user** runs it. Starting / installing live sync belongs to
+  `strata-spaces`.
