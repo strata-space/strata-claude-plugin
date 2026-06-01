@@ -301,8 +301,11 @@ strata status --json | jq -r '
   "| \(.folder) | alive=\(.alive) | \(.sessionState) | degraded=\(.degraded) | pending=\(.pendingCount)\(if .oldestPendingSecs then " (oldest \(.oldestPendingSecs)s)" else "" end) |"'
 ```
 
-For a single folder the user names, `strata sync status <folder> --json` reads the
-same sidecar. Map what you see — every fix is the **user**'s to run:
+The top-level `strata status --json` above is the reliable machine-readable
+source for every session at once. For a single folder the user names, `strata
+sync status <folder>` prints the same session in human-readable form (treat its
+output as text, not JSON — the subcommand emits structured JSON only on its
+error path). Map what you see — every fix is the **user**'s to run:
 
 - **`sessionState: "live"`, `degraded: false`, `pendingCount: 0`** — healthy and
   caught up. If edits still aren't appearing, the problem is auth or the document,
