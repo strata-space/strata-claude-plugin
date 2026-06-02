@@ -14,10 +14,11 @@ allowed-tools: Bash, Read, Write, Edit, Grep, Glob, AskUserQuestion
 
 # Strata Spaces
 
-You operate the `strata` CLI on the user's behalf to mount a Strata Space (a
-collection of Markdown documents stored at strata.space) as a real folder of
-`.md` files. After a successful mount, edits and deletes in the local folder
-synchronise back to Strata; users can read and edit with any editor.
+You operate the `strata` CLI on the user's behalf to put a Strata Space (a
+collection of Markdown documents stored at strata.space) on disk as `.md` files:
+as a continuously synced folder, a live mounted volume, or a one-time snapshot.
+Edits and deletes on disk synchronise back to Strata; users can read and edit
+with any editor.
 
 Every privileged command (package install, system-extension toggle, force
 unmount, group membership change) requires explicit in-conversation consent
@@ -25,6 +26,46 @@ from the user. Never run such a command without first showing it verbatim and
 asking permission. If the user declines any install consent, route to the
 snapshot-fallback path (see "Snapshot fallback") and exit gracefully. Do not
 retry silently.
+
+## Choose the install mode
+
+There are three ways to put a Space on disk; they need different things, so pick
+the mode before installing anything:
+
+- **Supervised folder sync** (`strata sync install`) — a normal folder of real
+  `.md` files kept in continuous two-way sync by a background service that
+  restarts at login. Needs only the CLI: **no FSKit/FUSE and no system-extension
+  approval**. Lowest friction, and still fully live.
+- **Live mount** (`strata mount`) — a virtual filesystem showing the Space as a
+  mounted volume. Needs FSKit (macOS 15.4+) or FUSE (Linux) plus a one-time
+  system-extension approval on macOS.
+- **One-time snapshot** (`strata sync pull`) — a static copy with no live
+  updates.
+
+Map intent to a mode:
+
+- "install", "set up", "sync", or "keep in sync" a Space, or a bare "put Space X
+  in ./y" → **supervised folder sync**. This is the default for ambiguous
+  install/sync requests; say in one line that you are setting up background sync
+  and that they can ask for a live mount instead.
+- "mount", "as a volume/drive", or an explicit live-filesystem ask → **live
+  mount**.
+- "grab", "download", "a copy", "offline", or any one-time wording → **snapshot**.
+  Also the fallback when a mount and sync are both unavailable or declined.
+
+Use `AskUserQuestion` only when the request genuinely implies no mode. Do not
+default to a mount.
+
+Every mode needs the CLI installed and a login. Run **Platform detection** and
+install the CLI next regardless of mode. **FSKit enablement** (macOS) and **FUSE
+preflight** (Linux) are mount-only — skip them for supervised sync and snapshot.
+Then route by mode:
+
+- Supervised folder sync → **Login and Space pick** → **Live folder sync**
+  (`strata sync install`).
+- Live mount → **Login and Space pick** → **Mount path selection** (with
+  **Git-tree** handling) → **Mount execution and summary**.
+- Snapshot → **Login and Space pick** → **Snapshot fallback**.
 
 ## Platform detection
 
@@ -59,11 +100,16 @@ case "$(uname -s)" in
 esac
 ```
 
-If `platform` is `macos-too-old`, `wsl`, `container`, or `unsupported`, jump to
-"Snapshot fallback". For Windows specifically, tell the user a live mount is not
-possible, but the plugin already registers the Strata MCP server, so they can
-read, search, and edit their documents in the conversation through the
-`strata-research`, `strata-publish`, and `strata-review` siblings.
+If `platform` is `macos-too-old`, `wsl`, or `container`, a live mount is
+impossible, but **supervised folder sync** still runs there (it needs only the
+CLI process, not FSKit/FUSE) — prefer it over a snapshot when the user wants
+ongoing sync, otherwise use the snapshot. Both still need the CLI installed, so
+run the platform's CLI install below and skip only the mount-only FSKit/FUSE
+steps. For `unsupported` (Windows native) the CLI install flow does not cover the
+platform, so no live or snapshot option exists; tell the user, and note the
+plugin already registers the Strata MCP server, so they can read, search, and
+edit their documents in the conversation through the `strata-research`,
+`strata-publish`, and `strata-review` siblings.
 
 ## macOS install + FSKit enablement
 
@@ -81,7 +127,9 @@ Propose the cask install. Tap is `strata-space/strata`:
 > Plugin proposes: `brew install --cask strata-space/strata/strata`. Run it?
 > [y/N]
 
-If declined, jump to "Snapshot fallback". If accepted, run it. On macOS, the
+If declined, jump to "Snapshot fallback". If accepted, run it. **The FSKit
+enablement below is mount-only: for supervised folder sync or snapshot the cask
+install is all you need here, so skip to "Login and Space pick".** On macOS, the
 CLI ships an FSKit module that needs a one-time approval before the first mount
 works. Do **not** probe for it here; detecting the module is `strata-doctor`'s
 job, and macOS does not expose the enabled state to any CLI anyway. Just guide
@@ -151,7 +199,8 @@ them. If they decline any consent, jump to "Snapshot fallback".
 > Plugin proposes: `tar -xzf $tmp/$asset -C ~/.local/bin/` (then add
 > `~/.local/bin` to PATH if needed). Run it? [y/N]
 
-FUSE preflight in this order:
+FUSE preflight is mount-only — skip it for supervised folder sync and snapshot
+(those need only the installed CLI). For a mount, run it in this order:
 
 1. `[ -e /dev/fuse ]` (kernel module present).
 2. `command -v fusermount3` (preferred over `fusermount`).
@@ -319,23 +368,19 @@ On Linux:
 After the force unmount succeeds, run `strata status --json` to confirm the
 mount entry is gone.
 
-## Live folder sync (no FUSE/FSKit)
+## Live folder sync (supervised daemon or foreground)
 
-There are three ways to get a Space onto disk, not two. A **mount** (above) is a
-virtual filesystem and needs FSKit/FUSE. A **snapshot** (below) is a one-time
-copy with no live updates. Between them is **live folder sync**: an ordinary
-folder of real `.md` files kept in continuous two-way CRDT sync by a background
-process — no kernel filesystem, so it runs where a mount cannot (macOS without
-FSKit approval, WSL, containers) as long as the process itself can run. Edits on
-either side merge with no clobber window (the daemon does a base-aware three-way
-merge and pauses a local overwrite while you are mid-edit), so concurrent web +
-local editing is safe.
+This is the **supervised folder sync** mode from "Choose the install mode" (and
+its foreground variant): an ordinary folder of real `.md` files kept in
+continuous two-way CRDT sync by a background process — no kernel filesystem, so
+it runs where a mount cannot (macOS without FSKit approval, WSL, containers) as
+long as the process itself can run. Edits on either side merge with no clobber
+window (the daemon does a base-aware three-way merge and pauses a local overwrite
+while you are mid-edit), so concurrent web + local editing is safe.
 
-Prefer live folder sync over the static snapshot whenever the user wants ongoing
-two-way sync but a mount is unavailable or unwanted. The same safety rails as a
-mount apply, because it writes real files into a folder: reuse the **Mount path
-selection** destructive-path refusal and the **Git-tree** `.gitignore` handling
-above before creating the folder.
+The same safety rails as a mount apply, because it writes real files into a
+folder: reuse the **Mount path selection** destructive-path refusal and the
+**Git-tree** `.gitignore` handling above before creating the folder.
 
 Two ways to run it:
 
