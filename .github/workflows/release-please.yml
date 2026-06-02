@@ -1,20 +1,20 @@
 # Opens/updates a "release PR" that bumps the plugin version
 # (.claude-plugin/plugin.json $.version) and CHANGELOG.md from Conventional
-# Commits since the last release. PR-only: skip-github-release means it does
-# NOT tag or create a GitHub Release.
+# Commits since the last release.
 #
-# This automates the manual version-bump + changelog edit (CONTRIBUTING steps
-# 1-2). The `tag` job below then publishes the `strata--v<version>` tag
-# automatically once the release PR merges, replacing the manual
-# `claude plugin tag ./ --push` step.
+# When the release PR merges, release-please creates the GitHub Release and the
+# matching git tag, then advances the merged PR's `autorelease:` label to
+# `tagged`. The tag is `strata--v<version>` because release-please-config.json
+# sets component "strata" + tag-separator "--" + include-component-in-tag; that
+# is the tag the Strata marketplace serves. No separate tagging job is needed.
 #
 # One-time prerequisites (owner action required):
 #   - Settings -> Actions -> General -> Workflow permissions: enable
 #     "Allow GitHub Actions to create and approve pull requests" so the PR can
 #     be opened.
-#   - This workflow opens the PR with the RELEASE_PLEASE_TOKEN secret (a PAT or
-#     GitHub App token), which must stay set: GITHUB_TOKEN-authored PRs do not
-#     trigger workflows, so smoke.yml would not run on the release PR.
+#   - This workflow runs with the RELEASE_PLEASE_TOKEN secret (a PAT or GitHub
+#     App token), which must stay set: GITHUB_TOKEN-authored PRs do not trigger
+#     workflows, so smoke.yml would not run on the release PR.
 
 name: release-please
 
@@ -39,37 +39,3 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-          # PR-only: never tag or create a GitHub Release here. The `tag` job
-          # owns tagging. release-type lives in release-please-config.json.
-          skip-github-release: true
-
-  # The Strata marketplace serves the `strata--v<version>` tag, not the
-  # `v<version>` tag release-please would otherwise create — so release-please
-  # stays PR-only and this job owns tagging. When a release PR merges to main it
-  # bumps `$.version` in .claude-plugin/plugin.json; push the matching
-  # `strata--v<version>` tag if it does not exist yet. On every other push to
-  # main the tag already exists and this is a no-op. Tags are not branch-
-  # protected, so the workflow's `contents: write` GITHUB_TOKEN can push them.
-  tag:
-    needs: release-please
-    runs-on: ubuntu-latest
-    concurrency:
-      group: release-please-tag
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Push strata--v<version> tag when missing
-        run: |
-          set -euo pipefail
-          version="$(jq -r '.version' .claude-plugin/plugin.json)"
-          tag="strata--v${version}"
-          if git ls-remote --tags origin "refs/tags/${tag}" | grep -q .; then
-            echo "::notice::${tag} already exists; nothing to tag."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag "${tag}"
-          git push origin "${tag}"
-          echo "::notice::Pushed ${tag}"
