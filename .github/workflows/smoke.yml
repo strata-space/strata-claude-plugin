@@ -13,7 +13,7 @@ jobs:
     name: validate manifest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: validate JSON syntax
         run: |
           jq empty .claude-plugin/plugin.json
@@ -33,7 +33,7 @@ jobs:
     name: shellcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: install shellcheck
         run: sudo apt-get update && sudo apt-get install -y shellcheck
       - name: shellcheck tests/
@@ -48,7 +48,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: git-mount-gitignore
         run: bash tests/git-mount-gitignore.sh
       - name: snapshot-fallback (skips without strata CLI installed)
