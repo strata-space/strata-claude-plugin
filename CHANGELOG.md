@@ -4,6 +4,33 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.5.0...strata--v0.6.0) (2026-06-02)
+
+
+### Added
+
+* **085:** plugin scaffolding + MountState enrichment (Phases 1-2) ([9967679](https://github.com/strata-space/strata-claude-plugin/commit/9967679f9b779221eb9c3b30f3bfa33c8073bc66))
+* **085:** SKILL.md content + VM smoke tests (Phases 3-8) ([81c05a3](https://github.com/strata-space/strata-claude-plugin/commit/81c05a3615d01e42d72b8bb2e0d77ad1cae3835f))
+* **doctor:** detect stuck mount / leaked carrier disk and route recovery ([#19](https://github.com/strata-space/strata-claude-plugin/issues/19)) ([e1bfa29](https://github.com/strata-space/strata-claude-plugin/commit/e1bfa29a01d5602fc86ea5a3868ffe785b27af72))
+* **doctor:** diagnose Linux FUSE runtime, symmetric with macOS FSKit ([0d99ffe](https://github.com/strata-space/strata-claude-plugin/commit/0d99ffe06a62f88c429d169c97d31aedc53b99f7))
+* **publish:** default new docs to private + scope picker ([#16](https://github.com/strata-space/strata-claude-plugin/issues/16)) ([1819212](https://github.com/strata-space/strata-claude-plugin/commit/1819212a722c117ddcd3b927c6c3b809bcd9c7ad))
+* self-host as a custom marketplace ([#4](https://github.com/strata-space/strata-claude-plugin/issues/4)) ([67c2ba5](https://github.com/strata-space/strata-claude-plugin/commit/67c2ba501b01db7abbec7d6f49a349ff6fac31a9))
+* **skills:** live folder-sync API + new-arch sync troubleshooting ([#22](https://github.com/strata-space/strata-claude-plugin/issues/22)) ([2d8dcad](https://github.com/strata-space/strata-claude-plugin/commit/2d8dcadab556a249e2b855d1b81c77c49e658d31))
+* strata-doctor diagnostic skill (+ pending release-please CI) ([#7](https://github.com/strata-space/strata-claude-plugin/issues/7)) ([a70f600](https://github.com/strata-space/strata-claude-plugin/commit/a70f600cb03e8960fe3b78f2eb9bdcd5e7afaba9))
+* Tier-1 skills (research, publish, review); retire strata-mcp-setup ([#5](https://github.com/strata-space/strata-claude-plugin/issues/5)) ([29ac9b0](https://github.com/strata-space/strata-claude-plugin/commit/29ac9b09cb1fb3dc8a01dd260bad821a2c7a3572))
+
+
+### Fixed
+
+* **fskit:** correct system-extension enablement advice + add doctor probe ([#9](https://github.com/strata-space/strata-claude-plugin/issues/9)) ([29d2d6c](https://github.com/strata-space/strata-claude-plugin/commit/29d2d6c896a8e0c00fee7a42454b852a885ef23e))
+* **fskit:** detect FSKit module via pluginkit, not systemextensionsctl ([cac758d](https://github.com/strata-space/strata-claude-plugin/commit/cac758ddae0a763c716b0201cf071b27910576e0))
+* **publish:** rework scope picker to the folder-placement model ([#18](https://github.com/strata-space/strata-claude-plugin/issues/18)) ([f0b4162](https://github.com/strata-space/strata-claude-plugin/commit/f0b41628dd5059bad840205441aae934ce74ee29))
+* **skills:** correct CLI jq shapes, ungate the doctor probe, set plan expectations ([#17](https://github.com/strata-space/strata-claude-plugin/issues/17)) ([e5bd3be](https://github.com/strata-space/strata-claude-plugin/commit/e5bd3be7840fd9ebfde131085e2f71e0bc917b52))
+* **strata-doctor:** correct CLI default-URL claim; probe effective apiUrl ([#8](https://github.com/strata-space/strata-claude-plugin/issues/8)) ([73de68d](https://github.com/strata-space/strata-claude-plugin/commit/73de68d581128730709c2797320214e6d255eea2))
+* **strata-doctor:** sync status subcommand is human-readable, not JSON ([#23](https://github.com/strata-space/strata-claude-plugin/issues/23)) ([58fa567](https://github.com/strata-space/strata-claude-plugin/commit/58fa567d2789ff1e161e094fe910bd651913bb54))
+* **strata-spaces:** choose install mode up-front so "install" defaults to sync ([#25](https://github.com/strata-space/strata-claude-plugin/issues/25)) ([a8da374](https://github.com/strata-space/strata-claude-plugin/commit/a8da37473421c52dcd81d1bb89b6f81c239a05d5))
+* **strata-spaces:** drop removed --writable flag (writable is the CLI default) ([#20](https://github.com/strata-space/strata-claude-plugin/issues/20)) ([bbf2f55](https://github.com/strata-space/strata-claude-plugin/commit/bbf2f558db84f8822937bd5d8c176d78f4782996))
+
 ## [0.5.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.4.0...strata--v0.5.0) (2026-06-02)
 
 
