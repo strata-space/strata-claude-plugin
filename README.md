@@ -64,10 +64,11 @@ the plugin is installed.
 
 ## Install the plugin
 
-Through the Claude marketplace (recommended once listed). Manually:
+Add the Strata marketplace, then install the plugin:
 
 ```
-/plugin install strata-space/strata-claude-plugin
+/plugin marketplace add strata-space/marketplace
+/plugin install strata@strata-space
 ```
 
 inside any Claude client that speaks the marketplace protocol. On install, the
@@ -301,7 +302,7 @@ A few things you can check yourself:
 Layout:
 
 ```
-.claude-plugin/plugin.json   # marketplace manifest
+.claude-plugin/plugin.json   # plugin manifest
 .mcp.json                    # auto-registers the Strata MCP server
 skills/
   strata-research/SKILL.md   # ask your Spaces (MCP)

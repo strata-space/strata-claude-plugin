@@ -5,8 +5,8 @@
 # When the release PR merges, release-please creates the GitHub Release and the
 # matching git tag, then advances the merged PR's `autorelease:` label to
 # `tagged`. The tag is `strata--v<version>` because release-please-config.json
-# sets component "strata" + tag-separator "--" + include-component-in-tag; that
-# is the tag the Strata marketplace serves. No separate tagging job is needed.
+# sets component "strata" + tag-separator "--" + include-component-in-tag. No
+# separate tagging job is needed.
 #
 # One-time prerequisites (owner action required):
 #   - Settings -> Actions -> General -> Workflow permissions: enable
