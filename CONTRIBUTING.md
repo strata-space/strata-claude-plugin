@@ -77,13 +77,9 @@ release (`fix:` → PATCH, `feat:` → MINOR, `feat!:` / `BREAKING CHANGE:` →
 MAJOR). Follow Conventional Commits in commit messages so this works.
 
 1. Review the open release PR (edit the changelog wording if you like), then
-   merge it. That commits the version bump.
-2. On `main` after merge:
-   ```bash
-   claude plugin tag ./ --push
-   ```
-   This creates and pushes `strata--vX.Y.Z`, validating that
-   `plugin.json` agrees with any enclosing marketplace entry.
+   merge it. That commits the version bump, and release-please then creates the
+   GitHub Release and the matching `strata--vX.Y.Z` tag automatically — no
+   manual tagging step is needed.
 
 ## Reporting bugs
 
