@@ -42,7 +42,8 @@ the plugin is installed.
 1. **Install the plugin** (registers the MCP server):
 
    ```
-   /plugin install strata-space/strata-claude-plugin
+   /plugin marketplace add strata-space/marketplace
+   /plugin install strata@strata-space
    ```
 
 2. **Sign in** — the first Strata tool call opens a browser once for OAuth. If
@@ -75,6 +76,12 @@ inside any Claude client that speaks the marketplace protocol. On install, the
 bundled `.mcp.json` registers the Strata MCP server with your client; on the
 first tool call it opens a browser once for sign-in. No further configuration is
 required for the conversation skills.
+
+Or, without the marketplace, install the plugin directly from its repo:
+
+```
+/plugin install strata-space/strata-claude-plugin
+```
 
 ## Install the Strata CLI (optional)
 
