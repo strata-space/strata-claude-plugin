@@ -4,6 +4,13 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.5.1...strata--v0.5.2) (2026-06-08)
+
+
+### Changed
+
+* correct the Homebrew tap name in the CLI install note ([#36](https://github.com/strata-space/strata-claude-plugin/issues/36)) ([194bc8a](https://github.com/strata-space/strata-claude-plugin/commit/194bc8a2d25acb2ed37f01688cacdc661728ba3b))
+
 ## [0.5.1](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.5.0...strata--v0.5.1) (2026-06-08)
 
 
