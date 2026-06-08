@@ -1,9 +1,9 @@
 # Strata Plugin for Claude
 
 Work with your [Strata](https://strata.space) documents from inside Claude:
-mount your Spaces as local folders of Markdown, keep a folder in live two-way
-sync, or read, search, publish, and review your documents directly in
-conversation. Installing the plugin registers the Strata MCP server
+link a folder to a Space for live two-way sync, mount your Spaces as local
+folders of Markdown, or read, search, publish, and review your documents
+directly in conversation. Installing the plugin registers the Strata MCP server
 automatically (no setup step), so the in-conversation skills work out of the
 box; the filesystem skills add an optional CLI.
 
@@ -15,7 +15,7 @@ box; the filesystem skills add an optional CLI.
 - [Install the Strata CLI (optional)](#install-the-strata-cli-optional)
 - [Requirements](#requirements)
 - [The five skills](#the-five-skills)
-- [Getting documents onto disk: mount vs sync vs snapshot](#getting-documents-onto-disk-mount-vs-sync-vs-snapshot)
+- [Getting documents onto disk: link vs mount vs snapshot](#getting-documents-onto-disk-link-vs-mount-vs-snapshot)
 - [Other MCP clients](#other-mcp-clients)
 - [Privacy and consent](#privacy-and-consent)
 - [Troubleshooting](#troubleshooting)
@@ -31,8 +31,8 @@ Strata MCP server on install. Two halves:
   filesystem. Search your Spaces, read documents, publish a draft, and leave
   review comments without leaving the chat.
 - **Filesystem skills** drive the `strata` CLI to bring a Space onto disk as
-  real `.md` files — as a live mount, a live-synced folder, or a one-time
-  snapshot — so any editor can open them.
+  real `.md` files — as a live-linked folder, a virtual-drive mount, or a
+  one-time snapshot — so any editor can open them.
 
 You only need the CLI for the filesystem half. Everything else works the moment
 the plugin is installed.
@@ -56,12 +56,11 @@ the plugin is installed.
 
 4. **(Optional) bring a Space onto disk.** Install the CLI (below), then ask:
 
-   > Mount my "Engineering" Space as a local folder.
-
-   or, where a mount is not available (or you just want plain files kept in
-   sync):
-
    > Keep a local folder in two-way sync with my "Engineering" Space.
+
+   or, for a virtual drive that shows the Space as a mounted volume:
+
+   > Mount my "Engineering" Space as a local folder.
 
 ## Install the plugin
 
@@ -85,8 +84,9 @@ Or, without the marketplace, install the plugin directly from its repo:
 
 ## Install the Strata CLI (optional)
 
-The CLI is only needed for the **filesystem** features: mounting a Space
-(`strata-spaces`), live folder sync, and bulk folder publish (`strata-publish`).
+The CLI is only needed for the **filesystem** features: linking a folder for
+live sync, mounting a Space (`strata-spaces`), and bulk folder publish
+(`strata-publish`).
 The `strata-spaces` skill installs it for you on first run under explicit
 consent, so you can skip this section and let the skill drive. To install it
 yourself ahead of time:
@@ -135,14 +135,15 @@ strata status         # shows auth, mounts, and sync sessions
 - **Conversation skills** (`strata-research`, `strata-publish` single-doc,
   `strata-review`, `strata-doctor` connectivity half) — `node` and `npm` for the
   bundled `mcp-remote` bridge. No Strata CLI needed.
-- **Filesystem mount** (`strata-spaces`) and **bulk folder publish**
-  (`strata-publish` folder mode) — the Strata CLI, plus either macOS 15.4+ (FSKit
-  backend) or Linux with kernel ≥ 4.18 and the `fuse3` userspace helper (FUSE
-  backend).
-- **Live folder sync** (`strata sync run` / `install`) — the Strata CLI only. It
-  uses ordinary files and a background process, **not** a kernel filesystem, so
-  it works on systems where a mount cannot (older macOS, WSL, containers) as long
-  as the process can run.
+- **Live folder link** (`strata link`, recommended) and **bulk folder publish**
+  (`strata-publish` folder mode) — the Strata CLI only. Linking uses ordinary
+  files and a background process, **not** a kernel filesystem, so it works
+  cross-platform (macOS and Linux) on systems where a mount cannot (older macOS,
+  WSL, containers) as long as the process can run.
+- **Virtual-drive mount** (`strata mount`, optional) — the Strata CLI, plus
+  either macOS 15.4+ (FSKit backend, read-only, needs a one-time System Settings
+  permission) or Linux with kernel ≥ 4.18 and the `fuse3` userspace helper (FUSE
+  backend, read/write).
 - **Windows** is detected and routed to the in-conversation MCP skills; a native
   mount is out of scope.
 
@@ -180,16 +181,17 @@ body. Read-only with respect to the document text.
 
 ### `strata-spaces` — bring a Space onto disk (CLI)
 
-Mounts a Space as a local folder of `.md` files: installs the CLI on first run,
-handles the macOS FSKit extension or the Linux FUSE helper, logs in, mounts
-Git-safely (auto-adds the mount dir to `.gitignore`, never commits), and manages
-the lifecycle — list, unmount, recover stuck mounts. Also sets up **live folder
-sync** where a mount is not available, and falls back to a one-time
-static-snapshot pull when neither is possible.
+Links a folder to a Space for live two-way sync as the recommended,
+cross-platform path: installs the CLI on first run, logs in, sets up the link
+Git-safely (auto-adds the folder to `.gitignore`, never commits), and manages
+the lifecycle — list, unlink, recover stuck sessions. As an optional
+virtual-drive alternative it can `strata mount` the Space (handling the macOS
+FSKit extension or the Linux FUSE helper), and it falls back to a one-time
+static-snapshot pull when even a link is not wanted.
 
-> Mount my "Engineering" Space at ~/strata/engineering.
+> Keep ~/strata/engineering in sync with my "Engineering" Space.
 >
-> Unmount the Lighthouse Space.
+> Mount the Lighthouse Space as a virtual drive.
 
 ### `strata-doctor` — diagnose why Strata is not working (MCP + CLI)
 
@@ -206,29 +208,38 @@ skill — and never remediates by side effect.
 >
 > My edits aren't syncing / my save failed. Diagnose it.
 
-## Getting documents onto disk: mount vs sync vs snapshot
+## Getting documents onto disk: link vs mount vs snapshot
 
 There are three ways to get a Space's documents into a local folder. The
 `strata-spaces` skill picks the right one for your platform; here is the model.
 
 | Mode | Command | Files | Live? | Needs FUSE/FSKit? | Best when |
 | ---- | ------- | ----- | ----- | ----------------- | --------- |
-| **Mount** | `strata mount` | virtual filesystem | yes (real-time) | **yes** | macOS 15.4+ / modern Linux; you want documents to appear like any other folder |
-| **Live folder sync** | `strata sync run` / `install` | ordinary `.md` files | yes (seconds) | **no** | a mount is unavailable or unwanted; you want plain files that stay in sync |
+| **Live link** (recommended) | `strata link` | ordinary `.md` files | yes (seconds) | **no** | the default: cross-platform read/write two-way sync, no kernel extension, no permissions |
+| **Mount** (virtual drive) | `strata mount` | virtual filesystem | yes (real-time) | **yes** | you want the Space to appear like a mounted volume; Linux read/write (FUSE), macOS read-only (FSKit, one-time permission) |
 | **Snapshot** | `strata sync pull` | ordinary `.md` files | no (one-time) | no | offline copy, or a platform where no live option works |
 
-**Live folder sync** is the newest mode and the most portable: a background
-daemon keeps a folder and a Space in **two-way CRDT sync** — local saves push to
-Strata and remote edits land in the files within seconds. Concurrent editing on
-both sides is safe: the daemon does a base-aware three-way merge and pauses a
-local overwrite while you are mid-edit, so there is no clobber window. Run it in
-the foreground (`strata sync run <folder> --space <id>`, stop with Ctrl-C) or
-install it as a login-supervised service (`strata sync install <folder> --space
-<id>`, manage with `strata sync stop` / `uninstall`).
+**Live link** is the recommended path and the most portable: a background
+service keeps a folder and a Space in **two-way CRDT sync** — local saves push
+to Strata and remote edits land in the files within seconds — cross-platform on
+macOS and Linux, with no kernel extension and no permissions. Concurrent editing
+on both sides is safe: the service does a base-aware three-way merge and pauses a
+local overwrite while you are mid-edit, so there is no clobber window. By default
+`strata link <folder> --space <id>` installs a supervised background service
+(launchd on macOS, systemd on Linux); pass `--foreground` to run it in the
+terminal for one session (stop with Ctrl-C), or `--no-autostart` to install
+without starting. Stop and remove a link with `strata unlink <space>` (`--pause`
+stops it but leaves it to resume at next login).
 
-If a bulk delete would unlink a large fraction of a Space, sync **pauses** and
-holds the deletions rather than propagating a possible accident; confirm with
-`strata sync resume <folder>` once you have verified the deletions are intended.
+The **mount** is the optional virtual-drive alternative: it shows the Space as a
+mounted volume. On Linux it is read/write (FUSE); on macOS it is read-only and
+needs a one-time System Settings permission (FSKit). Stop it with `strata
+unmount`.
+
+Deleting a file locally unlinks the document from the Space and propagates
+immediately. Unlinks are reversible: the document is never destroyed and can be
+re-added by recreating the file. If a sync session is interrupted or stuck,
+re-run `strata link <folder> --space <id>` to recover it.
 
 Check the health of any mount or sync session at a glance:
 
@@ -275,8 +286,8 @@ Every privileged command (`brew install`, `apt install`, `dnf install`,
 `fusermount3 -uz`) is proposed in conversation and requires explicit user
 confirmation before execution. Operations that write to your Strata content
 (publishing, commenting) are confirmed in conversation before the first write.
-Deletions held by the mass-delete guard are never applied for you; the skills
-surface the count and leave `strata sync resume` to you. No binary download
+Deleting a synced file unlinks the document from the Space (reversible, never
+destroyed) and propagates immediately. No binary download
 proceeds without SHA-256 verification against a published checksum. No
 environment-specific URLs are hardcoded beyond the MCP endpoint; the rest is read
 from your CLI auth state.

@@ -4,7 +4,7 @@ description: >
   Diagnose why Strata is not working in Claude and map each failure to a
   concrete next step. Probes the Strata MCP connection (registered, signed in,
   write scope, tool groups), and — when the strata CLI is present — its auth
-  state, mount health, live folder-sync health (stuck/paused/degraded sync
+  state, mount health, live folder-link health (stuck/paused/degraded sync
   sessions, pending write journal, blocked supervised mounts), and the most
   recent write failure (owner + request-access link). Use for "Strata isn't
   working in Claude", "why can't I see my docs", "my save failed", "my edits
@@ -90,8 +90,8 @@ command -v strata >/dev/null 2>&1 || printf 'no-cli\n'
 If the CLI is absent, say so plainly and stop the CLI layer:
 
 > The strata CLI is not installed, so I can only diagnose the MCP side (above).
-> Mounting and folder sync need the CLI — the `strata-spaces` skill owns that
-> install. Everything in Layer 1 works without it.
+> Linking a folder and mounting need the CLI — the `strata-spaces` skill owns
+> that install. Everything in Layer 1 works without it.
 
 Do not install it here.
 
@@ -210,10 +210,11 @@ upgrade` / `strata login` fixes above, never a command this skill executes:
   preflight; hand off there.
 
 - **`dev-fuse-absent`** (no `/dev/fuse`): the kernel exposes no FUSE device. This
-  is the WSL / container / locked-down-kernel case, where a live mount is not
-  possible at all. Do not propose a fix — report that mounting is impossible on
-  this system and point at the `strata-spaces` snapshot fallback (`strata sync
-  pull`), which is where that skill already routes these platforms.
+  is the WSL / container / locked-down-kernel case, where a virtual-drive mount
+  is not possible at all. Do not propose a fix for the mount — report that
+  mounting is impossible on this system and point at the `strata-spaces` skill,
+  which routes these platforms to a live link (`strata link`, no FUSE needed) or,
+  failing that, the snapshot fallback (`strata sync pull`).
 
 - **`dev-fuse-unreadable`** / **`not-in-fuse-group`**: FUSE is installed but the
   current user cannot open the device (group membership / udev). Both map to one
@@ -288,12 +289,13 @@ mount (a successful `strata mount` clears the sidecar — you never clear it her
 If `.blockedMounts` is empty, no supervised mount is wedged at startup; a
 missing mount is a fresh-install or auth problem, not a blocked supervisor.
 
-### Live folder-sync health (`strata sync run` / `install`)
+### Live folder-link health (`strata link`)
 
-Live folder sync is the **other** way a Space syncs locally — ordinary Markdown
-files kept in two-way CRDT sync by a daemon (`strata sync run` in the foreground,
-or `strata sync install` as a login-supervised service), distinct from a FUSE /
-FSKit mount. It has its own health sidecar. Read every session:
+A live link is the **other** way a Space syncs locally — ordinary Markdown
+files kept in two-way CRDT sync by a background service (`strata link`,
+login-supervised by default, or `strata link --foreground` for a single
+terminal session), distinct from a FUSE / FSKit mount. It has its own health
+sidecar. Read every session:
 
 ```bash
 strata status --json | jq -r '
@@ -303,39 +305,37 @@ strata status --json | jq -r '
 
 The top-level `strata status --json` above is the reliable machine-readable
 source for every session at once. For a single folder the user names, `strata
-sync status <folder>` prints the same session in human-readable form (treat its
-output as text, not JSON — the subcommand emits structured JSON only on its
+status <folder>` prints the same session in human-readable form (treat its
+output as text, not JSON — the command emits structured JSON only on its
 error path). Map what you see — every fix is the **user**'s to run:
 
 - **`sessionState: "live"`, `degraded: false`, `pendingCount: 0`** — healthy and
   caught up. If edits still aren't appearing, the problem is auth or the document,
-  not the daemon.
+  not the link.
 - **`degraded: true`** (always `Live` with a backlog older than 30s) — pushes are
   queuing but not draining. This is usually a transient network/transport stall
-  that self-heals. A **supervised** session (installed via `strata sync install`)
+  that self-heals. A **supervised** link (the default `strata link`)
   that stays wedged ~3 minutes exits and is auto-restarted by `launchd` /
   `systemd`, which drains the backlog — tell the user to wait and re-check. A
-  **foreground** `strata sync run` has no supervisor: if it stays degraded, the
-  user stops it (Ctrl-C) and re-runs `strata sync run <folder> --space <id>`, or
-  switches to `strata sync install` for auto-restart.
-- **`sessionState` contains `paused (mass-delete guard …)`** — a local change
-  would unlink a large fraction of the Space's documents, so sync paused rather
-  than propagate a possible accident. The held deletions are **not** applied
-  until the user confirms. Surface the count and tell them to run, themselves,
-  after verifying the deletions are intended:
+  **foreground** `strata link --foreground` has no supervisor: if it stays
+  degraded, the user stops it (Ctrl-C) and re-runs `strata link <folder> --space
+  <id> --foreground`, or re-links without `--foreground` for auto-restart.
+- **`sessionState` is stuck or paused (and not `re-login required`)** — the
+  session was interrupted and isn't progressing. Deletions are never held: a
+  deleted file unlinks its document immediately (reversible, never destroyed),
+  so there is nothing to confirm or release. Recover by re-running the link:
 
-  > Sync paused: a batch of deletions is being held so an accidental bulk delete
-  > doesn't propagate. If those deletions are intended, run `strata sync resume
-  > <folder>` to confirm and apply them. This skill won't run it — it deletes
-  > documents.
+  > The sync session looks stuck. Re-run `strata link <folder> --space <id>` to
+  > recover it. If auth has lapsed, run `strata login` first, then re-link.
 
 - **`sessionState` contains `paused (re-login required)`** — the session's token
   expired and could not refresh. Route to the *Auth state* fix: `strata login`,
   then the daemon resumes.
 - **`alive: false`** while `sessionState` is non-terminal (not `stopping`) — the
-  daemon process died and the sidecar is stale. For a supervised service, restart
-  it: `strata sync stop <space_id>` then `strata sync install <folder> --space
-  <space_id>`. For a foreground run, the user re-runs `strata sync run`.
+  service process died and the sidecar is stale. For a supervised link, restart
+  it: `strata unlink <space_id> --pause` then `strata link <folder> --space
+  <space_id>`. For a foreground run, the user re-runs `strata link <folder>
+  --space <space_id> --foreground`.
 - **`recentPushErrors`** lists per-document push failures (`error`, `count`,
   `lastSeen`); a 403 there is the same permission-denied case as *Write refused*
   below — surface the owner + request-access link. Entries self-clear after five
@@ -392,13 +392,13 @@ single highest-priority fix — so the user is not left to triage a list:
 | Mount backend ready  | FSKit installed / FUSE ready / missing / n-a |
 | Active mounts        | N                 |
 | Blocked mounts       | none / <space>:<reason> |
-| Live sync sessions   | N (live / degraded / paused / dead) |
+| Live link sessions   | N (live / degraded / paused / dead) |
 | Sync backlog         | drained / N queued |
 | Recent write error   | none / <doc>      |
 ```
 
-Only the rows that apply belong in the table — drop the mount / sync rows
-entirely when the user has neither a mount nor a sync session, rather than
+Only the rows that apply belong in the table — drop the mount / link rows
+entirely when the user has neither a mount nor a link session, rather than
 padding the report with `n-a`.
 
 > **Next step:** <the one thing to do, e.g. "re-run `strata login` — your token
@@ -417,8 +417,7 @@ user with no resolution path:
   the tool-group header; doctor reports on it but never rewrites it.
 - Installing the CLI, enabling FSKit/FUSE, or force-unmounting. Those belong to
   `strata-spaces`; hand off rather than reimplement.
-- Mutating sync state. Doctor never runs `strata sync resume` (it confirms and
-  applies held deletions), never restarts a daemon, and never `strata login`s.
-  It surfaces the held-deletion count, the restart command, or the re-login
-  prompt, and the **user** runs it. Starting / installing live sync belongs to
-  `strata-spaces`.
+- Mutating sync state. Doctor never re-links a stuck session, never restarts a
+  service, and never `strata login`s. It surfaces the recovery command (re-run
+  `strata link`), the restart command, or the re-login prompt, and the **user**
+  runs it. Starting / installing a live link belongs to `strata-spaces`.
