@@ -1,14 +1,15 @@
 ---
 name: strata-spaces
 description: >
-  Mount or sync a Strata Space (strata.space) as a local folder of Markdown
-  files. First-run install of the strata CLI, macOS FSKit / Linux FUSE
-  preflight, browser login, Space pick, Git-safe mount, lifecycle (list,
-  unmount, recover stuck mounts), live two-way folder sync without a mount
-  (`strata sync run` / `install`, works where FUSE/FSKit can't), and a
-  static-snapshot fallback when neither is possible. Use for "mount my Space",
-  "open my Strata docs as files", "sync Strata locally", "keep a folder in sync",
-  or any mount/sync-lifecycle request.
+  Link or mount a Strata Space (strata.space) as a local folder of Markdown
+  files. First-run install of the strata CLI, browser login, Space pick,
+  Git-safe setup, live two-way folder link (`strata link` / `unlink`, the
+  recommended cross-platform path, no kernel extension), an optional
+  virtual-drive mount (`strata mount`, macOS FSKit / Linux FUSE), lifecycle
+  (list, unlink, unmount, recover stuck sessions), and a static-snapshot
+  fallback when neither is possible. Use for "link my Space", "keep a folder in
+  sync", "mount my Space", "open my Strata docs as files", "sync Strata
+  locally", or any link/mount-lifecycle request.
 allowed-tools: Bash, Read, Write, Edit, Grep, Glob, AskUserQuestion
 ---
 
@@ -32,38 +33,38 @@ retry silently.
 There are three ways to put a Space on disk; they need different things, so pick
 the mode before installing anything:
 
-- **Supervised folder sync** (`strata sync install`) — a normal folder of real
-  `.md` files kept in continuous two-way sync by a background service that
-  restarts at login. Needs only the CLI: **no FSKit/FUSE and no system-extension
-  approval**. Lowest friction, and still fully live.
-- **Live mount** (`strata mount`) — a virtual filesystem showing the Space as a
-  mounted volume. Needs FSKit (macOS 15.4+) or FUSE (Linux) plus a one-time
-  system-extension approval on macOS.
+- **Live link** (`strata link`) — a normal folder of real `.md` files kept in
+  continuous two-way sync by a background service that restarts at login. Needs
+  only the CLI: cross-platform (macOS + Linux), read/write, **no FSKit/FUSE and
+  no system-extension approval**. The recommended path: lowest friction, fully
+  live, and works everywhere the process can run.
+- **Virtual-drive mount** (`strata mount`) — the optional alternative: a virtual
+  filesystem showing the Space as a mounted volume. Needs FSKit (macOS 15.4+,
+  read-only, plus a one-time system-extension approval) or FUSE (Linux,
+  read/write).
 - **One-time snapshot** (`strata sync pull`) — a static copy with no live
   updates.
 
 Map intent to a mode:
 
-- "install", "set up", "sync", or "keep in sync" a Space, or a bare "put Space X
-  in ./y" → **supervised folder sync**. This is the default for ambiguous
-  install/sync requests; say in one line that you are setting up background sync
-  and that they can ask for a live mount instead.
-- "mount", "as a volume/drive", or an explicit live-filesystem ask → **live
-  mount**.
+- "link", "install", "set up", "sync", or "keep in sync" a Space, or a bare "put
+  Space X in ./y" → **live link**. This is the default for ambiguous
+  install/sync requests; say in one line that you are setting up a live link and
+  that they can ask for a virtual-drive mount instead.
+- "mount", "as a volume/drive", or an explicit virtual-drive ask → **mount**.
 - "grab", "download", "a copy", "offline", or any one-time wording → **snapshot**.
-  Also the fallback when a mount and sync are both unavailable or declined.
+  Also the fallback when a link and mount are both unavailable or declined.
 
 Use `AskUserQuestion` only when the request genuinely implies no mode. Do not
 default to a mount.
 
 Every mode needs the CLI installed and a login. Run **Platform detection** and
 install the CLI next regardless of mode. **FSKit enablement** (macOS) and **FUSE
-preflight** (Linux) are mount-only — skip them for supervised sync and snapshot.
+preflight** (Linux) are mount-only — skip them for a live link and snapshot.
 Then route by mode:
 
-- Supervised folder sync → **Login and Space pick** → **Live folder sync**
-  (`strata sync install`).
-- Live mount → **Login and Space pick** → **Mount path selection** (with
+- Live link → **Login and Space pick** → **Live folder link** (`strata link`).
+- Mount → **Login and Space pick** → **Mount path selection** (with
   **Git-tree** handling) → **Mount execution and summary**.
 - Snapshot → **Login and Space pick** → **Snapshot fallback**.
 
@@ -100,12 +101,11 @@ case "$(uname -s)" in
 esac
 ```
 
-If `platform` is `macos-too-old`, `wsl`, or `container`, a live mount is
-impossible, but **supervised folder sync** still runs there (it needs only the
-CLI process, not FSKit/FUSE) — prefer it over a snapshot when the user wants
-ongoing sync, otherwise use the snapshot. Both still need the CLI installed, so
-run the platform's CLI install below and skip only the mount-only FSKit/FUSE
-steps. For `unsupported` (Windows native) the CLI install flow does not cover the
+If `platform` is `macos-too-old`, `wsl`, or `container`, a virtual-drive mount is
+impossible, but a **live link** still runs there (it needs only the CLI process,
+not FSKit/FUSE) — prefer it over a snapshot when the user wants ongoing sync,
+otherwise use the snapshot. Both still need the CLI installed, so run the
+platform's CLI install below and skip only the mount-only FSKit/FUSE steps. For `unsupported` (Windows native) the CLI install flow does not cover the
 platform, so no live or snapshot option exists; tell the user, and note the
 plugin already registers the Strata MCP server, so they can read, search, and
 edit their documents in the conversation through the `strata-research`,
@@ -128,8 +128,8 @@ Propose the cask install. Tap is `strata-space/strata`:
 > [y/N]
 
 If declined, jump to "Snapshot fallback". If accepted, run it. **The FSKit
-enablement below is mount-only: for supervised folder sync or snapshot the cask
-install is all you need here, so skip to "Login and Space pick".** On macOS, the
+enablement below is mount-only: for a live link or snapshot the cask install is
+all you need here, so skip to "Login and Space pick".** On macOS, the
 CLI ships an FSKit module that needs a one-time approval before the first mount
 works. Do **not** probe for it here; detecting the module is `strata-doctor`'s
 job, and macOS does not expose the enabled state to any CLI anyway. Just guide
@@ -199,7 +199,7 @@ them. If they decline any consent, jump to "Snapshot fallback".
 > Plugin proposes: `tar -xzf $tmp/$asset -C ~/.local/bin/` (then add
 > `~/.local/bin` to PATH if needed). Run it? [y/N]
 
-FUSE preflight is mount-only — skip it for supervised folder sync and snapshot
+FUSE preflight is mount-only — skip it for a live link and snapshot
 (those need only the installed CLI). For a mount, run it in this order:
 
 1. `[ -e /dev/fuse ]` (kernel module present).
@@ -368,48 +368,42 @@ On Linux:
 After the force unmount succeeds, run `strata status --json` to confirm the
 mount entry is gone.
 
-## Live folder sync (supervised daemon or foreground)
+## Live folder link (`strata link`)
 
-This is the **supervised folder sync** mode from "Choose the install mode" (and
-its foreground variant): an ordinary folder of real `.md` files kept in
-continuous two-way CRDT sync by a background process — no kernel filesystem, so
-it runs where a mount cannot (macOS without FSKit approval, WSL, containers) as
-long as the process itself can run. Edits on either side merge with no clobber
-window (the daemon does a base-aware three-way merge and pauses a local overwrite
-while you are mid-edit), so concurrent web + local editing is safe.
+This is the **live link** mode from "Choose the install mode": an ordinary folder
+of real `.md` files kept in continuous two-way CRDT sync by a background process
+— no kernel filesystem, so it works cross-platform (macOS + Linux) and runs where
+a mount cannot (macOS without FSKit approval, WSL, containers) as long as the
+process itself can run. Edits on either side merge with no clobber window (the
+service does a base-aware three-way merge and pauses a local overwrite while you
+are mid-edit), so concurrent web + local editing is safe.
 
 The same safety rails as a mount apply, because it writes real files into a
 folder: reuse the **Mount path selection** destructive-path refusal and the
 **Git-tree** `.gitignore` handling above before creating the folder.
 
-Two ways to run it:
+By default `strata link` installs a supervised background service that restarts
+at login (`launchd` on macOS, `systemd` on Linux), so get explicit consent first:
 
-- **Foreground** (the user watches it; stops on Ctrl-C):
+> Plugin proposes: `strata link "$folder" --space "$space_id"` — a background
+> service that keeps the folder synced and restarts at login. Add `--foreground`
+> to run it in the terminal for one session (stop with Ctrl-C) instead, or
+> `--no-autostart` to install it without starting. Run it? [y/N]
 
-  ```bash
-  strata sync run "$folder" --space "$space_id"
-  ```
-
-- **Supervised** (restarts at login via `launchd` / `systemd`). This installs a
-  login service, so get explicit consent first:
-
-  > Plugin proposes: `strata sync install "$folder" --space "$space_id"` — a
-  > background service that keeps the folder synced and restarts at login. Add
-  > `--no-autostart` to install without starting. Run it? [y/N]
-
-Either way, tell the user what continuous sync means before the first run:
+Tell the user what continuous sync means before the first run:
 
 > This keeps the folder and the Space in two-way sync: your local saves push to
 > Strata and remote edits land in the files within seconds. Deletes propagate to
-> Strata's trash (recoverable for 30 days). Stop it any time with Ctrl-C (`run`)
-> or `strata sync stop <space>` (supervised).
+> Strata's trash (recoverable for 30 days). Stop and remove it with `strata
+> unlink <space>` (or Ctrl-C if you ran it `--foreground`); `strata unlink
+> <space> --pause` stops it but leaves it to resume at next login.
 
-### Sync lifecycle
+### Link lifecycle
 
 ```bash
-strata sync status "$folder" --json   # session state, pending count, errors
-strata sync stop "$space_id"          # stop a supervised service (keeps it installed)
-strata sync uninstall "$space_id"     # remove the supervised service entirely
+strata status "$folder"               # session state, pending count, errors
+strata unlink "$space_id" --pause     # stop the background service (resumes at next login)
+strata unlink "$space_id"             # stop and remove the background service entirely
 ```
 
 For a deeper read of a stuck, paused, or degraded session, hand off to
@@ -417,8 +411,8 @@ For a deeper read of a stuck, paused, or degraded session, hand off to
 
 ### Mass-delete guard
 
-If a local change would unlink a large fraction of the Space's documents, sync
-**pauses** instead of propagating a possible accident, and `strata sync status`
+If a local change would unlink a large fraction of the Space's documents, the
+link **pauses** instead of propagating a possible accident, and `strata status`
 shows `paused (mass-delete guard …)`. The held deletions are not applied until
 the user confirms. Surface the count and let them run it themselves — never run
 it for them, it deletes documents:
