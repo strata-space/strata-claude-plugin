@@ -236,10 +236,10 @@ mounted volume. On Linux it is read/write (FUSE); on macOS it is read-only and
 needs a one-time System Settings permission (FSKit). Stop it with `strata
 unmount`.
 
-If a bulk delete would unlink a large fraction of a Space, the link **pauses**
-and holds the deletions rather than propagating a possible accident; confirm
-with `strata sync resume <folder>` once you have verified the deletions are
-intended.
+Deleting a file locally unlinks the document from the Space and propagates
+immediately. Unlinks are reversible: the document is never destroyed and can be
+re-added by recreating the file. If a sync session is interrupted or stuck,
+re-run `strata link <folder> --space <id>` to recover it.
 
 Check the health of any mount or sync session at a glance:
 
@@ -286,8 +286,8 @@ Every privileged command (`brew install`, `apt install`, `dnf install`,
 `fusermount3 -uz`) is proposed in conversation and requires explicit user
 confirmation before execution. Operations that write to your Strata content
 (publishing, commenting) are confirmed in conversation before the first write.
-Deletions held by the mass-delete guard are never applied for you; the skills
-surface the count and leave `strata sync resume` to you. No binary download
+Deleting a synced file unlinks the document from the Space (reversible, never
+destroyed) and propagates immediately. No binary download
 proceeds without SHA-256 verification against a published checksum. No
 environment-specific URLs are hardcoded beyond the MCP endpoint; the rest is read
 from your CLI auth state.

@@ -409,17 +409,13 @@ strata unlink "$space_id"             # stop and remove the background service e
 For a deeper read of a stuck, paused, or degraded session, hand off to
 `strata-doctor` (it owns the `syncSessions` / `pendingJournal` diagnosis).
 
-### Mass-delete guard
+### Deletions
 
-If a local change would unlink a large fraction of the Space's documents, the
-link **pauses** instead of propagating a possible accident, and `strata status`
-shows `paused (mass-delete guard …)`. The held deletions are not applied until
-the user confirms. Surface the count and let them run it themselves — never run
-it for them, it deletes documents:
-
-> Sync paused: a batch of deletions is being held so an accidental bulk delete
-> doesn't propagate. If the deletions are intended, run `strata sync resume
-> "$folder"` to confirm and apply them.
+Deleting a local file unlinks its document from the Space and propagates
+immediately — there is no pause and no held-deletions step. Unlinks are
+reversible: the document is never destroyed and can be re-added by recreating
+the file. If a sync session is interrupted or stuck, recover it by re-running
+`strata link "$folder" --space "$space_id"`.
 
 ### One-time push with folders
 

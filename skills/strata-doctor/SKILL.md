@@ -320,16 +320,13 @@ error path). Map what you see — every fix is the **user**'s to run:
   **foreground** `strata link --foreground` has no supervisor: if it stays
   degraded, the user stops it (Ctrl-C) and re-runs `strata link <folder> --space
   <id> --foreground`, or re-links without `--foreground` for auto-restart.
-- **`sessionState` contains `paused (mass-delete guard …)`** — a local change
-  would unlink a large fraction of the Space's documents, so sync paused rather
-  than propagate a possible accident. The held deletions are **not** applied
-  until the user confirms. Surface the count and tell them to run, themselves,
-  after verifying the deletions are intended:
+- **`sessionState` is stuck or paused (and not `re-login required`)** — the
+  session was interrupted and isn't progressing. Deletions are never held: a
+  deleted file unlinks its document immediately (reversible, never destroyed),
+  so there is nothing to confirm or release. Recover by re-running the link:
 
-  > Sync paused: a batch of deletions is being held so an accidental bulk delete
-  > doesn't propagate. If those deletions are intended, run `strata sync resume
-  > <folder>` to confirm and apply them. This skill won't run it — it deletes
-  > documents.
+  > The sync session looks stuck. Re-run `strata link <folder> --space <id>` to
+  > recover it. If auth has lapsed, run `strata login` first, then re-link.
 
 - **`sessionState` contains `paused (re-login required)`** — the session's token
   expired and could not refresh. Route to the *Auth state* fix: `strata login`,
@@ -420,8 +417,7 @@ user with no resolution path:
   the tool-group header; doctor reports on it but never rewrites it.
 - Installing the CLI, enabling FSKit/FUSE, or force-unmounting. Those belong to
   `strata-spaces`; hand off rather than reimplement.
-- Mutating sync state. Doctor never runs `strata sync resume` (it confirms and
-  applies held deletions), never restarts a service, and never `strata login`s.
-  It surfaces the held-deletion count, the restart command, or the re-login
-  prompt, and the **user** runs it. Starting / installing a live link belongs to
-  `strata-spaces`.
+- Mutating sync state. Doctor never re-links a stuck session, never restarts a
+  service, and never `strata login`s. It surfaces the recovery command (re-run
+  `strata link`), the restart command, or the re-login prompt, and the **user**
+  runs it. Starting / installing a live link belongs to `strata-spaces`.
