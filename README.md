@@ -94,7 +94,7 @@ yourself ahead of time:
 **macOS (Homebrew):**
 
 ```bash
-brew install --cask strata-space/strata/strata
+brew install --cask strata-space/tap/strata
 ```
 
 This taps `strata-space/strata` and installs the `strata` cask (the CLI plus the
