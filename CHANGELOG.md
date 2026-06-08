@@ -4,6 +4,13 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.5.0...strata--v0.5.1) (2026-06-08)
+
+
+### Changed
+
+* move the marketplace to its own repo ([#30](https://github.com/strata-space/strata-claude-plugin/issues/30)) ([0da9183](https://github.com/strata-space/strata-claude-plugin/commit/0da91830ee11066e59c710e6faf4ab3b669bb452))
+
 ## [0.5.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.4.0...strata--v0.5.0) (2026-06-02)
 
 
