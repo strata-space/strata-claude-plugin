@@ -124,7 +124,7 @@ fi
 
 Propose the cask install. Tap is `strata-space/strata`:
 
-> Plugin proposes: `brew install --cask strata-space/strata/strata`. Run it?
+> Plugin proposes: `brew install --cask strata-space/tap/strata`. Run it?
 > [y/N]
 
 If declined, jump to "Snapshot fallback". If accepted, run it. **The FSKit

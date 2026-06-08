@@ -69,7 +69,7 @@ if command -v strata >/dev/null 2>&1; then
   assert_jq_field "status." '.mounts | type' 'array' "$status"
   assert_jq_field "status." '.recentWriteErrors | type' 'array' "$status"
 else
-  log "  (strata not yet installed; SKILL.md install flow runs 'brew install --cask strata-space/strata/strata')"
+  log "  (strata not yet installed; SKILL.md install flow runs 'brew install --cask strata-space/tap/strata')"
 fi
 
 summarize

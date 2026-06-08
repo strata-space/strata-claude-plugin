@@ -130,7 +130,7 @@ strata status --json | jq -e 'has("recentWriteErrors")' >/dev/null 2>&1 || print
 On `cli-too-old`, tell the user:
 
 > Your strata CLI is too old to report write failures. Run `brew upgrade --cask
-> strata-space/strata/strata` (macOS) or download the latest Linux release, then
+> strata-space/tap/strata` (macOS) or download the latest Linux release, then
 > retry.
 
 ### Auth state
