@@ -97,7 +97,7 @@ yourself ahead of time:
 brew install --cask strata-space/tap/strata
 ```
 
-This taps `strata-space/strata` and installs the `strata` cask (the CLI plus the
+This taps `strata-space/tap` and installs the `strata` cask (the CLI plus the
 bundled FSKit filesystem module). After install, enable the module once:
 **System Settings → General → Login Items & Extensions → File System
 Extensions → Strata CLI** (switch the Extensions list to **By Category** if the
