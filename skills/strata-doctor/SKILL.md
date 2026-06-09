@@ -354,6 +354,33 @@ A small, shrinking count is normal (writes drain within seconds). A count that
 durable, so nothing is lost, but the daemon needs the restart or re-login above
 to drain it.
 
+### Daemon log (when the state alone doesn't explain it)
+
+When a session is degraded, stuck, or dead and the restart / re-login fixes above
+don't say *why*, read the supervised daemon's own output. It is the only record of
+what a background `strata link` actually did, so it is where a silent stall stops
+being a mystery. The location is platform-specific — a log file on macOS, the user
+journal on Linux — so branch on the OS. Reading it is read-only and in scope here;
+`spaceId` comes from the `syncSessions` entry:
+
+```bash
+sid=<spaceId>
+if [ "$(uname -s)" = Darwin ]; then
+  tail -n 50 "$HOME/Library/Logs/strata/sync-$sid.log" 2>/dev/null \
+    || printf 'no log yet at ~/Library/Logs/strata/sync-%s.log\n' "$sid"
+else
+  journalctl --user -u "strata-sync@$sid.service" -n 50 --no-pager 2>/dev/null \
+    || printf 'no user journal for strata-sync@%s.service\n' "$sid"
+fi
+```
+
+Map what the tail shows to a fix the **user** runs, never the whole file: a
+repeated auth/401 error routes to *Auth state* (`strata login`); a repeated
+network/transport error is the transient degraded case above (wait, or re-link);
+a panic or a repeated push rejection is the line to surface when you report. If
+neither branch prints anything, the daemon has not logged yet (a brand-new or
+never-started link) — that points back at `syncSessions` liveness, not the log.
+
 ### Write refused (permission-denied)
 
 Triggers: the user says their save failed, or mentions "permission denied",
