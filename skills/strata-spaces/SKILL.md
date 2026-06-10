@@ -96,7 +96,7 @@ case "$(uname -s)" in
     fi
     ;;
   *)
-    platform="unsupported"  # Windows native, etc: route to snapshot or MCP skills
+    platform="windows-or-other"  # links work via the Windows CLI zip; no mounts
     ;;
 esac
 ```
@@ -105,11 +105,15 @@ If `platform` is `macos-too-old`, `wsl`, or `container`, a virtual-drive mount i
 impossible, but a **live link** still runs there (it needs only the CLI process,
 not FSKit/FUSE) — prefer it over a snapshot when the user wants ongoing sync,
 otherwise use the snapshot. Both still need the CLI installed, so run the
-platform's CLI install below and skip only the mount-only FSKit/FUSE steps. For `unsupported` (Windows native) the CLI install flow does not cover the
-platform, so no live or snapshot option exists; tell the user, and note the
-plugin already registers the Strata MCP server, so they can read, search, and
-edit their documents in the conversation through the `strata-research`,
-`strata-publish`, and `strata-review` siblings.
+platform's CLI install below and skip only the mount-only FSKit/FUSE steps.
+For `windows-or-other`: on native Windows the CLI ships as
+`strata-windows-x86_64.zip` on the GitHub releases page (early-adopter,
+not yet code-signed — extract, keep `strata.exe` and `st-agent.exe` together,
+add the folder to `PATH`). Live links and snapshots work there; mounts do
+not. On anything else with no CLI build, no live or snapshot option exists;
+note the plugin already registers the Strata MCP server, so the user can
+read, search, and edit documents in conversation through the
+`strata-research`, `strata-publish`, and `strata-review` siblings.
 
 ## macOS install + FSKit enablement
 
@@ -382,32 +386,67 @@ The same safety rails as a mount apply, because it writes real files into a
 folder: reuse the **Mount path selection** destructive-path refusal and the
 **Git-tree** `.gitignore` handling above before creating the folder.
 
-By default `strata link` installs a supervised background service that restarts
-at login (`launchd` on macOS, `systemd` on Linux), so get explicit consent first:
+`strata link` hands the folder to the **Strata agent** — one per-user
+background service that supervises every linked folder and restarts at login
+(launchd on macOS, systemd on Linux, Task Scheduler on Windows). The first
+link installs the agent's login item, so get explicit consent first:
 
-> Plugin proposes: `strata link "$folder" --space "$space_id"` — a background
-> service that keeps the folder synced and restarts at login. Add `--foreground`
-> to run it in the terminal for one session (stop with Ctrl-C) instead, or
-> `--no-autostart` to install it without starting. Run it? [y/N]
+> Plugin proposes: `strata link "$folder" --space "$space_id"` — the Strata
+> background agent keeps the folder synced and restarts at login (the first
+> link installs the agent as a login item). Run it? [y/N]
 
 Tell the user what continuous sync means before the first run:
 
 > This keeps the folder and the Space in two-way sync: your local saves push to
 > Strata and remote edits land in the files within seconds. Deletes propagate to
 > Strata's trash (recoverable for 30 days). Stop and remove it with `strata
-> unlink <space>` (or Ctrl-C if you ran it `--foreground`); `strata unlink
-> <space> --pause` stops it but leaves it to resume at next login.
+> unlink <space>`; `strata unlink <space> --pause` pauses it (re-running
+> `strata link` on the folder resumes). `strata agent status` shows the
+> agent that runs it all.
 
 ### Link lifecycle
 
 ```bash
 strata status "$folder"               # session state, pending count, errors
-strata unlink "$space_id" --pause     # stop the background service (resumes at next login)
-strata unlink "$space_id"             # stop and remove the background service entirely
+strata unlink "$space_id" --pause     # pause sync (re-run `strata link` to resume)
+strata unlink "$space_id"             # stop syncing; keeps the local Markdown
+strata agent status                   # the background agent that runs every link
+strata agent restart                  # one-click repair when sessions look dead
 ```
 
 For a deeper read of a stuck, paused, or degraded session, hand off to
 `strata-doctor` (it owns the `syncSessions` / `pendingJournal` diagnosis).
+
+### Cache-flush recovery (corrupt local sync state)
+
+`strata-doctor` routes a link here when its probe shows the **local `.strata/`
+cache** is the corrupted party — a clean-room `sync pull` came back clean, but the
+live link stays degraded after a restart with an oversized-update / `payloadTooLarge`
+push error. The fix is to discard the local CRDT replica and let a fresh `strata
+link` re-bootstrap clean state from the server. The `.md` files on disk are not the
+cache and are always kept.
+
+A normal `strata unlink "$space_id"` already removes `.strata/` on its way out, so
+the first attempt is simply unlink-then-relink:
+
+> Plugin proposes: `strata unlink "$space_id"`, then `strata link "$folder" --space
+> "$space_id"` — discards the local sync cache and re-downloads clean state from the
+> Space. Your `.md` files are kept. Run it? [y/N]
+
+When the link is *wedged* — the daemon crashed and left an orphaned service
+registration — `strata unlink` bails with `No linked folder found` and never reaches
+the cache. Use the force flush, which ignores the broken registry and removes
+`.strata/` plus the health sidecar regardless of service state:
+
+> Plugin proposes: `strata unlink "$space_id" --purge` (force-flush the local cache
+> for a wedged link), then `strata link "$folder" --space "$space_id"`. Run it?
+> [y/N]
+
+After re-linking, confirm with `strata status "$folder"`: `sessionState: live`,
+`degraded: false`, `pendingCount: 0`. If it returns to degraded with the same push
+error, the cache was not the cause — the server document is corrupt, which a local
+flush cannot fix; hand back to `strata-doctor`'s server-state branch (recreate the
+document). That is data surgery, not a sync operation.
 
 ### Deletions
 

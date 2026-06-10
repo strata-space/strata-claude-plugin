@@ -111,8 +111,16 @@ curl -sSf https://github.com/strata-space/strata/releases/latest/download/instal
 
 The installer detects your OS and architecture, verifies the download, and
 places `strata` in `~/.local/bin` by default (override with
-`STRATA_INSTALL_DIR`). On Linux it lays out the binary alongside its
-`libstrata_fuse.so` cdylib; on macOS it installs the app and symlinks `strata`.
+`STRATA_INSTALL_DIR`). On Linux it lays out the binary alongside the
+`st-agent` background agent and its `libstrata_fuse.so` cdylib; on macOS it
+installs the app and symlinks `strata`.
+
+**Windows (early-adopter):** download `strata-windows-x86_64.zip` from the
+[latest release](https://github.com/strata-space/strata/releases/latest),
+extract it somewhere stable (keep `strata.exe` and `st-agent.exe` together),
+and add the folder to `PATH`. The build is not yet code-signed — terminals run
+it without fuss; Explorer shows a SmartScreen prompt ("More info" → "Run
+anyway"). Live folder links work; virtual-drive mounts are macOS/Linux only.
 
 **Linux (manual):** download the matching tarball from the
 [latest release](https://github.com/strata-space/strata/releases/latest) —
@@ -137,9 +145,11 @@ strata status         # shows auth, mounts, and sync sessions
   bundled `mcp-remote` bridge. No Strata CLI needed.
 - **Live folder link** (`strata link`, recommended) and **bulk folder publish**
   (`strata-publish` folder mode) — the Strata CLI only. Linking uses ordinary
-  files and a background process, **not** a kernel filesystem, so it works
-  cross-platform (macOS and Linux) on systems where a mount cannot (older macOS,
-  WSL, containers) as long as the process can run.
+  files and the Strata background agent (one per-user login item that
+  supervises every linked folder; `strata agent status` shows it), **not** a
+  kernel filesystem, so it works cross-platform (macOS, Linux, and Windows)
+  on systems where a mount cannot (older macOS, WSL, containers) as long as
+  the agent can run.
 - **Virtual-drive mount** (`strata mount`, optional) — the Strata CLI, plus
   either macOS 15.4+ (FSKit backend, read-only, needs a one-time System Settings
   permission) or Linux with kernel ≥ 4.18 and the `fuse3` userspace helper (FUSE

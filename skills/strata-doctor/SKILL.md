@@ -3,10 +3,11 @@ name: strata-doctor
 description: >
   Diagnose why Strata is not working in Claude and map each failure to a
   concrete next step. Probes the Strata MCP connection (registered, signed in,
-  write scope, tool groups), and — when the strata CLI is present — its auth
-  state, mount health, live folder-link health (stuck/paused/degraded sync
-  sessions, pending write journal, blocked supervised mounts), and the most
-  recent write failure (owner + request-access link). Use for "Strata isn't
+  write scope, tool groups), and — when the strata CLI is present — the
+  background agent's health (running/stale/not installed), its auth state,
+  mount health, live folder-link health (stuck/paused/degraded sync sessions,
+  pending write journal, blocked supervised mounts), and the most recent
+  write failure (owner + request-access link). Use for "Strata isn't
   working in Claude", "why can't I see my docs", "my save failed", "my edits
   aren't syncing", "sync is stuck/paused", "permission denied on a Strata file",
   "is Strata connected", or "the Strata tools are missing". No CLI install
@@ -94,6 +95,51 @@ If the CLI is absent, say so plainly and stop the CLI layer:
 > that install. Everything in Layer 1 works without it.
 
 Do not install it here.
+
+### Agent-era CLI? (version gate)
+
+Modern CLIs run all background sync under one per-user **Strata agent** (a
+single login item supervising every linked folder and mount), and
+`strata status --json` carries a top-level `agent` block. Gate on it before
+using any agent-era advice below:
+
+```bash
+strata status --json | jq -e 'has("agent")' >/dev/null 2>&1 || printf 'cli-pre-agent\n'
+```
+
+On `cli-pre-agent`, the CLI predates the unified agent. Everything below
+assumes the agent-era CLI, so the one fix is to upgrade first:
+
+> Your strata CLI predates the background agent. Run `brew upgrade --cask
+> strata-space/tap/strata` (macOS) or re-run the Linux install one-liner, then
+> retry. The upgrade migrates your existing links automatically.
+
+### Agent health (the thing that runs all sync)
+
+Every linked folder syncs under the agent, so a dead agent looks like "all my
+links stopped at once". Read its block:
+
+```bash
+strata status --json | jq -r '.agent |
+  "running=\(.running) version=\(.agentVersion // "-") unit=\(.unitInstalled) heartbeatStale=\(.heartbeatStale)"'
+```
+
+- **`running: true`, `heartbeatStale: false`** — the agent is healthy; a sync
+  problem lives in one session, not the agent. Move on.
+- **`running: false`** — the agent is down; every link shows
+  `stopped (agent not running)`. One fix, the user runs it:
+
+  > Run `strata agent restart` — it reinstalls the agent's login item if
+  > needed and starts it. `strata agent status` confirms.
+
+- **`running: true` but `heartbeatStale: true`** — the socket answers but the
+  heartbeat file is old: a wedged agent. Same fix (`strata agent restart`).
+- **`unitInstalled: false` with `running: false`** — the agent was never
+  installed (fresh machine) or was uninstalled. Any `strata link` installs it
+  implicitly; `strata agent install` does it explicitly.
+
+`strata agent status` prints the same facts human-readably; suggest it when
+the user wants to check by hand.
 
 ### Environment consistency (CLI host vs MCP)
 
@@ -274,13 +320,17 @@ strata status --json | jq -r '
   "| \(.spaceId) | \(.reason | gsub("\n"; " — ")) | \(.at) |"'
 ```
 
-Each entry is a supervised `strata mount` child that failed to start. The
-`reason` string already names the cause; map it to the user fix and re-run the
-mount (a successful `strata mount` clears the sidecar — you never clear it here):
+Each entry is an agent-supervised `strata mount` child that gave up (the
+agent deliberately does not respawn a blocked mount — bad credentials would
+loop forever). The `reason` string already names the cause; map it to the
+user fix (a successful `strata mount` clears the sidecar, and a fresh
+`strata login` clears every blocked sidecar so the agent retries — you never
+clear it here):
 
 - **FSKit extension disabled / not approved** → the System-Settings fix under
   *FSKit module* above, then re-run `strata mount`.
-- **Bad / expired credentials** → `strata login`, then re-run `strata mount`.
+- **Bad / expired credentials** → `strata login`; the agent retries the mount
+  automatically after the sign-in lands.
 - **Already mounted elsewhere** → `strata unmount <space>` at the other path
   first.
 - **FUSE not available** (Linux) → the `fuse3` / `usermod` fixes under *FUSE
@@ -292,10 +342,10 @@ missing mount is a fresh-install or auth problem, not a blocked supervisor.
 ### Live folder-link health (`strata link`)
 
 A live link is the **other** way a Space syncs locally — ordinary Markdown
-files kept in two-way CRDT sync by a background service (`strata link`,
-login-supervised by default, or `strata link --foreground` for a single
-terminal session), distinct from a FUSE / FSKit mount. It has its own health
-sidecar. Read every session:
+files kept in two-way CRDT sync by the background agent (`strata link` hands
+the folder to the agent, which runs one sync engine per linked Space),
+distinct from a FUSE / FSKit mount. Each engine has its own health sidecar.
+Read every session:
 
 ```bash
 strata status --json | jq -r '
@@ -314,12 +364,9 @@ error path). Map what you see — every fix is the **user**'s to run:
   not the link.
 - **`degraded: true`** (always `Live` with a backlog older than 30s) — pushes are
   queuing but not draining. This is usually a transient network/transport stall
-  that self-heals. A **supervised** link (the default `strata link`)
-  that stays wedged ~3 minutes exits and is auto-restarted by `launchd` /
-  `systemd`, which drains the backlog — tell the user to wait and re-check. A
-  **foreground** `strata link --foreground` has no supervisor: if it stays
-  degraded, the user stops it (Ctrl-C) and re-runs `strata link <folder> --space
-  <id> --foreground`, or re-links without `--foreground` for auto-restart.
+  that self-heals: an engine that stays wedged ~3 minutes exits and the agent
+  restarts it, which drains the backlog — tell the user to wait and re-check.
+  If it never clears, `strata agent restart` recycles every engine at once.
 - **`sessionState` is stuck or paused (and not `re-login required`)** — the
   session was interrupted and isn't progressing. Deletions are never held: a
   deleted file unlinks its document immediately (reversible, never destroyed),
@@ -331,11 +378,12 @@ error path). Map what you see — every fix is the **user**'s to run:
 - **`sessionState` contains `paused (re-login required)`** — the session's token
   expired and could not refresh. Route to the *Auth state* fix: `strata login`,
   then the daemon resumes.
-- **`alive: false`** while `sessionState` is non-terminal (not `stopping`) — the
-  service process died and the sidecar is stale. For a supervised link, restart
-  it: `strata unlink <space_id> --pause` then `strata link <folder> --space
-  <space_id>`. For a foreground run, the user re-runs `strata link <folder>
-  --space <space_id> --foreground`.
+- **`alive: false` or `stale: true`** while `sessionState` is non-terminal (not
+  `stopping`) — the engine (or the whole agent) is dead and the sidecar is its
+  last words, not live state. Check the *Agent health* block above first: an
+  agent that is down explains every session at once, and `strata agent
+  restart` is the fix. If the agent is healthy and only one session is dead,
+  re-running `strata link <folder> --space <space_id>` recycles that engine.
 - **`recentPushErrors`** lists per-document push failures (`error`, `count`,
   `lastSeen`); a 403 there is the same permission-denied case as *Write refused*
   below — surface the owner + request-access link. Entries self-clear after five
@@ -354,32 +402,79 @@ A small, shrinking count is normal (writes drain within seconds). A count that
 durable, so nothing is lost, but the daemon needs the restart or re-login above
 to drain it.
 
-### Daemon log (when the state alone doesn't explain it)
+### Re-link didn't fix it: corrupt local cache vs corrupt server state
 
-When a session is degraded, stuck, or dead and the restart / re-login fixes above
-don't say *why*, read the supervised daemon's own output. It is the only record of
-what a background `strata link` actually did, so it is where a silent stall stops
-being a mystery. The location is platform-specific — a log file on macOS, the user
-journal on Linux — so branch on the OS. Reading it is read-only and in scope here;
-`spaceId` comes from the `syncSessions` entry:
+The standard stuck-session recovery is "re-run `strata link`" (above), and a full
+`strata unlink` discards the local cache on its way out. When a session comes back
+**degraded the same way after a clean unlink + re-link** — same `recentPushErrors`,
+a `pendingCount` that never drains, classically a `payloadTooLarge` /
+oversized-update push error — the bad CRDT state is *persisted*, not transient, and
+a plain re-link re-derives it. Two different things persist it, and they need
+opposite fixes, so tell them apart before you hand off:
+
+- **A bloated local cache.** The per-folder `.strata/` cache (the daemon's CRDT
+  replica: `state.json` + `snapshots/*.bin.zst`) is grossly out of proportion to
+  the Space's content — tens of MB of `.strata` for a handful of small documents
+  is the tell (a healthy cache is a few hundred KB). Read it; this is read-only:
+
+  ```bash
+  folder=<the syncSessions .folder for this space>
+  du -sh "$folder/.strata" "$folder/.strata/snapshots" 2>/dev/null
+  ```
+
+- **Corrupt server state.** The canonical document on the server is itself damaged,
+  so every fresh replica re-derives the damage. A clean local cache cannot be the
+  cause, and flushing it changes nothing.
+
+The discriminator is a throwaway `sync pull` into an empty temp dir: it fetches the
+server's state with no local cache in the way, and is read-only with respect to the
+user's link and the server.
 
 ```bash
-sid=<spaceId>
+probe=$(mktemp -d)
+strata sync pull <space_id> "$probe" >/dev/null 2>&1
+# Inspect "$probe"/*.md for the same corruption — pathologically long lines,
+# repeated garbage runs, interleaved/duplicated tokens — then: rm -rf "$probe"
+```
+
+- **Probe is clean** → the damage lived only in the local cache. Hand off to
+  `strata-spaces` **cache-flush recovery**, which purges `.strata/` under consent
+  and re-links to re-bootstrap clean state from the server. Doctor does not flush
+  it here — mutating sync state is out of scope.
+- **Probe is still corrupt** → the server document is the source, and no local flush
+  can fix it; it has to be recreated clean on the server (recover a clean copy,
+  `strata api documents create` it, `strata api spaces add-documents` it back, and
+  trash the damaged one). That is data surgery, not a sync fix — surface it as such
+  and hand off; do not attempt it inside doctor.
+
+### Agent log (when the state alone doesn't explain it)
+
+When a session is degraded, stuck, or dead and the restart / re-login fixes above
+don't say *why*, read the agent's own output. All engines log into the one
+agent log, so it is where a silent stall stops being a mystery. The location is
+platform-specific — a log file on macOS, the user journal on Linux — so branch
+on the OS. Reading it is read-only and in scope here:
+
+```bash
 if [ "$(uname -s)" = Darwin ]; then
-  tail -n 50 "$HOME/Library/Logs/strata/sync-$sid.log" 2>/dev/null \
-    || printf 'no log yet at ~/Library/Logs/strata/sync-%s.log\n' "$sid"
+  tail -n 50 "$HOME/Library/Logs/strata/agent.log" 2>/dev/null \
+    || printf 'no log yet at ~/Library/Logs/strata/agent.log\n'
 else
-  journalctl --user -u "strata-sync@$sid.service" -n 50 --no-pager 2>/dev/null \
-    || printf 'no user journal for strata-sync@%s.service\n' "$sid"
+  journalctl --user -u strata-agent -n 50 --no-pager 2>/dev/null \
+    || printf 'no user journal for strata-agent.service\n'
 fi
 ```
 
+(On Windows the agent runs as the `StrataAgent` scheduled task; its output is
+in `%LOCALAPPDATA%\strata\logs\`.)
+
 Map what the tail shows to a fix the **user** runs, never the whole file: a
 repeated auth/401 error routes to *Auth state* (`strata login`); a repeated
-network/transport error is the transient degraded case above (wait, or re-link);
-a panic or a repeated push rejection is the line to surface when you report. If
-neither branch prints anything, the daemon has not logged yet (a brand-new or
-never-started link) — that points back at `syncSessions` liveness, not the log.
+network/transport error is the transient degraded case above (wait, or
+`strata agent restart`); a panic or a repeated push rejection is the line to
+surface when you report. If neither branch prints anything, the agent has not
+logged yet (a brand-new install or a never-started agent) — that points back
+at *Agent health*, not the log.
 
 ### Write refused (permission-denied)
 
@@ -414,6 +509,7 @@ single highest-priority fix — so the user is not left to triage a list:
 | MCP write scope      | yes / no / n-a    |
 | Tool groups          | core,comments     |
 | CLI installed        | yes / no          |
+| Agent                | running vX / not running / stale |
 | CLI / MCP same env   | yes / no / n-a    |
 | CLI auth             | logged_in / …     |
 | Mount backend ready  | FSKit installed / FUSE ready / missing / n-a |
@@ -444,7 +540,8 @@ user with no resolution path:
   the tool-group header; doctor reports on it but never rewrites it.
 - Installing the CLI, enabling FSKit/FUSE, or force-unmounting. Those belong to
   `strata-spaces`; hand off rather than reimplement.
-- Mutating sync state. Doctor never re-links a stuck session, never restarts a
-  service, and never `strata login`s. It surfaces the recovery command (re-run
-  `strata link`), the restart command, or the re-login prompt, and the **user**
-  runs it. Starting / installing a live link belongs to `strata-spaces`.
+- Mutating sync state. Doctor never re-links a stuck session, never restarts
+  the agent, and never `strata login`s. It surfaces the recovery command
+  (`strata agent restart`, re-run `strata link`) or the re-login prompt, and
+  the **user** runs it. Starting / installing a live link belongs to
+  `strata-spaces`.
