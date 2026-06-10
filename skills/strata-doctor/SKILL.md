@@ -354,6 +354,51 @@ A small, shrinking count is normal (writes drain within seconds). A count that
 durable, so nothing is lost, but the daemon needs the restart or re-login above
 to drain it.
 
+### Re-link didn't fix it: corrupt local cache vs corrupt server state
+
+The standard stuck-session recovery is "re-run `strata link`" (above), and a full
+`strata unlink` discards the local cache on its way out. When a session comes back
+**degraded the same way after a clean unlink + re-link** — same `recentPushErrors`,
+a `pendingCount` that never drains, classically a `payloadTooLarge` /
+oversized-update push error — the bad CRDT state is *persisted*, not transient, and
+a plain re-link re-derives it. Two different things persist it, and they need
+opposite fixes, so tell them apart before you hand off:
+
+- **A bloated local cache.** The per-folder `.strata/` cache (the daemon's CRDT
+  replica: `state.json` + `snapshots/*.bin.zst`) is grossly out of proportion to
+  the Space's content — tens of MB of `.strata` for a handful of small documents
+  is the tell (a healthy cache is a few hundred KB). Read it; this is read-only:
+
+  ```bash
+  folder=<the syncSessions .folder for this space>
+  du -sh "$folder/.strata" "$folder/.strata/snapshots" 2>/dev/null
+  ```
+
+- **Corrupt server state.** The canonical document on the server is itself damaged,
+  so every fresh replica re-derives the damage. A clean local cache cannot be the
+  cause, and flushing it changes nothing.
+
+The discriminator is a throwaway `sync pull` into an empty temp dir: it fetches the
+server's state with no local cache in the way, and is read-only with respect to the
+user's link and the server.
+
+```bash
+probe=$(mktemp -d)
+strata sync pull <space_id> "$probe" >/dev/null 2>&1
+# Inspect "$probe"/*.md for the same corruption — pathologically long lines,
+# repeated garbage runs, interleaved/duplicated tokens — then: rm -rf "$probe"
+```
+
+- **Probe is clean** → the damage lived only in the local cache. Hand off to
+  `strata-spaces` **cache-flush recovery**, which purges `.strata/` under consent
+  and re-links to re-bootstrap clean state from the server. Doctor does not flush
+  it here — mutating sync state is out of scope.
+- **Probe is still corrupt** → the server document is the source, and no local flush
+  can fix it; it has to be recreated clean on the server (recover a clean copy,
+  `strata api documents create` it, `strata api spaces add-documents` it back, and
+  trash the damaged one). That is data surgery, not a sync fix — surface it as such
+  and hand off; do not attempt it inside doctor.
+
 ### Daemon log (when the state alone doesn't explain it)
 
 When a session is degraded, stuck, or dead and the restart / re-login fixes above

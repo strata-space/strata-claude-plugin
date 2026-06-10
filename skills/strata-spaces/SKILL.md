@@ -409,6 +409,37 @@ strata unlink "$space_id"             # stop and remove the background service e
 For a deeper read of a stuck, paused, or degraded session, hand off to
 `strata-doctor` (it owns the `syncSessions` / `pendingJournal` diagnosis).
 
+### Cache-flush recovery (corrupt local sync state)
+
+`strata-doctor` routes a link here when its probe shows the **local `.strata/`
+cache** is the corrupted party — a clean-room `sync pull` came back clean, but the
+live link stays degraded after a restart with an oversized-update / `payloadTooLarge`
+push error. The fix is to discard the local CRDT replica and let a fresh `strata
+link` re-bootstrap clean state from the server. The `.md` files on disk are not the
+cache and are always kept.
+
+A normal `strata unlink "$space_id"` already removes `.strata/` on its way out, so
+the first attempt is simply unlink-then-relink:
+
+> Plugin proposes: `strata unlink "$space_id"`, then `strata link "$folder" --space
+> "$space_id"` — discards the local sync cache and re-downloads clean state from the
+> Space. Your `.md` files are kept. Run it? [y/N]
+
+When the link is *wedged* — the daemon crashed and left an orphaned service
+registration — `strata unlink` bails with `No linked folder found` and never reaches
+the cache. Use the force flush, which ignores the broken registry and removes
+`.strata/` plus the health sidecar regardless of service state:
+
+> Plugin proposes: `strata unlink "$space_id" --purge` (force-flush the local cache
+> for a wedged link), then `strata link "$folder" --space "$space_id"`. Run it?
+> [y/N]
+
+After re-linking, confirm with `strata status "$folder"`: `sessionState: live`,
+`degraded: false`, `pendingCount: 0`. If it returns to degraded with the same push
+error, the cache was not the cause — the server document is corrupt, which a local
+flush cannot fix; hand back to `strata-doctor`'s server-state branch (recreate the
+document). That is data surgery, not a sync operation.
+
 ### Deletions
 
 Deleting a local file unlinks its document from the Space and propagates
