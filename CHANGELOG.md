@@ -4,6 +4,14 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.5.2...strata--v0.6.0) (2026-06-10)
+
+
+### Added
+
+* **skills:** unified-agent CLI — agent health in doctor, agent-era link lifecycle, Windows reach ([#41](https://github.com/strata-space/strata-claude-plugin/issues/41)) ([8a2e7ea](https://github.com/strata-space/strata-claude-plugin/commit/8a2e7ea875c26ba8441e3913033507da3a6a0f46))
+* **strata-doctor:** surface the supervised sync daemon log cross-platform ([#38](https://github.com/strata-space/strata-claude-plugin/issues/38)) ([715c243](https://github.com/strata-space/strata-claude-plugin/commit/715c24301b0d7ab061dc41a326f1df49c9b8d13f))
+
 ## [0.5.2](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.5.1...strata--v0.5.2) (2026-06-08)
 
 
