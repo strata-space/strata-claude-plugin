@@ -4,6 +4,13 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.6.0...strata--v0.7.0) (2026-06-12)
+
+
+### Added
+
+* Codex packaging via a second host manifest with lockstep versioning ([#43](https://github.com/strata-space/strata-claude-plugin/issues/43)) ([7aed804](https://github.com/strata-space/strata-claude-plugin/commit/7aed8045b4d98c500fc541eabb3ce17ba052d2ac))
+
 ## [0.6.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.5.2...strata--v0.6.0) (2026-06-10)
 
 
