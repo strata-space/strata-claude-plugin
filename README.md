@@ -82,6 +82,21 @@ Or, without the marketplace, install the plugin directly from its repo:
 /plugin install strata-space/strata-claude-plugin
 ```
 
+### Codex
+
+The same repository ships a Codex manifest (`.codex-plugin/plugin.json`), so
+Codex users get the bundled MCP server and the five skills too. Add the
+marketplace source and enable the plugin (or install it from the Codex app's
+plugin directory):
+
+```toml
+# ~/.codex/config.toml
+[plugins."strata@strata-space"]
+marketplace = "github:strata-space/marketplace"
+```
+
+Then run `/plugins` in Codex and install `strata`.
+
 ## Install the Strata CLI (optional)
 
 The CLI is only needed for the **filesystem** features: linking a folder for
