@@ -26,21 +26,26 @@ for t in $triggers; do
   ok "fallback trigger covered: $t"
 done
 
-# Path-selection logic: in-git → ./spaces/..., out-of-git → ~/Strata/...
+# Path-selection logic: always ./spaces/* under CWD, regardless of git state.
 tmp=$(mktemp -d)
 cleanup() { rm -rf "$tmp" 2>/dev/null || true; }
 trap cleanup EXIT
-cd "$tmp"
 
+default_path_for() {
+  printf './spaces/%s' "$(printf '%s' "$1" | tr 'A-Z ' 'a-z-')"
+}
+expected="./spaces/my-space"
+
+cd "$tmp"
 git init -q
-if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  ok "in-git: uses ./spaces/* default"
+if [ "$(default_path_for 'My Space')" = "$expected" ]; then
+  ok "in-git: uses ./spaces/* default under CWD"
 fi
 
 cd "$tmp"
 mkdir -p outside && cd outside
-if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  ok "out-of-git: uses ~/Strata/* default"
+if [ "$(default_path_for 'My Space')" = "$expected" ]; then
+  ok "out-of-git: uses ./spaces/* default under CWD (no ~/Strata)"
 fi
 
 summarize

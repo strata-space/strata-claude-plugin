@@ -251,15 +251,14 @@ by name. Save the Space `id` for the mount command.
 
 ## Mount path selection
 
-Default behaviour:
+Default to a folder under the current working directory, regardless of whether
+CWD is a git repo:
 
 ```bash
-if git rev-parse --is-inside-work-tree 2>/dev/null; then
-  default_path="./spaces/$(printf '%s' "$space_name" | tr 'A-Z ' 'a-z-')"
-else
-  default_path="$HOME/Strata/$(printf '%s' "$space_name" | tr 'A-Z ' 'a-z-')"
-fi
+default_path="./spaces/$(printf '%s' "$space_name" | tr 'A-Z ' 'a-z-')"
 ```
+
+(Git state only affects `.gitignore` handling below, not where the mount lands.)
 
 Reject destructive paths outright. Never propose, accept, or `mkdir` any of:
 `/`, `/usr`, `/var`, `/tmp`, `/etc`, `/bin`, `/sbin`, `/dev`, `/sys`, `/proc`,
@@ -491,8 +490,8 @@ Explain the tradeoff in one short paragraph:
 > read and edit access for offline use. If you'd rather keep it in sync, I can
 > set up live folder sync instead — it works here without a mount.
 
-Use the same path-selection logic as the live mount (in-git → `./spaces/...`,
-out-of-git → `~/Strata/...`). Run the pull:
+Use the same path-selection logic as the live mount (default `./spaces/...`
+under CWD). Run the pull:
 
 ```bash
 strata sync pull "$space_id" "$dest_dir"
