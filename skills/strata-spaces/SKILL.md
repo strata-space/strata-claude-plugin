@@ -413,6 +413,15 @@ strata agent status                   # the background agent that runs every lin
 strata agent restart                  # one-click repair when sessions look dead
 ```
 
+If `strata link` itself fails with a launchctl / bootstrap error (for example
+`Bootstrap failed: 5: Input/output error`, or `installing the agent
+supervision unit: launchctl [...] failed`), the agent's supervision unit is in
+a bad state. Repair it with `strata agent restart` (the one-click repair), or
+`strata agent install` to reinstall the unit, then retry the link. To skip the
+background service entirely, run `strata link "$folder" --space "$space_id"
+--foreground`, which runs the sync in this terminal without installing a
+launchd/systemd unit.
+
 For a deeper read of a stuck, paused, or degraded session, hand off to
 `strata-doctor` (it owns the `syncSessions` / `pendingJournal` diagnosis).
 

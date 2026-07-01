@@ -97,10 +97,14 @@ strata spaces --json | jq -r '.[] | "\(.name)\t\(.id)\t\(.documentCount)"'
 
 If the user named a Space, match it. Otherwise present the list and ask. Save
 the Space `id`. (To publish into a brand-new Space, the user creates it in the
-web app first, or you run `strata api raw POST /api/v1/spaces --body
-'{"name":"..."}'` with their consent. A bare `{"name":...}` body creates a
-personal Space, which works on any plan; a workspace-visible Space needs a
-typed `scope` and a paid plan, and 403s otherwise.)
+web app first, or you run `strata api raw POST /api/v1/spaces` with their
+consent. The body requires a typed `scope` (`kind` + `id`, both mandatory).
+For a personal Space (owner-only, works on any plan), pass the caller's own
+user id: `{"name":"...","scope":{"kind":"personal","id":"<userId>"}}`. Read
+that user id back from any existing Space — `strata api spaces get <anySpaceId>
+--json | jq -r '.scope.id'` returns it as `user_...`. A workspace-visible
+Space uses `scope:{"kind":"tier","id":"<nodeId>"}` and needs a paid plan; it
+403s otherwise.)
 
 ### Decide whether a pull is safe
 
