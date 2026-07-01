@@ -251,15 +251,14 @@ by name. Save the Space `id` for the mount command.
 
 ## Mount path selection
 
-Default behaviour:
+Default to a folder under the current working directory, regardless of whether
+CWD is a git repo:
 
 ```bash
-if git rev-parse --is-inside-work-tree 2>/dev/null; then
-  default_path="./spaces/$(printf '%s' "$space_name" | tr 'A-Z ' 'a-z-')"
-else
-  default_path="$HOME/Strata/$(printf '%s' "$space_name" | tr 'A-Z ' 'a-z-')"
-fi
+default_path="./spaces/$(printf '%s' "$space_name" | tr 'A-Z ' 'a-z-')"
 ```
+
+(Git state only affects `.gitignore` handling below, not where the mount lands.)
 
 Reject destructive paths outright. Never propose, accept, or `mkdir` any of:
 `/`, `/usr`, `/var`, `/tmp`, `/etc`, `/bin`, `/sbin`, `/dev`, `/sys`, `/proc`,
@@ -414,6 +413,15 @@ strata agent status                   # the background agent that runs every lin
 strata agent restart                  # one-click repair when sessions look dead
 ```
 
+If `strata link` itself fails with a launchctl / bootstrap error (for example
+`Bootstrap failed: 5: Input/output error`, or `installing the agent
+supervision unit: launchctl [...] failed`), the agent's supervision unit is in
+a bad state. Repair it with `strata agent restart` (the one-click repair), or
+`strata agent install` to reinstall the unit, then retry the link. To skip the
+background service entirely, run `strata link "$folder" --space "$space_id"
+--foreground`, which runs the sync in this terminal without installing a
+launchd/systemd unit.
+
 For a deeper read of a stuck, paused, or degraded session, hand off to
 `strata-doctor` (it owns the `syncSessions` / `pendingJournal` diagnosis).
 
@@ -491,8 +499,8 @@ Explain the tradeoff in one short paragraph:
 > read and edit access for offline use. If you'd rather keep it in sync, I can
 > set up live folder sync instead — it works here without a mount.
 
-Use the same path-selection logic as the live mount (in-git → `./spaces/...`,
-out-of-git → `~/Strata/...`). Run the pull:
+Use the same path-selection logic as the live mount (default `./spaces/...`
+under CWD). Run the pull:
 
 ```bash
 strata sync pull "$space_id" "$dest_dir"
