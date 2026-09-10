@@ -1,0 +1,11 @@
+{
+  "sections": [
+    {
+      "slug": "presentations",
+      "title": "From conversation to slides",
+      "deeplinkPath": "/documentation/presentations#presentations",
+      "summary": "Author presentations from a conversation with strata-presentation; anchor HTML edits on an ID.",
+      "body": "Use strata-presentation to turn the conversation into an audience, purpose, and sequence of supported claims. Read the source material and company design system before styling. Use one headline per slide, evidence in its visual, and narration in ordinary section prose. Save with edit_document and read the result back; inspect available HTML previews and report any rendering limits.\n\nAnchor each HTML edit on a descriptive, deck-unique id. Include that id in both oldString and newString, matching one current fragment with replaceAll=false. This is a text-replacement convention, not an ID-selector API. Reread absent or ambiguous matches; do not force them with a full rewrite. Substitute the actual returned documentId in the example.\n\nPrefer small anchored edits: with replaceAll=false, a missing or ambiguous match is rejected in the serving ECS task’s in-memory Yjs replica under the API’s matching rules, which can normalize quotes, footnote markers, and whitespace. This is not an exact-byte check or a distributed compare-and-swap. Another task’s committed change may not have reached that replica; a stale anchor can match before raced WAL records are integrated during persistence. Character-level edits touch the matched region; cross-node or block edits can fall back to a Markdown round-trip and structural rewrite. No MCP body-write path accepts an expected documentVersion or guarantees safety against a concurrent editor. If the deck appears actively edited, tell the user and coordinate a pause or prepare a separate copy. Read-back confirms an observed result, not concurrency safety.\n\n````text\ngrammarVersion: 1\n````"
+    }
+  ]
+}

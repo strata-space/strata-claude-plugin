@@ -1,9 +1,9 @@
-# Strata Plugin for Claude
+# Strata Plugin for Claude Code and Codex
 
 Work with your [Strata](https://strata.space) documents from inside Claude:
 link a folder to a Space for live two-way sync, mount your Spaces as local
 folders of Markdown, or read, search, publish, and review your documents
-directly in conversation. Installing the plugin registers the Strata MCP server
+directly in conversation, including creating and revising presentations. Installing the plugin registers the Strata MCP server
 automatically (no setup step), so the in-conversation skills work out of the
 box; the filesystem skills add an optional CLI.
 
@@ -14,7 +14,7 @@ box; the filesystem skills add an optional CLI.
 - [Install the plugin](#install-the-plugin)
 - [Install the Strata CLI (optional)](#install-the-strata-cli-optional)
 - [Requirements](#requirements)
-- [The five skills](#the-five-skills)
+- [The six skills](#the-six-skills)
 - [Getting documents onto disk: link vs mount vs snapshot](#getting-documents-onto-disk-link-vs-mount-vs-snapshot)
 - [Other MCP clients](#other-mcp-clients)
 - [Privacy and consent](#privacy-and-consent)
@@ -24,12 +24,12 @@ box; the filesystem skills add an optional CLI.
 
 ## What you get
 
-The plugin ships five skills and a bundled `.mcp.json` that registers the
+The plugin ships six skills and a bundled `.mcp.json` that registers the
 Strata MCP server on install. Two halves:
 
-- **Conversation skills** run entirely over the MCP server — no CLI, no
-  filesystem. Search your Spaces, read documents, publish a draft, and leave
-  review comments without leaving the chat.
+- **Conversation skills** use the MCP server without the Strata CLI. Search your Spaces, read
+  documents, publish a draft, leave review comments, and create presentations
+  from a conversation or an existing local deck file.
 - **Filesystem skills** drive the `strata` CLI to bring a Space onto disk as
   real `.md` files — as a live-linked folder, a virtual-drive mount, or a
   one-time snapshot — so any editor can open them.
@@ -85,7 +85,7 @@ Or, without the marketplace, install the plugin directly from its repo:
 ### Codex
 
 The same repository ships a Codex manifest (`.codex-plugin/plugin.json`), so
-Codex users get the bundled MCP server and the five skills too. Add the
+Codex users get the bundled MCP server and the six skills too. Add the
 marketplace source and enable the plugin (or install it from the Codex app's
 plugin directory):
 
@@ -156,7 +156,7 @@ strata status         # shows auth, mounts, and sync sessions
 ## Requirements
 
 - **Conversation skills** (`strata-research`, `strata-publish` single-doc,
-  `strata-review`, `strata-doctor` connectivity half) — `node` and `npm` for the
+  `strata-review`, `strata-presentation`, `strata-doctor` connectivity half) — `node` and `npm` for the
   bundled `mcp-remote` bridge. No Strata CLI needed.
 - **Live folder link** (`strata link`, recommended) and **bulk folder publish**
   (`strata-publish` folder mode) — the Strata CLI only. Linking uses ordinary
@@ -172,7 +172,7 @@ strata status         # shows auth, mounts, and sync sessions
 - **Windows** is detected and routed to the in-conversation MCP skills; a native
   mount is out of scope.
 
-## The five skills
+## The six skills
 
 Skills activate from natural language — you do not call them by name. The
 example prompts below are illustrative.
@@ -203,6 +203,17 @@ Reads a document and posts feedback as anchored comments rather than editing the
 body. Read-only with respect to the document text.
 
 > Review the "API Gateway LLD" doc and leave comments on anything risky.
+
+### `strata-presentation` — create and revise decks (MCP, no CLI)
+
+Authors a presentation as a Strata document from your prompt and source documents.
+Infers the audience, purpose, length, and theme, bundling necessary questions into
+one round. Supports slide edits, company themes, existing HTML deck import,
+validation, and export through the connected server's available tools.
+
+> Turn these project notes into a short presentation for the leadership team.
+>
+> Use our company theme and tighten the recommendation on slide three.
 
 ### `strata-spaces` — bring a Space onto disk (CLI)
 
@@ -351,6 +362,7 @@ skills/
   strata-research/SKILL.md   # ask your Spaces (MCP)
   strata-publish/SKILL.md    # push local content up (MCP + CLI)
   strata-review/SKILL.md     # comment on a document (MCP)
+  strata-presentation/      # deck authoring skill and references (MCP)
   strata-spaces/SKILL.md     # mount + live-sync lifecycle (CLI)
   strata-doctor/SKILL.md     # diagnose connectivity, mounts, sync, write failures (MCP + CLI)
 tests/                       # VM smoke runners (bash)
@@ -374,6 +386,23 @@ The MCP skills (`strata-research`, `strata-review`) are conversation-driven
 orchestration over the MCP server; there is no host-side bash to smoke-test, so
 they have no test runner. CI runs the platform-agnostic tests on every push and
 PR; per-OS first-mount tests are reserved for release rehearsal.
+
+Presentation tests use the built-in Node.js test runner (Node.js 20+):
+
+```sh
+node --test tests/presentation/*.test.mjs
+```
+
+The import cases and documentation overview are committed snapshots, so CI
+needs neither the monorepo nor Strata credentials. For release rehearsal against
+a freshly generated platform corpus, pass its manifest explicitly:
+
+```sh
+STRATA_DOCS_MANIFEST=/path/to/aidocs/packages/shared/src/generated/docs-manifest.json node --test tests/presentation/compatibility.test.mjs
+```
+
+See [the import rehearsal](tests/presentation/import.md) for fresh agent runs.
+The live documentation corpus remains the runtime authority for the skill.
 
 ## License
 
