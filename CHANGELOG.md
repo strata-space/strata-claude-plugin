@@ -4,6 +4,13 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.7.1...strata--v0.8.0) (2026-09-10)
+
+
+### Added
+
+* add the shared presentation authoring skill ([#50](https://github.com/strata-space/strata-claude-plugin/issues/50)) ([33e3cf6](https://github.com/strata-space/strata-claude-plugin/commit/33e3cf64d1e4e84c8142b88e71593bbefa564d74))
+
 ## [0.7.1](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.7.0...strata--v0.7.1) (2026-07-01)
 
 
