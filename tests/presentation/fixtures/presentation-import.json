@@ -1,0 +1,1095 @@
+{
+  "procedureVersion": 3,
+  "source": "<!doctype html><html lang=\"en\"><head><title>Review</title></head><body class=\"imported\">\n<style>:root { --background: #ffffff; --text: #111111; --accent: #2457db; } section { padding: 32px; } h1, h2 { font: 32px system-ui; }</style>\n<section id=\"opening\" data-owner=\"design\"><h1 class=\"headline\">Review</h1><pre>```json name=rows\n{\"value\":42}\n```</pre></section>\n<section data-title=\"Outlook\"><h2 id=\"outlook-title\">Outlook</h2><p id=\"value\">84%</p></section>\n</body></html>",
+  "cases": [
+    {
+      "name": "all-rules-pass",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S1-container-pass",
+      "html": "<html><head><title>Deck</title></head><body><main class=\"slides\"><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></main></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S1-extra-body-content",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><p>Outside the slides</p></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "fail",
+          "reason": "body content outside section topology"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S2-local-style-pass",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><style>h1 { color: #111; }</style><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S2-head-style",
+      "html": "<html><head><title>Deck</title><style>h1 { color: #111; }</style></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "fail",
+          "reason": "style is in head"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S2-positional-selector",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><style>section:nth-child(2) { color: red; }</style></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "cannotEstablish",
+          "reason": "positional selector depends on section order"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-local-script-pass",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p><script>{ const value = document.getElementById(\"value\"); value.textContent = \"43\"; }</script></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-navigation-pass",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><script>{ const slides = document.querySelectorAll(\"section\"); let index = 0; document.addEventListener(\"keydown\", event => { if (event.key === \"ArrowRight\") { slides[index].hidden = true; index = (index + 1) % slides.length; slides[index].hidden = false; } }); }</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-shared-helper",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p><script>{ paint(); }</script></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "unresolved shared helper paint"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-computed-selector",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p><script>{ document.querySelector(\"#\" + \"value\"); }</script></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "computed selector argument"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-sibling-read",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p><script>{ document.getElementById(\"two\").textContent; }</script></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "lookup resolves in sibling section"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-global-assignment",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p><script>{ window.value = 42; }</script></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "global assignment"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-alias-bypass",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p><script>{ const lookup = document.getElementById; lookup(\"two\"); }</script></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "alias of DOM method"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S4-data-asset-pass",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><img alt=\"dot\" src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==\"><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S4-external-asset",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><img alt=\"dot\" src=\"https://example.com/dot.png\"><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "fail",
+          "reason": "external src"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S4-escaped-css-url",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><style>section { background-image: u\\72l(https://example.com/dot.png); }</style></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "fail",
+          "reason": "decoded external CSS url"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S4-sibling-fragment",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><a href=\"#two\">Next</a><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "fail",
+          "reason": "fragment belongs to another section"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S5-data-title-pass",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\" data-title=\"Two\"></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S5-missing-headline",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "fail",
+          "reason": "no headline or data-title"
+        }
+      ]
+    },
+    {
+      "name": "S5-reserved-appendix",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Appendix results</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "fail",
+          "reason": "reserved appendix boundary"
+        }
+      ]
+    },
+    {
+      "name": "S5-structured-headline",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2><em>Two</em></h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "cannotEstablish",
+          "reason": "headline has structured children"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-original",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-adapted",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-reimported",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-tampered",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next; window.leak = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "section adapter representation does not validate"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-unknown-version",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><script data-strata-section-adapter=\"2\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "section adapter representation does not validate"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-duplicate",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"two\"><h2>Two</h2></section><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "section adapter representation does not validate"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S2-global-after-local-cascade",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><style>h1 { color: rgb(255, 0, 0); }</style><h1>One</h1></section><section id=\"two\"><h2>Two</h2></section><style>h1 { color: rgb(0, 0, 255); }</style></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-bare",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"draft\" hidden><h2>Draft numbers, do not show</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-bare-adapted",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"draft\" hidden><h2>Draft numbers, do not show</h2></section><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Authored hidden on a source section disqualifies the validated adapter."
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-false",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"draft\" hidden=\"false\"><h2>Draft numbers, do not show</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-false-adapted",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"draft\" hidden=\"false\"><h2>Draft numbers, do not show</h2></section><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Authored hidden on a source section disqualifies the validated adapter."
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-until-found",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"draft\" hidden=\"until-found\"><h2>Draft numbers, do not show</h2></section></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-until-found-adapted",
+      "html": "<html><head><title>Deck</title></head><body><section id=\"one\"><h1>One</h1><p id=\"value\">42</p></section><section id=\"draft\" hidden=\"until-found\"><h2>Draft numbers, do not show</h2></section><script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script></body></html>",
+      "expected": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Authored hidden on a source section disqualifies the validated adapter."
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    }
+  ],
+  "sectionAdapter": "<script data-strata-section-adapter=\"1\">\n{\n  const slides = document.querySelectorAll(\"section\");\n  let index = 0;\n  const goTo = (next) => {\n    index = next;\n    slides.forEach((slide, ordinal) => { slide.hidden = ordinal !== index; });\n  };\n  if (strata.deck.active) {\n    goTo(0);\n    strata.deck.registerAdapter({ count: () => slides.length, current: () => index, goTo });\n  }\n}\n</script>",
+  "cascade": {
+    "source": "<html><head><title>Deck</title></head><body><section id=\"one\"><style>h1 { color: rgb(255, 0, 0); }</style><h1>One</h1></section><section id=\"two\"><h2>Two</h2></section><style>h1 { color: rgb(0, 0, 255); }</style></body></html>",
+    "split": [
+      "<html><head></head><body><section id=\"one\"><style>h1 { color: rgb(255, 0, 0); }</style><h1 data-deck-headline></h1></section><style>h1 { color: rgb(0, 0, 255); }</style></body></html>",
+      "<html><head></head><body><section id=\"two\"><h2 data-deck-headline></h2></section><style>h1 { color: rgb(0, 0, 255); }</style></body></html>"
+    ],
+    "styleOrder": ["h1 { color: rgb(255, 0, 0); }", "h1 { color: rgb(0, 0, 255); }"]
+  },
+  "frameAttributes": {
+    "source": "<html lang=\"en\" dir=\"rtl\" data-owner=\"design\"><head><title>Deck</title></head><body class=\"imported\" style=\"background:rgb(18,52,86)\" aria-label=\"Slides\"><section><h1>One</h1></section></body></html>",
+    "unsupported": "<html manifest=\"offline.appcache\"><body onload=\"window.lost = true\" data-deck-reduced-motion=\"false\"><section><h1>One</h1></section></body></html>"
+  },
+  "boundaries": [
+    {
+      "name": "scalar-delimiters",
+      "markdown": "---\nSome text\n---",
+      "frontmatter": "Some text",
+      "blocks": [
+        {
+          "type": "frontmatter"
+        }
+      ]
+    },
+    {
+      "name": "dots-terminator",
+      "markdown": "---\npresentation: true\n...",
+      "frontmatter": "presentation: true",
+      "blocks": [
+        {
+          "type": "frontmatter"
+        }
+      ]
+    },
+    {
+      "name": "crlf",
+      "markdown": "---\r\npresentation: true\r\n---\r\n",
+      "frontmatter": "presentation: true",
+      "blocks": [
+        {
+          "type": "frontmatter"
+        }
+      ]
+    },
+    {
+      "name": "bom",
+      "markdown": "﻿---\npresentation: true\n---",
+      "frontmatter": null,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "name": "padded",
+      "markdown": "--- \t\npresentation: true\n---  ",
+      "frontmatter": "presentation: true",
+      "blocks": [
+        {
+          "type": "frontmatter"
+        }
+      ]
+    },
+    {
+      "name": "indented-open",
+      "markdown": " ---\npresentation: true\n---",
+      "frontmatter": null,
+      "blocks": [
+        {
+          "type": "horizontalRule"
+        },
+        {
+          "type": "heading",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "name": "indented-close",
+      "markdown": "---\npresentation: true\n ---",
+      "frontmatter": null,
+      "blocks": [
+        {
+          "type": "horizontalRule"
+        },
+        {
+          "type": "heading",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "name": "blank-before",
+      "markdown": "\n---\npresentation: true\n---",
+      "frontmatter": "presentation: true",
+      "blocks": [
+        {
+          "type": "frontmatter"
+        }
+      ]
+    },
+    {
+      "name": "blank-first-content",
+      "markdown": "---\n\npresentation: true\n---",
+      "frontmatter": null,
+      "blocks": [
+        {
+          "type": "horizontalRule"
+        },
+        {
+          "type": "heading",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "name": "tab-close",
+      "markdown": "---\npresentation: true\n---\t",
+      "frontmatter": null,
+      "blocks": [
+        {
+          "type": "horizontalRule"
+        },
+        {
+          "type": "heading",
+          "level": 2
+        }
+      ]
+    },
+    {
+      "name": "empty",
+      "markdown": "---\n---",
+      "frontmatter": null,
+      "blocks": [
+        {
+          "type": "horizontalRule"
+        },
+        {
+          "type": "horizontalRule"
+        }
+      ]
+    },
+    {
+      "name": "unclosed",
+      "markdown": "---\npresentation: true",
+      "frontmatter": null,
+      "blocks": [
+        {
+          "type": "horizontalRule"
+        },
+        {
+          "type": "paragraph"
+        }
+      ]
+    }
+  ],
+  "fenceBytes": [
+    {
+      "name": "lf",
+      "html": "<section>\n<h1>One</h1>\n</section>",
+      "markdown": "---\npresentation: true\n---\n# One\n```html\n<section>\n<h1>One</h1>\n</section>\n```\n"
+    },
+    {
+      "name": "crlf",
+      "html": "<section>\r\n<h1>One</h1>\r\n</section>",
+      "markdown": "---\npresentation: true\n---\n# One\n```html\n<section>\r\n<h1>One</h1>\r\n</section>\n```\n"
+    },
+    {
+      "name": "crlf-final",
+      "html": "<section>\r\n<h1>One</h1>\r\n</section>\r\n",
+      "markdown": "---\npresentation: true\n---\n# One\n```html\n<section>\r\n<h1>One</h1>\r\n</section>\r\n\n```\n"
+    },
+    {
+      "name": "mixed",
+      "html": "<section>\r\n<h1>One</h1>\n</section>",
+      "markdown": "---\npresentation: true\n---\n# One\n```html\n<section>\r\n<h1>One</h1>\n</section>\n```\n"
+    },
+    {
+      "name": "windows-delimiters",
+      "html": "<section>\r\n<h1>One</h1>\r\n</section>\r\n",
+      "markdown": "---\r\npresentation: true\r\n---\r\n# One\r\n```html\r\n<section>\r\n<h1>One</h1>\r\n</section>\r\n\r\n```\r\n"
+    }
+  ]
+}

@@ -1,0 +1,1015 @@
+{
+  "cases": [
+    {
+      "name": "all-rules-pass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S1-container-pass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S1-extra-body-content",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "fail",
+          "reason": "Unsupported slide topology: extra body content outside the section sequence.",
+          "location": "line:column 1:145; section none; script none; <p>"
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S2-local-style-pass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S2-head-style",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "fail",
+          "reason": "Style is in head/container rather than body or one section.",
+          "location": "line:column 1:32; section none; script none; <style>"
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S2-positional-selector",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "cannotEstablish",
+          "reason": "Positional/relational selector :nth-child.",
+          "location": "line:column 1:159; section none; script none; <style>"
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-local-script-pass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-navigation-pass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-shared-helper",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Undeclared/shared helper paint.",
+          "location": "line:column 1:105; section 1; script 1; <script>"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-computed-selector",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Computed selector; a literal string is required.",
+          "location": "line:column 1:128; section 1; script 1; <script>"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-sibling-read",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Lookup reads a sibling section or repeated shell.",
+          "location": "line:column 1:105; section 1; script 1; <script>"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-global-assignment",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Host/global property access or host-method alias is outside the accepted receiver chains.",
+          "location": "line:column 1:105; section 1; script 1; <script>"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-alias-bypass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Host/global property access or host-method alias is outside the accepted receiver chains.",
+          "location": "line:column 1:120; section 1; script 1; <script>"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S4-data-asset-pass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S4-external-asset",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "fail",
+          "reason": "Nonembedded resource reference https://example.com/dot.png.",
+          "location": "line:column 1:90; section 1; script none; <img>"
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S4-escaped-css-url",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "fail",
+          "reason": "Nonembedded resource reference https://example.com/dot.png.",
+          "location": "line:column 1:180; section none; script none; <style>"
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S4-sibling-fragment",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "fail",
+          "reason": "Unresolved or cross-section fragment #two.",
+          "location": "line:column 1:78; section 1; script none; <a>"
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S5-data-title-pass",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S5-missing-headline",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "fail",
+          "reason": "No nonempty h1–h3 text or data-title.",
+          "location": "line:column 1:105; section 2; script none; <section>"
+        }
+      ]
+    },
+    {
+      "name": "S5-reserved-appendix",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "fail",
+          "reason": "Reserved Appendix headline would terminate slide processing.",
+          "location": "line:column 1:123; section 2; script none; <h2>"
+        }
+      ]
+    },
+    {
+      "name": "S5-structured-headline",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "cannotEstablish",
+          "reason": "Structured headline children would be discarded by textContent injection.",
+          "location": "line:column 1:123; section 2; script none; <h2>"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-original",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-adapted",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-reimported",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-tampered",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "section adapter representation does not validate",
+          "location": "script 1 at 1:145"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-unknown-version",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "section adapter representation does not validate",
+          "location": "script 1 at 1:145"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-adapter-duplicate",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "section adapter representation does not validate",
+          "location": "script 1 at 1:145"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S2-global-after-local-cascade",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass"
+        },
+        {
+          "rule": "S2",
+          "status": "pass"
+        },
+        {
+          "rule": "S3",
+          "status": "pass"
+        },
+        {
+          "rule": "S4",
+          "status": "pass"
+        },
+        {
+          "rule": "S5",
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-bare",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-bare-adapted",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Authored hidden on a source section disqualifies the validated adapter.",
+          "location": "line:column 1:105; section 2; script 1; authored hidden"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-false",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-false-adapted",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Authored hidden on a source section disqualifies the validated adapter.",
+          "location": "line:column 1:105; section 2; script 1; authored hidden"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-until-found",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    },
+    {
+      "name": "S3-authored-hidden-until-found-adapted",
+      "checks": [
+        {
+          "rule": "S1",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S2",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S3",
+          "status": "cannotEstablish",
+          "reason": "Authored hidden on a source section disqualifies the validated adapter.",
+          "location": "line:column 1:105; section 2; script 1; authored hidden"
+        },
+        {
+          "rule": "S4",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        },
+        {
+          "rule": "S5",
+          "status": "pass",
+          "reason": "No rejected construct in the parsed source."
+        }
+      ]
+    }
+  ],
+  "procedureVersion": 3,
+  "contractSha256": "dd549122eb27aab779f2baae9227ceff0e0ce2a1c618eb930c16984174052071",
+  "receipt": "Original 21 cases from /private/tmp/presentation-import-forward/cases.json (independent rehearsal); added adapter and cascade cases manually adjudicated against procedure version 2 during remediation. Round 3: reviewed all 28 existing cases against version 3; verdicts unchanged. Added six manually adjudicated authored-hidden cases (bare, false, until-found; original and exact-template adapted). The originals allow no adapter insertion and retain hidden; adapted inputs cannot establish S3. Parser absence, timeout and infrastructure failure are procedure-not-executed preconditions, not file verdicts. No fresh independent agent rehearsal claimed."
+}

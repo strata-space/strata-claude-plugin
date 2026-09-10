@@ -4,13 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A dual-host plugin (`strata`) for Claude Code and Codex that ships five skills, a bundled `.mcp.json` that registers the Strata MCP server, and a set of bash smoke tests. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files plus their test runners.
+A dual-host plugin (`strata`) for Claude Code and Codex that ships six skills, a bundled `.mcp.json` that registers the Strata MCP server, and a set of bash smoke tests. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files plus their test runners.
 
 - `skills/strata-research/SKILL.md`: answer a question from the user's Spaces with citations, over the MCP server (read-only, no CLI).
 - `skills/strata-publish/SKILL.md`: push local content up. `edit_document` for a single doc, `strata sync push` for a folder.
 - `skills/strata-review/SKILL.md`: leave anchored comments on a document via the MCP `manage_comments` tool; never rewrites the body.
 - `skills/strata-spaces/SKILL.md`: operates the user's `strata` CLI to mount a Space as a local Markdown folder (macOS FSKit / Linux FUSE), with a static-snapshot fallback when a live mount is impossible.
 - `skills/strata-doctor/SKILL.md`: diagnose why Strata is not working — MCP connectivity (registered, signed in, write scope, tool groups) and, when the CLI is present, auth state, mount health, and the permission-denied (write-failure) diagnosis. Read-only: it routes to a fix, never remediates by side effect.
+- `skills/strata-presentation/SKILL.md`: creates and revises decks from a conversation, with grammar, theme, import, validation, and refresh references. Uses MCP without requiring the Strata CLI.
 - `.mcp.json`: registers the Strata MCP server, with the `comments` tool group enabled, on install.
 - `.claude-plugin/plugin.json` + `.codex-plugin/plugin.json`: the two host manifests. Versions stay in lockstep (release-please bumps both via extra-files; smoke.yml asserts equality). The marketplace that lists this plugin lives in its own repo, `strata-space/marketplace`.
 
@@ -19,6 +20,9 @@ When editing skills, remember they are **executed by Claude at runtime**, not by
 ## Commands
 
 ```bash
+# Presentation skill checks (Node.js 20+, no package install)
+node --test tests/presentation/*.test.mjs
+
 # Smoke tests — each script no-ops on the wrong platform and exits non-zero on failed assertion.
 bash tests/git-mount-gitignore.sh         # cross-platform, runs in CI
 bash tests/snapshot-fallback.sh           # needs strata CLI; skips otherwise
