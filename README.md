@@ -1,5 +1,7 @@
 # Strata Plugin for Claude
 
+> This release switches MCP to `https://api.strata.space/mcp`. Update the plugin and authenticate again after the API hostname cutover. Manually configured MCP clients must re-add the server with the new URL.
+
 Work with your [Strata](https://strata.space) documents from inside Claude:
 link a folder to a Space for live two-way sync, mount your Spaces as local
 folders of Markdown, or read, search, publish, and review your documents
@@ -287,7 +289,7 @@ yourself:
       "args": [
         "-y",
         "mcp-remote",
-        "https://api.prod.us-east-2.strata.space/mcp",
+        "https://api.strata.space/mcp",
         "--header",
         "X-Strata-Tool-Groups:core,comments"
       ]
