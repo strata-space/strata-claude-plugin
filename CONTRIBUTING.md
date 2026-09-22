@@ -52,7 +52,7 @@ Don't soften or remove them in a PR:
   `.git/info/exclude` before creating the mount. Never `git add` or
   `git commit` on the user's behalf.
 - No environment-specific URLs hardcoded in skills. The public MCP endpoint
-  `https://api.prod.us-east-2.strata.space/mcp` lives in the bundled
+  `https://api.strata.space/mcp` lives in the bundled
   `.mcp.json` (and the README's other-clients snippet); document links use the
   `https://strata.space/app/documents/<docId>` form.
 

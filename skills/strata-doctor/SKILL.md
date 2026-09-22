@@ -143,7 +143,7 @@ the user wants to check by hand.
 
 ### Environment consistency (CLI host vs MCP)
 
-The released CLI defaults to production (`https://api.prod.us-east-2.strata.space`),
+The released CLI defaults to production (`https://api.strata.space`),
 the same endpoint the plugin's `.mcp.json` registers the MCP server against, so
 the two surfaces are consistent out of the box. A mismatch only arises when the
 user overrides the CLI with `--api-url` / `STRATA_API_URL`, or runs a non-release
