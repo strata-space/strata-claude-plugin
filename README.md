@@ -5,7 +5,7 @@
 Work with your [Strata](https://strata.space) documents from inside Claude:
 link a folder to a Space for live two-way sync, mount your Spaces as local
 folders of Markdown, or read, search, publish, and review your documents
-directly in conversation, including creating and revising presentations. Installing the plugin registers the Strata MCP server
+directly in conversation, including writing blog posts and creating and revising presentations. Installing the plugin registers the Strata MCP server
 automatically (no setup step), so the in-conversation skills work out of the
 box; the filesystem skills add an optional CLI.
 
@@ -16,7 +16,7 @@ box; the filesystem skills add an optional CLI.
 - [Install the plugin](#install-the-plugin)
 - [Install the Strata CLI (optional)](#install-the-strata-cli-optional)
 - [Requirements](#requirements)
-- [The six skills](#the-six-skills)
+- [The seven skills](#the-seven-skills)
 - [Getting documents onto disk: link vs mount vs snapshot](#getting-documents-onto-disk-link-vs-mount-vs-snapshot)
 - [Other MCP clients](#other-mcp-clients)
 - [Privacy and consent](#privacy-and-consent)
@@ -26,11 +26,11 @@ box; the filesystem skills add an optional CLI.
 
 ## What you get
 
-The plugin ships six skills and a bundled `.mcp.json` that registers the
+The plugin ships seven skills and a bundled `.mcp.json` that registers the
 Strata MCP server on install. Two halves:
 
 - **Conversation skills** use the MCP server without the Strata CLI. Search your Spaces, read
-  documents, publish a draft, leave review comments, and create presentations
+  documents, publish a draft, leave review comments, write and style blog posts, and create presentations
   from a conversation or an existing local deck file.
 - **Filesystem skills** drive the `strata` CLI to bring a Space onto disk as
   real `.md` files — as a live-linked folder, a virtual-drive mount, or a
@@ -87,7 +87,7 @@ Or, without the marketplace, install the plugin directly from its repo:
 ### Codex
 
 The same repository ships a Codex manifest (`.codex-plugin/plugin.json`), so
-Codex users get the bundled MCP server and the six skills too. Add the
+Codex users get the bundled MCP server and the seven skills too. Add the
 marketplace source and enable the plugin (or install it from the Codex app's
 plugin directory):
 
@@ -158,7 +158,7 @@ strata status         # shows auth, mounts, and sync sessions
 ## Requirements
 
 - **Conversation skills** (`strata-research`, `strata-publish` single-doc,
-  `strata-review`, `strata-presentation`, `strata-doctor` connectivity half) — `node` and `npm` for the
+  `strata-review`, `strata-blog`, `strata-presentation`, `strata-doctor` connectivity half) — `node` and `npm` for the
   bundled `mcp-remote` bridge. No Strata CLI needed.
 - **Live folder link** (`strata link`, recommended) and **bulk folder publish**
   (`strata-publish` folder mode) — the Strata CLI only. Linking uses ordinary
@@ -174,7 +174,7 @@ strata status         # shows auth, mounts, and sync sessions
 - **Windows** is detected and routed to the in-conversation MCP skills; a native
   mount is out of scope.
 
-## The six skills
+## The seven skills
 
 Skills activate from natural language — you do not call them by name. The
 example prompts below are illustrative.
@@ -205,6 +205,16 @@ Reads a document and posts feedback as anchored comments rather than editing the
 body. Read-only with respect to the document text.
 
 > Review the "API Gateway LLD" doc and leave comments on anything risky.
+
+### `strata-blog` — write and style blog posts (MCP, no CLI)
+
+Drafts a blog post from your prompt or turns an existing document into one, in
+your voice. Sets the post's `blog:` frontmatter: summary, tags, cover
+thumbnail, header image, typography, colors, wallpaper, and series. Fixes
+every validation finding and leaves the post as a draft for you to publish.
+
+> Turn my "launch notes" doc into a blog post. Use the photo as the thumbnail
+> and a wide crop of it as the header.
 
 ### `strata-presentation` — create and revise decks (MCP, no CLI)
 
@@ -364,6 +374,7 @@ skills/
   strata-research/SKILL.md   # ask your Spaces (MCP)
   strata-publish/SKILL.md    # push local content up (MCP + CLI)
   strata-review/SKILL.md     # comment on a document (MCP)
+  strata-blog/SKILL.md       # blog post authoring and styling (MCP)
   strata-presentation/      # deck authoring skill and references (MCP)
   strata-spaces/SKILL.md     # mount + live-sync lifecycle (CLI)
   strata-doctor/SKILL.md     # diagnose connectivity, mounts, sync, write failures (MCP + CLI)
