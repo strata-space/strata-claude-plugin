@@ -4,6 +4,17 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.0.0...strata--v1.1.0) (2026-10-06)
+
+
+### Added
+
+* add the strata-blog authoring skill ([#52](https://github.com/strata-space/strata-claude-plugin/issues/52)) ([7eda265](https://github.com/strata-space/strata-claude-plugin/commit/7eda26558e1d58c690a84d444482b24afae63d34))
+
+### Fixed
+
+* link documents through the app's workspace-chooser deep link ([#53](https://github.com/strata-space/strata-claude-plugin/issues/53)) ([108b91e](https://github.com/strata-space/strata-claude-plugin/commit/108b91edf77199a27f66a7e4901d531f101405b8))
+
 ## [1.0.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v0.7.1...strata--v1.0.0) (2026-09-22)
 
 
