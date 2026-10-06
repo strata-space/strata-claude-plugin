@@ -32,7 +32,7 @@ Also fetch `interactive-html` when the post will carry an `html` block or an HTM
 4. **Add the `blog:` frontmatter.** Merge into the existing first frontmatter block if there is one; never create a second block and never drop unrelated keys or comments. Add only what was asked for or clearly helps; omit a field to inherit its default instead of writing `null` or `default`.
 5. **Name images before referencing them** (see below).
 6. **Check `blogValidation`.** Every `edit_document` result on a document with blog frontmatter returns `blogValidation.findings`. Fix every `error`; review each `warning`. A successful edit does not mean the draft is publishable.
-7. **Hand back for review.** Leave the post as a draft and give the user the document link. Publish only when the user explicitly asks and a publishing tool is connected; otherwise tell them to publish from the app. Publication freezes content and resolved design, so later draft edits need a re-publish.
+7. **Hand back for review.** Leave the post as a draft and give the user the document link, in the form `https://app.strata.space/workspaces?next=%2Fdocuments%2F<documentId>` (MCP results carry no URL or workspace slug; never guess a `/w/<workspace>/` path). Publish only when the user explicitly asks and a publishing tool is connected; otherwise tell them to publish from the app. Publication freezes content and resolved design, so later draft edits need a re-publish.
 
 ## Key summary (verify against `blog-design`)
 
