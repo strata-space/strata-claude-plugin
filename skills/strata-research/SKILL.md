@@ -69,11 +69,12 @@ asks for an exhaustive trace.
 
 Synthesise the answer from what you read, and cite every non-obvious claim back
 to its source document so the user can verify it. Cite by document title with a
-link in the form `https://strata.space/app/documents/<docId>`, using the
-`documentId` from the `find` or `read_document` result. For example:
+link in the form `https://app.strata.space/workspaces?next=%2Fdocuments%2F<docId>`,
+using the `documentId` from the `find` or `read_document` result. That is the
+app's own deep link; it opens the document in the user's workspace. For example:
 
 > Pricing is per-seat with a hard per-user credit cap
-> ([HLD: Pricing & Routing Restructure](https://strata.space/app/documents/doc_01KRFAMHE99512BY201H2J4AWK)).
+> ([HLD: Pricing & Routing Restructure](https://app.strata.space/workspaces?next=%2Fdocuments%2Fdoc_01KRFAMHE99512BY201H2J4AWK)).
 
 Be honest about coverage: if the documents only partially answer the question,
 say what is and is not covered, and name the gap. Distinguish what the user's

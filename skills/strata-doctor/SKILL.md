@@ -487,7 +487,7 @@ Read the most-recent failure from `strata status --json`:
 ```bash
 strata status --json | jq -r '
   .recentWriteErrors[0] // empty |
-  "Document: \(.docTitle // .docId) (\(.docId))\nOwner: \(.ownerEmail // .ownerId)\nRequest access: https://strata.space/app/documents/\(.docId)"'
+  "Document: \(.docTitle // .docId) (\(.docId))\nOwner: \(.ownerEmail // .ownerId)\nRequest access: https://app.strata.space/workspaces?next=%2Fdocuments%2F\(.docId)"'
 ```
 
 If `recentWriteErrors[0]` exists, render owner + the webapp link verbatim. Tell

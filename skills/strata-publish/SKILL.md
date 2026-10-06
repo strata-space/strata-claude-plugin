@@ -45,7 +45,11 @@ For a draft the user wrote in the conversation, or one file:
    private (the personal default).
 3. Report the new document's title, its `effectiveAudience` (from the result —
    `{ kind: "private" }` or `{ kind: "tier", nodeId }`), and link
-   (`https://strata.space/app/documents/<documentId>`).
+   (`https://app.strata.space/workspaces?next=%2Fdocuments%2F<documentId>`).
+   The result carries no URL and no workspace, so build the link in exactly
+   that form: it is the app's own deep link, and it opens the document in the
+   user's workspace at `/w/<workspace>/documents/<documentId>/<title-slug>`.
+   Never invent a host or path shape.
 
 To change a document's audience afterward, **move it to a different folder**:
 `edit_document` with `action="move"`, the `documentId`, and `folderId` (omit
