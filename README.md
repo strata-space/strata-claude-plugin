@@ -309,7 +309,7 @@ yourself:
       "command": "npx",
       "args": [
         "-y",
-        "mcp-remote",
+        "mcp-remote@0.14.3",
         "https://api.strata.space/mcp",
         "--header",
         "X-Strata-Tool-Groups:core,comments"
