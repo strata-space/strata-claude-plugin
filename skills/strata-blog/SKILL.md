@@ -12,7 +12,7 @@ description: >
 
 # Strata blog posts
 
-A Strata blog post is an ordinary prose document whose first YAML frontmatter block holds a `blog:` mapping. The article is plain Markdown; the mapping controls appearance and discovery. The **Post appearance** panel in the app edits the same frontmatter, so humans and agents share one source. Tool prefixes depend on the host; discover the connected server's `find`, `read_document`, and `edit_document` schemas before calling them.
+A Strata blog post is an ordinary prose document whose first YAML frontmatter block holds a `blog:` mapping. The article is plain Markdown; the mapping controls appearance and discovery. The **Post appearance** panel in the app edits the same frontmatter, so humans and agents share one source. Tool prefixes depend on the host; discover the connected server's `find`, `read_document`, `create_document`, `replace_document_text` and `rewrite_document` schemas before calling them.
 
 ## Load the live rules first
 
@@ -27,11 +27,11 @@ Also fetch `interactive-html` when the post will carry an `html` block or an HTM
 ## Workflow
 
 1. **Recover intent.** Audience, purpose, the user's voice (read their earlier posts with `find` scoped to `{"type":"published"}` when a handle is known), length, and any source documents. Ask at most one bundled round of questions. Preserve the user's facts, voice, and jokes; never invent metrics, quotes, or product capabilities.
-2. **Read before writing.** `read_document` the target in full. Large documents return an outline; read every section you will touch. If a read comes back truncated, summarized, compressed, or otherwise not verbatim, you have NOT seen the body: do not use it as the basis for `action: write`. Re-read with sections, or switch to anchored `edit` calls.
+2. **Read before writing.** `read_document` the target in full. Large documents return an outline; read every section you will touch. If a read comes back truncated, summarized, compressed, or otherwise not verbatim, you have NOT seen the body: do not use it as the basis for `rewrite_document`. Re-read with sections, or switch to anchored `replace_document_text` calls.
 3. **Write the article** as normal Markdown: one H1 title, descriptive H2/H3 headings, the main answer early. Keep essential information in text, not only in images or executable visuals.
 4. **Add the `blog:` frontmatter.** Merge into the existing first frontmatter block if there is one; never create a second block and never drop unrelated keys or comments. Add only what was asked for or clearly helps; omit a field to inherit its default instead of writing `null` or `default`.
 5. **Name images before referencing them** (see below).
-6. **Check `blogValidation`.** Every `edit_document` result on a document with blog frontmatter returns `blogValidation.findings`. Fix every `error`; review each `warning`. A successful edit does not mean the draft is publishable.
+6. **Check `blogValidation`.** Every `create_document`, `replace_document_text`, `rewrite_document` and `finalize_document_upload` result on a document with blog frontmatter returns `blogValidation.findings`. Fix every `error`; review each `warning`. A successful edit does not mean the draft is publishable.
 7. **Hand back for review.** Leave the post as a draft and give the user the document link, in the form `https://app.strata.space/workspaces?next=%2Fdocuments%2F<documentId>` (MCP results carry no URL or workspace slug; never guess a `/w/<workspace>/` path). Publish only when the user explicitly asks and a publishing tool is connected; otherwise tell them to publish from the app. Publication freezes content and resolved design, so later draft edits need a re-publish.
 
 ## Key summary (verify against `blog-design`)
@@ -83,7 +83,7 @@ You cannot fetch an external image URL into a post through these tools. If the u
 
 ## Editing safely
 
-MCP body writes do not take an expected-version precondition, so `action: write` can overwrite a collaborator's concurrent changes. Prefer small, uniquely anchored `edit` calls (`replaceAll: false`): for example, anchor on the H1 plus the first image to insert frontmatter and naming comments above them. Use full `write` only for a brand-new document or when the user asks for a rewrite, and only from a verbatim read taken immediately before. If you overwrote something by mistake, say so at once and restore from document history if the host exposes it.
+MCP body writes do not take an expected-version precondition, so `rewrite_document` can overwrite a collaborator's concurrent changes. Prefer small, uniquely anchored `replace_document_text` calls (`replaceAll: false`): for example, anchor on the H1 plus the first image to insert frontmatter and naming comments above them. Use a full `rewrite_document` only for a brand-new document or when the user asks for a rewrite, and only from a verbatim read taken immediately before. If you overwrote something by mistake, say so at once and restore from document history if the host exposes it.
 
 ## Done means
 
