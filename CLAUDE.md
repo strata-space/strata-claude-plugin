@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A dual-host plugin (`strata`) for Claude Code and Codex that ships seven skills, a bundled `.mcp.json` that registers the Strata MCP server, and a set of bash smoke tests. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files plus their test runners.
 
 - `skills/strata-research/SKILL.md`: answer a question from the user's Spaces with citations, over the MCP server (read-only, no CLI).
-- `skills/strata-publish/SKILL.md`: push local content up. `edit_document` for a single doc, `strata sync push` for a folder.
-- `skills/strata-review/SKILL.md`: leave anchored comments on a document via the MCP `manage_comments` tool; never rewrites the body.
+- `skills/strata-publish/SKILL.md`: push local content up. `create_document` for a single doc, `strata sync push` for a folder.
+- `skills/strata-review/SKILL.md`: leave anchored comments on a document via the MCP `create_comment` tool; never rewrites the body.
 - `skills/strata-spaces/SKILL.md`: operates the user's `strata` CLI to mount a Space as a local Markdown folder (macOS FSKit / Linux FUSE), with a static-snapshot fallback when a live mount is impossible.
 - `skills/strata-doctor/SKILL.md`: diagnose why Strata is not working — MCP connectivity (registered, signed in, write scope, tool groups) and, when the CLI is present, auth state, mount health, and the permission-denied (write-failure) diagnosis. Read-only: it routes to a fix, never remediates by side effect.
 - `skills/strata-blog/SKILL.md`: writes, converts, and styles blog posts through `blog:` frontmatter (cover, header image, wallpaper, metadata), checking `blogValidation`. Uses MCP without requiring the Strata CLI.

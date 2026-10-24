@@ -61,16 +61,20 @@ After the user confirms, re-run the probe `find`.
 
 ### Write scope present?
 
-`list_tools` hides write-bearing tools (`edit_document`, `manage_comments`,
-`manage_suggestions`) unless the OAuth grant includes write scope. Symptom: the
-user can search and read, but publish or review "has no tool to call." If the
-write tools are absent from your toolkit while the read tools work, the grant is
-read-only. Tell the user to re-authorize and accept the write scope when the
-browser prompts.
+`list_tools` hides write-bearing tools (`create_document`,
+`replace_document_text`, `create_comment`, `propose_suggestion` and the rest)
+unless the OAuth grant includes write scope. Symptom: the user can search and
+read, but publish or review "has no tool to call." If those write tools are
+absent from the toolkit while read tools work, the grant is read-only. Tell
+the user to re-authorize and accept write scope when the browser prompts.
+
+Do not test for `edit_document`, `manage_comments` or `manage_suggestions`.
+Current servers keep them callable for old clients but never list them, so
+their absence says nothing about scope.
 
 ### Tool groups active?
 
-`manage_comments` / `manage_suggestions` (group `comments`) and the agent tools
+The comment and suggestion tools (group `comments`) and the agent tools
 (group `agents`) are gated behind the `X-Strata-Tool-Groups` header. The plugin
 sends `core,comments`. The MCP server echoes the **active** groups in its
 instructions string ("Active groups: …"). Compare:
