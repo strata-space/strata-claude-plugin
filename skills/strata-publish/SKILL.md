@@ -16,7 +16,7 @@ Get local content into Strata. Two shapes, two paths. Decide which the user
 is asking for before doing anything:
 
 - **One document** (a draft in the conversation, or a single file): use the
-  Strata MCP `edit_document` tool. No CLI needed, unless you are filing it into
+  Strata MCP `create_document` tool. No CLI needed, unless you are filing it into
   a Space (see "Into a Space" below).
 - **A folder of Markdown** (many files, possibly nested): use the `strata`
   CLI's `sync push`. This is the only path that handles creates, updates, and
@@ -40,7 +40,7 @@ For a draft the user wrote in the conversation, or one file:
    strata api folders list   # each folder's `scope.kind` is "personal" or "tier"
    ```
    MCP-only (no CLI): default to private, or pass a `folderId` the user names.
-2. Call `edit_document` with `action="create"`, the `title`, the Markdown
+2. Call `create_document` with the `title`, the Markdown
    `content`, and `folderId` for the chosen folder. Omit `folderId` to keep it
    private (the personal default).
 3. Report the new document's title, its `effectiveAudience` (from the result —
@@ -52,12 +52,12 @@ For a draft the user wrote in the conversation, or one file:
    Never invent a host or path shape.
 
 To change a document's audience afterward, **move it to a different folder**:
-`edit_document` with `action="move"`, the `documentId`, and `folderId` (omit
+`move_document` with the `documentId`, and `folderId` (omit
 `folderId` to move it to the space root). The CLI mirrors this:
 `strata api documents move <documentId> --folder-id <folderId>`.
 
-To replace the body of a document that already exists, use `edit_document`
-with `action="edit"` (targeted `oldString`/`newString`) or `action="write"`
+To replace the body of a document that already exists, use `replace_document_text`
+for a targeted `oldString`/`newString` edit, or `rewrite_document`
 (full replacement) instead of creating a duplicate. Search with the Strata
 `find` tool first if you are unsure whether the document already exists.
 

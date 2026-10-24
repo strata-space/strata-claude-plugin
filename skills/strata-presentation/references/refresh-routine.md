@@ -2,7 +2,7 @@
 
 After copying a company theme, create or update one refresh routine per deck when `manage_suggestions`, `get_company_theme`, and `list_company_themes` are advertised and `find` with `intent: "info"`, `scope: {"type": "strataDocumentation", "slug": "presentation-refresh"}` returns the refresh contract. On older servers, report that the theme copy will not refresh itself and create no routine.
 
-Find the person's Agents folder with `find` (`intent: "list"`, `scope: {"type": "folders"}`). Write an ordinary agent document there using `edit_document` `action: "create"`; update the existing routine if one already targets this deck. Preserve frontmatter: template instantiation removes it. Replace every example ID and the identity fields below with the actual values. There is no `output`.
+Find the person's Agents folder with `find` (`intent: "list"`, `scope: {"type": "folders"}`). Write an ordinary agent document there using `create_document`; update the existing routine if one already targets this deck. Preserve frontmatter: template instantiation removes it. Replace every example ID and the identity fields below with the actual values. There is no `output`.
 
 ````markdown
 ---
