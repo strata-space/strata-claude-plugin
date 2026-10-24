@@ -15,29 +15,36 @@ Review a document the way a careful colleague would: read it, then leave
 comments anchored to the exact passages they refer to. This skill never edits
 the document body. Feedback goes in as comments the author can read, reply to,
 and resolve. To change the text itself, that is `strata-publish`
-(`edit_document`), and the user has to ask for it explicitly.
+(`replace_document_text`), and the user has to ask for it explicitly.
 
 ## Comments only, by design
 
-This skill uses the Strata `manage_comments` tool and nothing else. Strata also
-has a `manage_suggestions` tool (propose concrete text replacements the author
-can accept in one click); it is exposed on the same MCP capability group as
-comments, so it may appear in the tool list, but **this skill deliberately does
-not use it.** If the user wants proposed edits rather than discussion comments,
-tell them that is a different mode and confirm before switching to it; do not
-reach for `manage_suggestions` on your own.
+This skill uses Strata's comment tools and nothing else: `create_comment`,
+`list_comments` and `set_comment_resolved`. Strata also has suggestion tools
+(`propose_suggestion` and its accept, reject and withdraw counterparts) that
+propose concrete text replacements the author can accept in one click. They
+sit in the same MCP capability group as comments, so they may appear in the
+tool list, but **this skill deliberately does not use them.** If the user
+wants proposed edits rather than discussion comments, tell them it is a
+different mode and confirm before switching to it. Do not reach for the
+suggestion tools on your own.
+
+Older servers bundled these operations as `manage_comments` and
+`manage_suggestions` with an `action` field. Current servers still accept
+those names but leave them out of the tool list, so use the single-operation
+tools.
 
 ## Prerequisite check
 
-`manage_comments` lives in the `comments` capability group, which the plugin's
+`create_comment` lives in the `comments` capability group, which the plugin's
 MCP registration enables, and it is a write operation, so the MCP session also
-needs write scope. If the `manage_comments` tool is not available:
+needs write scope. If `create_comment` is not available:
 
-- The `comments` group is not enabled on this connection, or the OAuth grant
-  has no write scope. Tell the user their MCP connection needs the
-  `X-Strata-Tool-Groups:core,comments` header (the bundled `.mcp.json` sets it;
-  reconnect after confirming it) and write scope. Do not fall back to editing
-  the document.
+- The `comments` group is not enabled on the connection, or the OAuth grant
+  has no write scope. Tell the user the MCP connection needs the
+  `X-Strata-Tool-Groups:core,comments` header (the bundled `.mcp.json` sets
+  it, so reconnect after confirming it) and write scope. Do not fall back to
+  editing the document.
 
 ## Read first, with existing threads
 
@@ -60,7 +67,7 @@ list (passage → comment), and get a quick confirmation. Posting comments write
 to a document other people may be reading, so do not surprise the author with a
 wall of comments they did not see coming.
 
-On confirmation, post each with `manage_comments`, `action="create"`:
+On confirmation, post each with `create_comment`:
 
 - `quotedText`: the exact substring from the document the comment anchors to.
   It must match the document text verbatim, or the anchor will not resolve.
@@ -75,17 +82,18 @@ plowing ahead.
 
 ## Managing threads
 
-`manage_comments` also handles the rest of the comment lifecycle when the user
-asks: `action="reply"` (with `parentCommentId`) to continue a thread,
-`action="resolve"` / `action="reopen"` to change a thread's state, and
-`action="list"` (filter by `status`) to enumerate threads. Resolve a thread
-only when the user asks you to; do not resolve other people's comments as a
-side effect of your review.
+The other comment tools handle the rest of the lifecycle when the user asks:
+`create_comment` with `parentCommentId` replies in a thread,
+`set_comment_resolved` with `resolved` set to `true` or `false` resolves or
+reopens a thread, and `list_comments` (filter by `status`) enumerates threads.
+Resolve a thread only when the user asks you to, and never resolve other
+people's comments as a side effect of your review.
 
 ## Out of scope
 
 - Editing the document body. This skill comments; it does not rewrite.
-- `manage_suggestions` (proposed text edits). Available on the wire, but this
-  skill does not use it. Switch modes only on an explicit request.
+- The suggestion tools (`propose_suggestion` and its accept, reject and
+  withdraw counterparts). They are available on the wire, but this skill does
+  not use them. Switch modes only on explicit request.
 - Accepting or resolving the author's own comments or suggestions on their
   behalf.
