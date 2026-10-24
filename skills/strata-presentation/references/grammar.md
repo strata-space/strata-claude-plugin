@@ -17,16 +17,14 @@ The boolean enables defaults. To configure them, replace it with a map:
 presentation:
   aspect: '16:9'
   transition: fade
-  audience: Leadership
-  purpose: Decide the launch date
   form: slides
   notes: presenter
 ---
 ```
 
-Only these six keys are accepted inside `presentation`. `aspect` accepts `16:9` (default), `16:10`, or `4:3`; `transition` accepts `fade` (default), `none`, or `slide`; `form` accepts `slides` (default) or `whole-deck`; `notes` accepts `presenter` (default) or `none`. Optional `audience` and `purpose` are strings of at most 200 Unicode characters each. The leading YAML text is limited to 16 KiB in UTF-8. Unknown presentation keys and invalid map values are errors. The theme belongs in a CSS fence, not `presentation.theme`.
+Only these four keys are accepted inside `presentation`. `aspect` accepts `16:9` (default), `16:10`, or `4:3`; `transition` accepts `fade` (default), `none`, or `slide`; `form` accepts `slides` (default) or `whole-deck`; `notes` accepts `presenter` (default) or `none`. The leading YAML text is limited to 16 KiB in UTF-8. Unknown presentation keys and invalid map values are errors. `audience` and `purpose` were removed in September 2026 and are now unknown keys. The theme belongs in a CSS fence, not `presentation.theme`.
 
-Use the actual YAML boolean `true`, not a quoted string or `yes`. Missing settings, `presentation: false`, null, and other non-map/non-true values describe an ordinary document. Disabling or removing presentation settings also disables the edition privacy policy; it is not a safe way to hide presenter notes. Invalid settings that still name the presentation key fail closed for readers below editor.
+Use the actual YAML boolean `true`, not a quoted string or `yes`. Missing settings, `presentation: false`, null, and other non-map/non-true values describe an ordinary document. Disabling or removing presentation settings also disables the edition privacy policy; it is not a safe way to hide presenter notes. Invalid settings that still name the presentation key fail closed for readers below editor, and for the owner the document stops being a deck: 0 slides and no Present control. Today only the deck's card in the presentations list shows the error, so check the map against this list before every write.
 
 ## Heading decision table (`form: slides`)
 
@@ -43,13 +41,13 @@ Only top-level document nodes define the structure; headings nested in a blockqu
 
 In each section, the first top-level `html` fence is its visual (`HTML` is also recognized). Additional HTML fences receive `extra-visual` findings and are neither selected visuals nor notes. A section containing both an HTML fence and a `slide` fence gets `slide-and-visual` and is excluded entirely. Fix it rather than relying on its omission. Only `html` is matched case-insensitively. The `slide` and `css` fence languages are compared exactly and must be lowercase: a mis-cased ```` ```CSS name=theme ```` fence loses its `extends`, `locked`, `source` and `sourceVersion` attributes at import, produces no finding at all, and is dropped from the reader edition, so the deck silently renders in the default theme.
 
-With no HTML fence, the first `slide` fence is the visual. Its `layout` must be `title`, `statement`, `bullets`, `big-number`, or `two-column`. A missing/invalid layout gets `unknown-layout` and falls back structurally to `statement`. Later `slide` fences are notes. With neither kind of visual, the section is a headline-only statement. These are grammar decisions: the shipped sandbox bootstrap does not yet install the text-layout renderer, so do not promise that layout bodies render today.
+With no HTML fence, the first `slide` fence is the visual. Its `layout` must be `title`, `statement`, `bullets`, `big-number`, `two-column`, or `image`. A `layout=image` fence names the image it shows with `uses`; without one it reports `image-slide-without-source`. A missing/invalid layout gets `unknown-layout` and falls back structurally to `statement`. Later `slide` fences are notes. With neither kind of visual, the section is a headline-only statement.
 
 ## Fence ownership
 
 | Fence | Attributes |
 | --- | --- |
-| `slide layout=bullets` | `layout` only; `name` and `uses` are discarded on slide fences. |
+| `slide layout=bullets` | `layout`, plus `uses` naming the image on `layout=image`. `name` is discarded on slide fences. |
 | `css name=theme` or `css name=deckTheme` | May carry `extends`, `locked`, `source`, and `sourceVersion`. |
 | `html uses="sales,targets"` | Declares which named resources the visual reads. |
 | `json name=sales` (also `csv`, `tsv`, `yaml`) | Defines a document-scoped data source. A table can be named by `<!-- strata:name=sales -->` immediately above it. |
@@ -91,7 +89,7 @@ Discuss the internal negotiation here, outside the visual.
 
 ## What the edition actually keeps
 
-Owners and editors receive the full authoring document. Viewers, commenters, and suggest-only readers receive an edition derived from the accepted structure. It includes accepted slide headings and visual blocks, synthesized `presentation` settings, both named theme CSS blocks, and named JSON/CSV/TSV/YAML blocks or tables declared by accepted visuals' `uses`. These resources can be anywhere in the top-level document, including the appendix. A slides edition also retains the appendix heading itself, but not ordinary appendix prose. Other authored frontmatter keys are not carried into the edition. The allowed presentation settings, including `audience` and `purpose`, are retained.
+Owners and editors receive the full authoring document. Viewers, commenters, and suggest-only readers receive an edition derived from the accepted structure. It includes accepted slide headings and visual blocks, synthesized `presentation` settings, both named theme CSS blocks, and named JSON/CSV/TSV/YAML blocks or tables declared by accepted visuals' `uses`. These resources can be anywhere in the top-level document, including the appendix. A slides edition also retains the appendix heading itself, but not ordinary appendix prose. Other authored frontmatter keys are not carried into the edition. The four allowed presentation settings are retained.
 
 The projection copies retained blocks whole. Hidden HTML, HTML/CSS comments, JavaScript strings, and unused fields inside a declared data source are visible to readers who inspect the source. A resource may be classified structurally as notes and still be retained because it is theme CSS or declared data. Never put secrets in those blocks or in the appendix heading. Keep private narration as ordinary prose in a valid slide section. The `notes` setting describes pane visibility; the projection does not use it to decide privacy.
 
