@@ -4,6 +4,13 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.1.1...strata--v1.1.2) (2026-10-24)
+
+
+### Fixed
+
+* **strata-presentation:** unthemed previews only when settings fail to parse ([#59](https://github.com/strata-space/strata-claude-plugin/issues/59)) ([ecec282](https://github.com/strata-space/strata-claude-plugin/commit/ecec282cea42b53f9f4bb3474ea735679c86f8a5))
+
 ## [1.1.1](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.1.0...strata--v1.1.1) (2026-10-24)
 
 
