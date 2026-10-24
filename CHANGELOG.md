@@ -4,6 +4,15 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.1.0...strata--v1.1.1) (2026-10-24)
+
+
+### Fixed
+
+* match the presentation skill to the live grammar and tools ([#56](https://github.com/strata-space/strata-claude-plugin/issues/56)) ([cd6010a](https://github.com/strata-space/strata-claude-plugin/commit/cd6010a14408005adbf2a7a580dfe3913e61f391))
+* pin mcp-remote to an exact version in the npx launcher ([#55](https://github.com/strata-space/strata-claude-plugin/issues/55)) ([7ba4467](https://github.com/strata-space/strata-claude-plugin/commit/7ba44676a03f17e9e2677382f8995aa96d811ba9))
+* **strata-review, strata-doctor:** use the single-operation comment tools ([#57](https://github.com/strata-space/strata-claude-plugin/issues/57)) ([c8c9ead](https://github.com/strata-space/strata-claude-plugin/commit/c8c9ead6bcdbd9b910a9a88f7e86d5926244d2da))
+
 ## [1.1.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.0.0...strata--v1.1.0) (2026-10-06)
 
 
