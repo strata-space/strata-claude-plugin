@@ -1,14 +1,11 @@
 {
   "mcpServers": {
     "strata": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote@0.14.3",
-        "https://api.strata.space/mcp",
-        "--header",
-        "X-Strata-Tool-Groups:core,comments"
-      ]
+      "type": "http",
+      "url": "https://api.strata.space/mcp",
+      "headers": {
+        "X-Strata-Tool-Groups": "core,comments"
+      }
     }
   }
 }
