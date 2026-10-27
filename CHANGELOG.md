@@ -4,6 +4,14 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.1.2...strata--v1.2.0) (2026-10-27)
+
+
+### Added
+
+* StrataSpace brand logo for directory listings ([#63](https://github.com/strata-space/strata-claude-plugin/issues/63)) ([c66b3ef](https://github.com/strata-space/strata-claude-plugin/commit/c66b3efbabf9086dfb41e1b0098259d9725777d6))
+* unblock directory review, rename to StrataSpace, add Cursor manifest ([#62](https://github.com/strata-space/strata-claude-plugin/issues/62)) ([1b43c41](https://github.com/strata-space/strata-claude-plugin/commit/1b43c4158b4817d74d9d274e61732c262c4b927d))
+
 ## [1.1.2](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.1.1...strata--v1.1.2) (2026-10-24)
 
 
