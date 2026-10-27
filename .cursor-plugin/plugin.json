@@ -1,7 +1,7 @@
 {
   "name": "strataspace",
   "displayName": "StrataSpace",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Work with your StrataSpace documents from Cursor: research with citations, publish local Markdown, review with comments, write blog posts, build presentations, and diagnose connectivity, through the hosted StrataSpace MCP server.",
   "author": {
     "name": "StrataSpace, Inc.",
