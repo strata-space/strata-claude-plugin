@@ -4,7 +4,8 @@
   "version": "1.1.2",
   "description": "Work with your StrataSpace documents from Cursor: research with citations, publish local Markdown, review with comments, write blog posts, build presentations, and diagnose connectivity, through the hosted StrataSpace MCP server.",
   "author": {
-    "name": "StrataSpace",
+    "name": "StrataSpace, Inc.",
+    "email": "support@strata.space",
     "url": "https://strata.space"
   },
   "homepage": "https://strata.space",
