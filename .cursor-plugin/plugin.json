@@ -5,11 +5,17 @@
   "description": "Work with your StrataSpace documents from Cursor: research with citations, publish local Markdown, review with comments, write blog posts, build presentations, and diagnose connectivity, through the hosted StrataSpace MCP server.",
   "author": {
     "name": "StrataSpace",
-    "email": "andrew@strata.space"
+    "url": "https://strata.space"
   },
   "homepage": "https://strata.space",
   "repository": "https://github.com/strata-space/strata-claude-plugin",
   "license": "MIT",
-  "keywords": ["strataspace", "mcp", "documents", "markdown", "knowledge-base"],
+  "keywords": [
+    "strataspace",
+    "mcp",
+    "documents",
+    "markdown",
+    "knowledge-base"
+  ],
   "logo": "assets/logo.svg"
 }
