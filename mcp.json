@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "strata": {
+      "url": "https://api.strata.space/mcp",
+      "headers": {
+        "X-Strata-Tool-Groups": "core,comments"
+      }
+    }
+  }
+}

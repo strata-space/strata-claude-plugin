@@ -10,7 +10,6 @@ description: >
   fallback when neither is possible. Use for "link my Space", "keep a folder in
   sync", "mount my Space", "open my Strata docs as files", "sync Strata
   locally", or any link/mount-lifecycle request.
-allowed-tools: Bash, Read, Write, Edit, Grep, Glob, AskUserQuestion
 ---
 
 # Strata Spaces

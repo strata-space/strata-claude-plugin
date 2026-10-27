@@ -158,8 +158,7 @@ strata status         # shows auth, mounts, and sync sessions
 ## Requirements
 
 - **Conversation skills** (`strata-research`, `strata-publish` single-doc,
-  `strata-review`, `strata-blog`, `strata-presentation`, `strata-doctor` connectivity half) — `node` and `npm` for the
-  bundled `mcp-remote` bridge. No Strata CLI needed.
+  `strata-review`, `strata-blog`, `strata-presentation`, `strata-doctor` connectivity half) — an MCP client that supports remote HTTP servers with OAuth (in Claude Code, run `/mcp` and choose Authenticate on first use). No Strata CLI needed.
 - **Live folder link** (`strata link`, recommended) and **bulk folder publish**
   (`strata-publish` folder mode) — the Strata CLI only. Linking uses ordinary
   files and the Strata background agent (one per-user login item that
@@ -297,23 +296,19 @@ strata status --json | jq '{mounts, syncSessions, pendingJournal, blockedMounts}
 
 ## Other MCP clients
 
-Claude Code and Claude Desktop pick up the Strata MCP server from the bundled
-`.mcp.json` automatically. For another MCP client (Cursor, VS Code, Zed,
-Continue, Cline, Windsurf), add the server to that client's MCP config
+Claude Code picks up the Strata MCP server from the bundled `.mcp.json`
+(authenticate once via `/mcp`); Claude Desktop and claude.ai use the StrataSpace
+connector from the Connectors directory, and Cursor reads the bundled `mcp.json`.
+For another MCP client (VS Code, Zed, Continue, Cline, Windsurf), add the server to that client's MCP config
 yourself:
 
 ```json
 {
   "mcpServers": {
     "strata": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote@0.14.3",
-        "https://api.strata.space/mcp",
-        "--header",
-        "X-Strata-Tool-Groups:core,comments"
-      ]
+      "type": "http",
+      "url": "https://api.strata.space/mcp",
+      "headers": { "X-Strata-Tool-Groups": "core,comments" }
     }
   }
 }

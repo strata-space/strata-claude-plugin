@@ -53,7 +53,7 @@ Don't soften or remove them in a PR:
   `git commit` on the user's behalf.
 - No environment-specific URLs hardcoded in skills. The public MCP endpoint
   `https://api.strata.space/mcp` lives in the bundled
-  `.mcp.json` (and the README's other-clients snippet); document links use the
+  `.mcp.json` (plus `mcp.json` for Cursor, `.codex-mcp.json` for Codex, and the README's other-clients snippet); document links use the
   app's workspace-chooser deep link,
   `https://app.strata.space/workspaces?next=%2Fdocuments%2F<docId>`, because
   MCP results carry a `documentId` but no URL and no workspace slug. It
