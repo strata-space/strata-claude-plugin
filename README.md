@@ -17,6 +17,7 @@ box; the filesystem skills add an optional CLI.
 - [Install the Strata CLI (optional)](#install-the-strata-cli-optional)
 - [Requirements](#requirements)
 - [The seven skills](#the-seven-skills)
+- [The terminal document view (Claude Code)](#the-terminal-document-view-claude-code)
 - [Getting documents onto disk: link vs mount vs snapshot](#getting-documents-onto-disk-link-vs-mount-vs-snapshot)
 - [Other MCP clients](#other-mcp-clients)
 - [Privacy and consent](#privacy-and-consent)
@@ -35,9 +36,14 @@ Strata MCP server on install. Two halves:
 - **Filesystem skills** drive the `strata` CLI to bring a Space onto disk as
   real `.md` files — as a live-linked folder, a virtual-drive mount, or a
   one-time snapshot — so any editor can open them.
+- **A terminal document view** (Claude Code): a pane that shows the document
+  Claude is reading, a band that tells you when it changed, a paragraph cursor
+  for comments and suggestions of your own, and, with the CLI, live
+  collaboration.
+  See [the terminal document view](#the-terminal-document-view-claude-code).
 
-You only need the CLI for the filesystem half. Everything else works the moment
-the plugin is installed.
+You only need the CLI for the filesystem half and the live half of the
+terminal view. Everything else works the moment the plugin is installed.
 
 ## Quickstart
 
@@ -98,6 +104,14 @@ marketplace = "github:strata-space/marketplace"
 ```
 
 Then run `/plugins` in Codex and install `strata`.
+
+### Pointing at another Strata deployment (Claude Code)
+
+The bundled `.mcp.json` reads `STRATA_API_URL`. Set it before starting Claude
+Code to use another deployment, for example
+`STRATA_API_URL=https://api.beta.strata.space claude`; unset, the production
+endpoint `https://api.strata.space` is used. The Cursor and Codex configs keep
+the production URL.
 
 ## Install the Strata CLI (optional)
 
@@ -255,6 +269,49 @@ skill — and never remediates by side effect.
 >
 > My edits aren't syncing / my save failed. Diagnose it.
 
+## The terminal document view (Claude Code)
+
+In Claude Code the plugin also ships a hooks module (`hooks/`) that turns the
+terminal into a document surface. It loads with the plugin; there is nothing
+to set up. Hooks modules are rolling out in Claude Code: on a build that does
+not have them yet, the plugin installs and works as before and the module
+stays idle until an update brings them.
+
+- **A pane opens when Claude reads a document.** `read_document` draws the
+  document, or the sections Claude read, in a pane beside the chat: an outline
+  strip (`0`–`9` jump to headings, `r` re-reads the whole), the revision, and
+  html embeds folded to a one-line placeholder (`show`/`fold` toggles the
+  source; embeds run in the web app, not the terminal). The pane docks on its
+  own in a wide terminal (144 columns); `/strata doc` opens it anywhere.
+- **A band above the prompt tracks what Claude has read.** It checks the
+  revision every ten seconds and shows `→ v<n> stale` when someone edits a
+  document after Claude read it; **Refresh stale** re-reads it into Claude's
+  context. **Hide** puts the band away for the session; `/strata band` brings
+  it back.
+- **Read with a cursor.** With the pane focused (`ctrl+x tab` cycles focus):
+  `j`/`k` move a cursor over paragraphs, `v` extends the selection, `c` posts
+  a comment anchored to the paragraph, `q` quotes it into your prompt, `s`
+  proposes a replacement as a suggestion, `a` asks Claude about it, `x`
+  clears. Comment threads draw under the paragraph they quote, with reply and
+  resolve. Writes from the pane always follow your keystroke; the module never
+  writes on its own.
+- **`/strata`** opens an explorer: search your Spaces, open a result in the
+  pane or read it into Claude's context, and a review queue of the suggestions
+  and comments made this session, with accept and reject.
+- **`@strata:`** in the prompt completes to a document from your Spaces. On
+  submit, the document's text reaches Claude as context and the mention reads
+  as the document's title and id.
+- **Live, with the CLI.** When a `strata` CLI with `doc watch` is installed and
+  signed in (`strata login`) to the deployment the document lives on, the pane follows the document live: edits appear
+  as they land, collaborators show in the header, and the section your cursor
+  is in shows as your presence in the web editor. `/strata live` reports or
+  switches it (`/strata live off`). Without the CLI the pane polls revisions
+  over MCP instead.
+
+Options under `/config` → plugin options: **strata CLI** (`cliPath`, default
+`strata` on `PATH`), **Live watch** (`liveWatch`), **Open the pane on read**
+(`autoOpen`).
+
 ## Getting documents onto disk: link vs mount vs snapshot
 
 There are three ways to get a Space's documents into a local folder. The
@@ -363,8 +420,10 @@ A few things you can check yourself:
 Layout:
 
 ```
-.claude-plugin/plugin.json   # plugin manifest
+.claude-plugin/plugin.json   # plugin manifest: skills, the hooks module's state contract and user options
 .mcp.json                    # auto-registers the Strata MCP server
+hooks/                       # Claude Code hooks module: register.tsx and its parts, tests beside them
+types/index.d.ts             # the hooks module's state contract (what it keeps in $.state)
 skills/
   strata-research/SKILL.md   # ask your Spaces (MCP)
   strata-publish/SKILL.md    # push local content up (MCP + CLI)
@@ -394,6 +453,20 @@ The MCP skills (`strata-research`, `strata-review`) are conversation-driven
 orchestration over the MCP server; there is no host-side bash to smoke-test, so
 they have no test runner. CI runs the platform-agnostic tests on every push and
 PR; per-OS first-mount tests are reserved for release rehearsal.
+
+The hooks module is TypeScript that Claude Code runs directly: no build step,
+no package manager. Validate and test it with the Claude Code CLI (CI runs
+both; `claude plugin test` exists only on a build with hooks modules enabled,
+and CI skips it with a notice elsewhere):
+
+```sh
+claude plugin validate .     # the manifest, and what the module hooks and calls
+claude plugin test .         # hooks/*.test.ts against the engine's test kit
+```
+
+To type-check, load the plugin once (`claude --plugin-dir .`): Claude Code
+lays its API types under `.claude-plugin/types/` (gitignored), which the
+repo's `tsconfig.json` extends; then `npx tsc -p .`.
 
 Presentation tests use the built-in Node.js test runner (Node.js 20+):
 

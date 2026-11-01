@@ -38,6 +38,18 @@ jobs:
         run: npm install -g @anthropic-ai/claude-code
       - name: claude plugin validate (plugin manifest)
         run: claude plugin validate .claude-plugin/plugin.json
+      - name: claude plugin validate (whole plugin, hooks module included)
+        run: claude plugin validate .
+      - name: claude plugin test (hooks module)
+        # Hooks modules are rolling out in Claude Code; a build without them has
+        # no `plugin test` and loads the plugin without the module. Run the tests
+        # where the command exists, and say so where it does not.
+        run: |
+          if claude plugin --help 2>&1 | grep -Eq '^\s+test\b'; then
+            claude plugin test .
+          else
+            echo "::notice::this Claude Code build has no 'claude plugin test' (hooks modules not enabled); the hooks module's tests were not run"
+          fi
 
   presentation:
     name: presentation skill checks

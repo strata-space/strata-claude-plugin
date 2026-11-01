@@ -5,8 +5,9 @@ Thanks for helping improve the Strata Claude plugin.
 ## What this repo ships
 
 Seven skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
-registers the Strata MCP server, and bash smoke tests. There is no application
-code, no build step, and no package manager.
+registers the Strata MCP server, a Claude Code hooks module under `hooks/`
+(TypeScript that Claude Code runs directly), and bash smoke tests. There is no
+build step and no package manager.
 
 Skills are **executed by Claude at runtime**, not by a script. Treat changes
 to `SKILL.md` like changes to a runbook, not refactoring source code.
@@ -25,6 +26,17 @@ to `SKILL.md` like changes to a runbook, not refactoring source code.
    ```bash
    shellcheck tests/*.sh
    ```
+   **Test the hooks module** if you touched `hooks/` or `types/`:
+   ```bash
+   claude plugin test .
+   ```
+   The command exists only on a Claude Code build with hooks modules enabled
+   (they are rolling out); on another build the plugin still validates and
+   loads without the module, which is why `hooks/hooks.json` carries both an
+   empty classic `hooks` record and the `modules` list.
+   To type-check, load the plugin once (`claude --plugin-dir .`), which lays
+   Claude Code's API types under `.claude-plugin/types/` (gitignored), then
+   `npx tsc -p .`.
 3. **Run the cross-platform smokes.**
    ```bash
    bash tests/git-mount-gitignore.sh

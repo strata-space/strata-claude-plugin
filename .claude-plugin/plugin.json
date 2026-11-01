@@ -2,9 +2,30 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "strata",
   "displayName": "StrataSpace",
-  "description": "Keep StrataSpace Spaces in live two-way sync as local Markdown folders (one background agent supervises every link) or mount them as virtual drives, and work with your StrataSpace documents in conversation through the bundled MCP server: research with citations, publish local content, review with comments, write and style blog posts, create and revise presentations, and diagnose connectivity. Skills: strata-spaces (mount lifecycle), strata-research, strata-publish, strata-review, strata-blog, strata-presentation, strata-doctor (connectivity & write-failure diagnosis).",
+  "description": "Keep StrataSpace Spaces in live two-way sync as local Markdown folders (one background agent supervises every link) or mount them as virtual drives, and work with your StrataSpace documents in conversation through the bundled MCP server: research with citations, publish local content, review with comments, write and style blog posts, create and revise presentations, and diagnose connectivity. In Claude Code, a document pane opens when Claude reads a document, a band tracks what Claude has read and when it changed, and with the strata CLI the pane follows the document live with collaborators' presence. Skills: strata-spaces (mount lifecycle), strata-research, strata-publish, strata-review, strata-blog, strata-presentation, strata-doctor (connectivity & write-failure diagnosis).",
   "version": "1.2.0",
   "license": "MIT",
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "cliPath": {
+      "type": "string",
+      "title": "strata CLI",
+      "description": "The strata CLI the live watch runs (`strata doc watch`): a path, or a name on PATH.",
+      "default": "strata"
+    },
+    "liveWatch": {
+      "type": "boolean",
+      "title": "Live watch",
+      "description": "Follow the pane's document live through the CLI when it is signed in; off, the pane polls revisions over MCP.",
+      "default": true
+    },
+    "autoOpen": {
+      "type": "boolean",
+      "title": "Open the pane on read",
+      "description": "Open the document pane unasked the first time Claude reads a Strata document in a wide enough terminal.",
+      "default": true
+    }
+  },
   "keywords": [
     "strataspace",
     "mcp",
@@ -12,7 +33,9 @@
     "fuse",
     "markdown",
     "knowledge-base",
-    "filesystem"
+    "filesystem",
+    "terminal",
+    "collaboration"
   ],
   "author": {
     "name": "StrataSpace",

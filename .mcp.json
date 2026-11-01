@@ -2,7 +2,7 @@
   "mcpServers": {
     "strata": {
       "type": "http",
-      "url": "https://api.strata.space/mcp",
+      "url": "${STRATA_API_URL:-https://api.strata.space}/mcp",
       "headers": {
         "X-Strata-Tool-Groups": "core,comments"
       }
