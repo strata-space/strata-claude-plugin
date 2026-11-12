@@ -15,7 +15,7 @@ A dual-host plugin (`strata`) for Claude Code and Codex that ships seven skills,
 - `skills/strata-doctor/SKILL.md`: diagnose why StrataSpace is not working — MCP connectivity (registered, signed in, write scope, tool groups) and, when the CLI is present, auth state, mount health, and the permission-denied (write-failure) diagnosis. Read-only: it routes to a fix, never remediates by side effect.
 - `skills/strata-blog/SKILL.md`: writes, converts, and styles blog posts through `blog:` frontmatter (cover, header image, wallpaper, metadata), checking `blogValidation`. Uses MCP without requiring the Strata CLI.
 - `skills/strata-presentation/SKILL.md`: creates and revises decks from a conversation, with grammar, theme, import, validation, and refresh references. Uses MCP without requiring the Strata CLI.
-- `.mcp.json`: registers the StrataSpace MCP server, with the `comments` tool group enabled, on install.
+- `.mcp.json`: registers the StrataSpace MCP server on install. It sends no headers; the server serves the `core` and `comments` tool groups by default.
 - `.claude-plugin/plugin.json` + `.codex-plugin/plugin.json`: the two host manifests. Versions stay in lockstep (release-please bumps both via extra-files; smoke.yml asserts equality). The marketplace that lists this plugin lives in its own repo, `strata-space/marketplace`.
 
 When editing skills, remember they are **executed by Claude at runtime**, not by a script. The SKILL.md body is prompt content + reference bash snippets that Claude reads and adapts. Treat changes to it like changes to a runbook, not like refactoring source code.

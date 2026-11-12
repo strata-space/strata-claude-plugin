@@ -307,17 +307,16 @@ yourself:
   "mcpServers": {
     "strata": {
       "type": "http",
-      "url": "https://api.strata.space/mcp",
-      "headers": { "X-Strata-Tool-Groups": "core,comments" }
+      "url": "https://api.strata.space/mcp"
     }
   }
 }
 ```
 
-The `X-Strata-Tool-Groups` header opts into the `comments` capability group so
-`strata-review` works (that group also exposes StrataSpace's suggestion tool, which
-`strata-review` deliberately does not use); drop the header entirely for
-read-only research and publishing. On the first tool call the server opens a
+No headers are needed: the server serves the core and comment tools by default,
+so `strata-review` works as is (the comment group also exposes StrataSpace's
+suggestion tool, which `strata-review` deliberately does not use). On the first
+tool call the server opens a
 browser for OAuth. That login is separate from the CLI's keychain token, but if
 you are already signed in to strata.space in your browser it completes in one
 click, because it reuses your browser session rather than your CLI token.
@@ -350,7 +349,8 @@ A few things you can check yourself:
 - **A tool call fails with an auth error.** The first call opens a browser for
   sign-in; complete it and retry. For the CLI half, run `strata login`.
 - **`strata-review` has no comment tool.** Re-authorize and accept the write
-  scope, and make sure your MCP config sends `X-Strata-Tool-Groups:core,comments`.
+  scope. If your MCP config sets an `X-Strata-Tool-Groups` header, remove it:
+  the server's default already includes the comment tools.
 - **A mount silently does nothing on macOS.** The FSKit module is installed but
   not approved — enable **Strata CLI** under System Settings → General → Login
   Items & Extensions → File System Extensions (use the **By Category** view).

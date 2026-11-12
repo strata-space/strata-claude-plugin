@@ -36,14 +36,14 @@ tools.
 
 ## Prerequisite check
 
-`create_comment` lives in the `comments` capability group, which the plugin's
-MCP registration enables, and it is a write operation, so the MCP session also
+`create_comment` lives in the `comments` capability group, which the server
+serves by default, and it is a write operation, so the MCP session also
 needs write scope. If `create_comment` is not available:
 
 - The `comments` group is not enabled on the connection, or the OAuth grant
-  has no write scope. Tell the user the MCP connection needs the
-  `X-Strata-Tool-Groups:core,comments` header (the bundled `.mcp.json` sets
-  it, so reconnect after confirming it) and write scope. Do not fall back to
+  has no write scope. Tell the user to remove any `X-Strata-Tool-Groups`
+  header from their MCP config (the server's default includes `comments`)
+  and to reconnect with write scope. Do not fall back to
   editing the document.
 
 ## Read first, with existing threads
