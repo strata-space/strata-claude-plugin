@@ -4,6 +4,13 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.2.1...strata--v1.2.2) (2026-11-11)
+
+
+### Fixed
+
+* move tests out so the directory accepts the plugin ([#73](https://github.com/strata-space/strata-claude-plugin/issues/73)) ([364b537](https://github.com/strata-space/strata-claude-plugin/commit/364b537fe28fff2757efb956383890736b35a8d5))
+
 ## [1.2.1](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.2.0...strata--v1.2.1) (2026-11-11)
 
 
