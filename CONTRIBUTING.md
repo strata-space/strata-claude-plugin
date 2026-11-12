@@ -5,8 +5,13 @@ Thanks for helping improve the StrataSpace Claude plugin.
 ## What this repo ships
 
 Seven skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
-registers the StrataSpace MCP server, and bash smoke tests. There is no application
-code, no build step, and no package manager.
+registers the StrataSpace MCP server. There is no application code, no build
+step, and no package manager. Tests live in
+[strata-space/strata-claude-plugin-tests](https://github.com/strata-space/strata-claude-plugin-tests).
+
+Do not add scripts or programs to this repo. The Claude plugin directory
+accepts only Markdown, text, JSON, YAML and images (PNG, JPEG, GIF, WebP, ICO)
+from an unverified organization, and refuses the whole version otherwise.
 
 Skills are **executed by Claude at runtime**, not by a script. Treat changes
 to `SKILL.md` like changes to a runbook, not refactoring source code.
@@ -21,21 +26,22 @@ to `SKILL.md` like changes to a runbook, not refactoring source code.
    warnings (useful for catching mistyped manifest fields), but note that
    the contributor `CLAUDE.md` at the repo root triggers a structural
    warning that does not apply to plugin users.
-2. **Lint shell.**
+2. **Run the tests** from a clone of
+   [strata-claude-plugin-tests](https://github.com/strata-space/strata-claude-plugin-tests)
+   next to this repo (see its README). At least:
    ```bash
-   shellcheck tests/*.sh
-   ```
-3. **Run the cross-platform smokes.**
-   ```bash
+   shellcheck -x tests/*.sh
    bash tests/git-mount-gitignore.sh
+   node --test tests/presentation/*.test.mjs
    ```
-4. **If you touched a runbook step**, replay the exact bash snippet from the
-   relevant `SKILL.md` in `tests/`. The point of the tests is to catch drift
-   between the runbook and the assertions — don't reimplement the logic.
+3. **If you touched a runbook step**, replay the exact bash snippet from the
+   relevant `SKILL.md` in that repo's `tests/`. The point of the tests is to
+   catch drift between the runbook and the assertions — don't reimplement the
+   logic.
 
 ## Hard rules these skills enforce
 
-These are spelled out in the `SKILL.md` files and asserted in `tests/`.
+These are spelled out in the `SKILL.md` files and asserted in the tests repo.
 Don't soften or remove them in a PR:
 
 - Every privileged command must be shown verbatim and gated on explicit
@@ -61,14 +67,8 @@ Don't soften or remove them in a PR:
 
 ## Test helper conventions
 
-`tests/_common.sh` exposes `ok`, `fail`, `assert_cmd_present`,
-`assert_file_exists`, `assert_jq_field`, and `summarize`. Every smoke script:
-
-1. `set -euo pipefail` at the top.
-2. Sources `_common.sh` via `HERE="$(cd "$(dirname "$0")" && pwd)" && . "$HERE/_common.sh"`.
-3. Uses `mktemp -d` with `trap … EXIT` cleanup. Never writes into the repo
-   or `$HOME` outside a temp dir.
-4. Ends with `summarize`, which exits non-zero if any `fail` was recorded.
+See the tests repo's `tests/_common.sh`. Smoke scripts read this plugin from
+`PLUGIN_ROOT`, which defaults to a sibling clone.
 
 ## Releasing
 
