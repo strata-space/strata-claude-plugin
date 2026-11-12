@@ -4,6 +4,14 @@ All notable changes to this plugin are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.2.0...strata--v1.2.1) (2026-11-11)
+
+
+### Fixed
+
+* strip embedded metadata from listing images ([#71](https://github.com/strata-space/strata-claude-plugin/issues/71)) ([e2e335c](https://github.com/strata-space/strata-claude-plugin/commit/e2e335c1e802a2c2e8c6d902b4606328e2d95b53))
+* use the StrataSpace product name in all user-facing text ([#70](https://github.com/strata-space/strata-claude-plugin/issues/70)) ([e5f2ab2](https://github.com/strata-space/strata-claude-plugin/commit/e5f2ab26a276214b0aac1c7e629aa8d13ebcea02))
+
 ## [1.2.0](https://github.com/strata-space/strata-claude-plugin/compare/strata--v1.1.2...strata--v1.2.0) (2026-10-27)
 
 
