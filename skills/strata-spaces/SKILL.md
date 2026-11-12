@@ -1,7 +1,7 @@
 ---
 name: strata-spaces
 description: >
-  Link or mount a StrataSpace Space (strata.space) as a local folder of Markdown
+  Link or mount a Space from StrataSpace (strata.space) as a local folder of Markdown
   files. First-run install of the strata CLI, browser login, Space pick,
   Git-safe setup, live two-way folder link (`strata link` / `unlink`, the
   recommended cross-platform path, no kernel extension), an optional
@@ -12,9 +12,9 @@ description: >
   locally", or any link/mount-lifecycle request.
 ---
 
-# StrataSpace Spaces
+# Link a Space to a local folder
 
-You operate the `strata` CLI on the user's behalf to put a StrataSpace Space (a
+You operate the `strata` CLI on the user's behalf to put a Space from StrataSpace (a
 collection of Markdown documents stored at strata.space) on disk as `.md` files:
 as a continuously synced folder, a live mounted volume, or a one-time snapshot.
 Edits and deletes on disk synchronise back to StrataSpace; users can read and edit

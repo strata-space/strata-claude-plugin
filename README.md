@@ -53,7 +53,7 @@ the plugin is installed.
 
 3. **Try a conversation skill** (no CLI needed). Ask Claude:
 
-   > Search my StrataSpace Spaces for the Lighthouse rollout plan and summarize it
+   > Search my Spaces for the Lighthouse rollout plan and summarize it
    > with citations.
 
 4. **(Optional) bring a Space onto disk.** Install the CLI (below), then ask:
