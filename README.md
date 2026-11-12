@@ -1,11 +1,11 @@
-# Strata Plugin for Claude Code and Codex
+# StrataSpace Plugin for Claude Code and Codex
 
 > This release switches MCP to `https://api.strata.space/mcp`. Update the plugin and authenticate again after the API hostname cutover. Manually configured MCP clients must re-add the server with the new URL.
 
-Work with your [Strata](https://strata.space) documents from inside Claude:
+Work with your [StrataSpace](https://strata.space) documents from inside Claude:
 link a folder to a Space for live two-way sync, mount your Spaces as local
 folders of Markdown, or read, search, publish, and review your documents
-directly in conversation, including writing blog posts and creating and revising presentations. Installing the plugin registers the Strata MCP server
+directly in conversation, including writing blog posts and creating and revising presentations. Installing the plugin registers the StrataSpace MCP server
 automatically (no setup step), so the in-conversation skills work out of the
 box; the filesystem skills add an optional CLI.
 
@@ -27,7 +27,7 @@ box; the filesystem skills add an optional CLI.
 ## What you get
 
 The plugin ships seven skills and a bundled `.mcp.json` that registers the
-Strata MCP server on install. Two halves:
+StrataSpace MCP server on install. Two halves:
 
 - **Conversation skills** use the MCP server without the Strata CLI. Search your Spaces, read
   documents, publish a draft, leave review comments, write and style blog posts, and create presentations
@@ -48,12 +48,12 @@ the plugin is installed.
    /plugin install strata@strata-space
    ```
 
-2. **Sign in** — the first Strata tool call opens a browser once for OAuth. If
+2. **Sign in** — the first StrataSpace tool call opens a browser once for OAuth. If
    you are already signed in to strata.space, it completes in a click.
 
 3. **Try a conversation skill** (no CLI needed). Ask Claude:
 
-   > Search my Strata Spaces for the Lighthouse rollout plan and summarize it
+   > Search my StrataSpace Spaces for the Lighthouse rollout plan and summarize it
    > with citations.
 
 4. **(Optional) bring a Space onto disk.** Install the CLI (below), then ask:
@@ -66,7 +66,7 @@ the plugin is installed.
 
 ## Install the plugin
 
-Add the Strata marketplace, then install the plugin:
+Add the StrataSpace marketplace, then install the plugin:
 
 ```
 /plugin marketplace add strata-space/marketplace
@@ -74,7 +74,7 @@ Add the Strata marketplace, then install the plugin:
 ```
 
 inside any Claude client that speaks the marketplace protocol. On install, the
-bundled `.mcp.json` registers the Strata MCP server with your client; on the
+bundled `.mcp.json` registers the StrataSpace MCP server with your client; on the
 first tool call it opens a browser once for sign-in. No further configuration is
 required for the conversation skills.
 
@@ -161,7 +161,7 @@ strata status         # shows auth, mounts, and sync sessions
   `strata-review`, `strata-blog`, `strata-presentation`, `strata-doctor` connectivity half) — an MCP client that supports remote HTTP servers with OAuth (in Claude Code, run `/mcp` and choose Authenticate on first use). No Strata CLI needed.
 - **Live folder link** (`strata link`, recommended) and **bulk folder publish**
   (`strata-publish` folder mode) — the Strata CLI only. Linking uses ordinary
-  files and the Strata background agent (one per-user login item that
+  files and the StrataSpace background agent (one per-user login item that
   supervises every linked folder; `strata agent status` shows it), **not** a
   kernel filesystem, so it works cross-platform (macOS, Linux, and Windows)
   on systems where a mount cannot (older macOS, WSL, containers) as long as
@@ -217,7 +217,7 @@ every validation finding and leaves the post as a draft for you to publish.
 
 ### `strata-presentation` — create and revise decks (MCP, no CLI)
 
-Authors a presentation as a Strata document from your prompt and source documents.
+Authors a presentation as a StrataSpace document from your prompt and source documents.
 Infers the audience, purpose, length, and theme, bundling necessary questions into
 one round. Supports slide edits, company themes, existing HTML deck import,
 validation, and export through the connected server's available tools.
@@ -240,7 +240,7 @@ static-snapshot pull when even a link is not wanted.
 >
 > Mount the Lighthouse Space as a virtual drive.
 
-### `strata-doctor` — diagnose why Strata is not working (MCP + CLI)
+### `strata-doctor` — diagnose why StrataSpace is not working (MCP + CLI)
 
 Read-only diagnostician. Probes the MCP connection (registered, signed in, write
 scope, tool groups) and, when the CLI is present, its auth state, environment
@@ -251,7 +251,7 @@ the most recent write failure (with the owner and a request-access link). It
 routes every finding to a fix — a command you run or a hand-off to the owning
 skill — and never remediates by side effect.
 
-> Strata isn't showing my documents in Claude — what's wrong?
+> StrataSpace isn't showing my documents in Claude — what's wrong?
 >
 > My edits aren't syncing / my save failed. Diagnose it.
 
@@ -268,7 +268,7 @@ There are three ways to get a Space's documents into a local folder. The
 
 **Live link** is the recommended path and the most portable: a background
 service keeps a folder and a Space in **two-way CRDT sync** — local saves push
-to Strata and remote edits land in the files within seconds — cross-platform on
+to StrataSpace and remote edits land in the files within seconds — cross-platform on
 macOS and Linux, with no kernel extension and no permissions. Concurrent editing
 on both sides is safe: the service does a base-aware three-way merge and pauses a
 local overwrite while you are mid-edit, so there is no clobber window. By default
@@ -296,7 +296,7 @@ strata status --json | jq '{mounts, syncSessions, pendingJournal, blockedMounts}
 
 ## Other MCP clients
 
-Claude Code picks up the Strata MCP server from the bundled `.mcp.json`
+Claude Code picks up the StrataSpace MCP server from the bundled `.mcp.json`
 (authenticate once via `/mcp`); Claude Desktop and claude.ai use the StrataSpace
 connector from the Connectors directory, and Cursor reads the bundled `mcp.json`.
 For another MCP client (VS Code, Zed, Continue, Cline, Windsurf), add the server to that client's MCP config
@@ -315,7 +315,7 @@ yourself:
 ```
 
 The `X-Strata-Tool-Groups` header opts into the `comments` capability group so
-`strata-review` works (that group also exposes Strata's suggestion tool, which
+`strata-review` works (that group also exposes StrataSpace's suggestion tool, which
 `strata-review` deliberately does not use); drop the header entirely for
 read-only research and publishing. On the first tool call the server opens a
 browser for OAuth. That login is separate from the CLI's keychain token, but if
@@ -327,7 +327,7 @@ click, because it reuses your browser session rather than your CLI token.
 Every privileged command (`brew install`, `apt install`, `dnf install`,
 `pacman`, `zypper`, `apk`, `sudo usermod`, `diskutil unmount force`,
 `fusermount3 -uz`) is proposed in conversation and requires explicit user
-confirmation before execution. Operations that write to your Strata content
+confirmation before execution. Operations that write to your StrataSpace content
 (publishing, commenting) are confirmed in conversation before the first write.
 Deleting a synced file unlinks the document from the Space (reversible, never
 destroyed) and propagates immediately. No binary download
@@ -340,11 +340,11 @@ from your CLI auth state.
 The fastest path is to ask Claude — the `strata-doctor` skill runs a full
 read-only diagnosis and routes each finding to a fix:
 
-> Diagnose my Strata setup.
+> Diagnose my StrataSpace setup.
 
 A few things you can check yourself:
 
-- **The Strata tools are missing in Claude.** The plugin's `.mcp.json` registers
+- **The StrataSpace tools are missing in Claude.** The plugin's `.mcp.json` registers
   the server on install; confirm the `strata` plugin is installed and enabled,
   and restart Claude if you just installed it.
 - **A tool call fails with an auth error.** The first call opens a browser for
@@ -364,7 +364,7 @@ Layout:
 
 ```
 .claude-plugin/plugin.json   # plugin manifest
-.mcp.json                    # auto-registers the Strata MCP server
+.mcp.json                    # auto-registers the StrataSpace MCP server
 skills/
   strata-research/SKILL.md   # ask your Spaces (MCP)
   strata-publish/SKILL.md    # push local content up (MCP + CLI)
@@ -402,7 +402,7 @@ node --test tests/presentation/*.test.mjs
 ```
 
 The import cases and documentation overview are committed snapshots, so CI
-needs neither the monorepo nor Strata credentials. For release rehearsal against
+needs neither the monorepo nor StrataSpace credentials. For release rehearsal against
 a freshly generated platform corpus, pass its manifest explicitly:
 
 ```sh

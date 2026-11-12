@@ -1,29 +1,29 @@
 ---
 name: strata-publish
 description: >
-  Push local content up into Strata (strata.space). Creates a single document
+  Push local content up into StrataSpace (strata.space). Creates a single document
   from a draft or file, or syncs a whole folder of Markdown into a Space
   (new files become documents, changed files update them, removed files are
-  trashed). Use for "publish this to Strata", "push my /docs folder to a
-  Space", "upload this draft", "sync my local notes up to Strata". A single
-  document needs only the Strata MCP connection; pushing a folder needs the
+  trashed). Use for "publish this to StrataSpace", "push my /docs folder to a
+  Space", "upload this draft", "sync my local notes up to StrataSpace". A single
+  document needs only the StrataSpace MCP connection; pushing a folder needs the
   `strata` CLI.
 ---
 
-# Strata publish
+# StrataSpace publish
 
-Get local content into Strata. Two shapes, two paths. Decide which the user
+Get local content into StrataSpace. Two shapes, two paths. Decide which the user
 is asking for before doing anything:
 
 - **One document** (a draft in the conversation, or a single file): use the
-  Strata MCP `create_document` tool. No CLI needed, unless you are filing it into
+  StrataSpace MCP `create_document` tool. No CLI needed, unless you are filing it into
   a Space (see "Into a Space" below).
 - **A folder of Markdown** (many files, possibly nested): use the `strata`
   CLI's `sync push`. This is the only path that handles creates, updates, and
   deletes in one operation, and the only one that can preserve a nested folder
   structure (with `--folders`; see below).
 
-This skill writes to the user's Strata content. Confirm the target and the
+This skill writes to the user's StrataSpace content. Confirm the target and the
 scope of the change before the first write, every time.
 
 ## Single document (MCP)
@@ -58,7 +58,7 @@ To change a document's audience afterward, **move it to a different folder**:
 
 To replace the body of a document that already exists, use `replace_document_text`
 for a targeted `oldString`/`newString` edit, or `rewrite_document`
-(full replacement) instead of creating a duplicate. Search with the Strata
+(full replacement) instead of creating a duplicate. Search with the StrataSpace
 `find` tool first if you are unsure whether the document already exists.
 
 ### Into a Space
@@ -156,7 +156,7 @@ Now show the user exactly what the push will do and gate on explicit consent:
 
 > Plugin proposes: push the contents of `<dir>` to Space `<name>`. New files
 > become new documents, changed files update existing ones, and files you have
-> deleted locally are moved to Strata's trash (recoverable for 30 days from the
+> deleted locally are moved to StrataSpace's trash (recoverable for 30 days from the
 > web app). Proceed? [y/N]
 
 Run the push only on `y`. Use `--json` so the result is machine-readable; this
@@ -166,8 +166,8 @@ reason: the conversation consent above is the gate.
 
 By default the push is **flat**: every document lands at the Space root,
 regardless of local subdirectories. If the folder is nested and the user wants
-that structure mirrored in Strata, add `--folders`. It recreates each
-subdirectory as a Strata folder and files documents into them. Confirm with the
+that structure mirrored in StrataSpace, add `--folders`. It recreates each
+subdirectory as a StrataSpace folder and files documents into them. Confirm with the
 user which they want when the folder has subdirectories; mention that without
 `--folders`, nested files flatten to the root.
 
@@ -186,7 +186,7 @@ Report the result honestly from the JSON
 > Pushed to <name>: 3 created, 1 updated, 0 deleted.
 
 If `status` is `partial` or `errors[]` is non-empty, surface each error
-verbatim. A common one is a per-file conflict: the document changed on Strata
+verbatim. A common one is a per-file conflict: the document changed on StrataSpace
 since the last sync. Do not silently retry or force past a conflict; show the
 user the conflicting file and let them decide.
 
@@ -194,6 +194,6 @@ user the conflicting file and let them decide.
 
 - Resolving merge conflicts. Report them and point at the web app; the skill
   does not overwrite a conflicting remote document.
-- Server-side repository indexing (pushing a codebase's interfaces into Strata
+- Server-side repository indexing (pushing a codebase's interfaces into StrataSpace
   search). That is a separate platform feature, not a CLI push.
 - Leaving comments or review feedback: use `strata-review`.
