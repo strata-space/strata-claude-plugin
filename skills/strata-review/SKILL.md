@@ -1,15 +1,15 @@
 ---
 name: strata-review
 description: >
-  Review a Strata document (strata.space) and leave anchored comments on it,
+  Review a StrataSpace document (strata.space) and leave anchored comments on it,
   rather than silently rewriting it. Reads the document, drafts feedback tied
-  to exact passages, and posts it as comments through the Strata MCP server.
-  Use for "review this Strata doc and leave comments", "mark up this document",
+  to exact passages, and posts it as comments through the StrataSpace MCP server.
+  Use for "review this StrataSpace doc and leave comments", "mark up this document",
   "leave feedback on X without changing it", "comment on the parts that need
   work". No CLI install required.
 ---
 
-# Strata review
+# StrataSpace review
 
 Review a document the way a careful colleague would: read it, then leave
 comments anchored to the exact passages they refer to. This skill never edits
@@ -19,8 +19,8 @@ and resolve. To change the text itself, that is `strata-publish`
 
 ## Comments only, by design
 
-This skill uses Strata's comment tools and nothing else: `create_comment`,
-`list_comments` and `set_comment_resolved`. Strata also has suggestion tools
+This skill uses StrataSpace's comment tools and nothing else: `create_comment`,
+`list_comments` and `set_comment_resolved`. StrataSpace also has suggestion tools
 (`propose_suggestion` and its accept, reject and withdraw counterparts) that
 propose concrete text replacements the author can accept in one click. They
 sit in the same MCP capability group as comments, so they may appear in the

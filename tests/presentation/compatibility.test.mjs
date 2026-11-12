@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-// The committed corpus snapshot makes plugin CI independent of Strata credentials.
+// The committed corpus snapshot makes plugin CI independent of StrataSpace credentials.
 // Set STRATA_DOCS_MANIFEST to a freshly generated platform manifest for release rehearsal.
 test('the documentation grammar is inside the presentation skill compatibility range', () => {
   const skill = readFileSync(new URL('../../skills/strata-presentation/SKILL.md', import.meta.url), 'utf8');

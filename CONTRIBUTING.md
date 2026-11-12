@@ -1,11 +1,11 @@
 # Contributing
 
-Thanks for helping improve the Strata Claude plugin.
+Thanks for helping improve the StrataSpace Claude plugin.
 
 ## What this repo ships
 
 Seven skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
-registers the Strata MCP server, and bash smoke tests. There is no application
+registers the StrataSpace MCP server, and bash smoke tests. There is no application
 code, no build step, and no package manager.
 
 Skills are **executed by Claude at runtime**, not by a script. Treat changes
@@ -40,7 +40,7 @@ Don't soften or remove them in a PR:
 
 - Every privileged command must be shown verbatim and gated on explicit
   `[y/N]` consent. If declined, route to snapshot-fallback (`strata-spaces`)
-  or stop. Never retry silently. Skills that write to Strata content
+  or stop. Never retry silently. Skills that write to StrataSpace content
   (`strata-publish`, `strata-review`) confirm in conversation before the
   first write.
 - The Linux CLI install path reads the GitHub release `digest` and refuses

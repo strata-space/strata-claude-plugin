@@ -1,18 +1,18 @@
 ---
 name: strata-blog
 description: >
-  Write, revise, or style a Strata blog post (strata.space): draft an article
-  from a conversation or notes, turn an existing Strata document into a post,
+  Write, revise, or style a StrataSpace blog post (strata.space): draft an article
+  from a conversation or notes, turn an existing StrataSpace document into a post,
   and set its `blog:` frontmatter (summary, tags, cover thumbnail, header
   image, typography, colors, wallpaper, series). Use for "turn this doc into a
-  blog post", "write a blog post about X in Strata", "add a cover / header
+  blog post", "write a blog post about X in StrataSpace", "add a cover / header
   image to my post", "style my post", "give my post a wallpaper", "get this
-  post ready to publish". Uses the Strata MCP server; no CLI required.
+  post ready to publish". Uses the StrataSpace MCP server; no CLI required.
 ---
 
-# Strata blog posts
+# StrataSpace blog posts
 
-A Strata blog post is an ordinary prose document whose first YAML frontmatter block holds a `blog:` mapping. The article is plain Markdown; the mapping controls appearance and discovery. The **Post appearance** panel in the app edits the same frontmatter, so humans and agents share one source. Tool prefixes depend on the host; discover the connected server's `find`, `read_document`, `create_document`, `replace_document_text` and `rewrite_document` schemas before calling them.
+A StrataSpace blog post is an ordinary prose document whose first YAML frontmatter block holds a `blog:` mapping. The article is plain Markdown; the mapping controls appearance and discovery. The **Post appearance** panel in the app edits the same frontmatter, so humans and agents share one source. Tool prefixes depend on the host; discover the connected server's `find`, `read_document`, `create_document`, `replace_document_text` and `rewrite_document` schemas before calling them.
 
 ## Load the live rules first
 

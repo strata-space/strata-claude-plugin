@@ -1,14 +1,14 @@
 ---
 name: strata-presentation
-description: Author or revise a Strata presentation from a conversation, adapt an existing deck file, and import company design tokens. Use for Strata deck authoring, slide edits, themes, notes, and presentation import or export requests.
+description: Author or revise a StrataSpace presentation from a conversation, adapt an existing deck file, and import company design tokens. Use for StrataSpace deck authoring, slide edits, themes, notes, and presentation import or export requests.
 metadata:
   grammar-version-min: "1"
   grammar-version-max: "1"
 ---
 
-# Strata presentations
+# StrataSpace presentations
 
-Create a presentation as an ordinary Strata document with leading YAML presentation settings. Use the connected server's `find`, `read_document`, `create_document`, `replace_document_text`, `rewrite_document`, `insert_document_section`, `presign_document_upload` and `finalize_document_upload` tools; tool prefixes depend on the host. `edit_document` is the deprecated bundled form: current servers still accept it but leave it out of the tool list, so do not plan around it. Discover their actual schemas before calling them.
+Create a presentation as an ordinary StrataSpace document with leading YAML presentation settings. Use the connected server's `find`, `read_document`, `create_document`, `replace_document_text`, `rewrite_document`, `insert_document_section`, `presign_document_upload` and `finalize_document_upload` tools; tool prefixes depend on the host. `edit_document` is the deprecated bundled form: current servers still accept it but leave it out of the tool list, so do not plan around it. Discover their actual schemas before calling them.
 
 The document grammar, theme resolver, reader edition projection, shared deck stage, text layouts, and presentation routes are available. Discover the connected tool schemas before validation or export; `export_presentation` supports standalone HTML and PDF on current servers, and rejects opaque whole-deck HTML because note removal cannot be established.
 
@@ -51,7 +51,7 @@ Change a bound number in its named data block, leaving the visual intact. The ex
 
 ```json
 {
-  "documentId": "<document ID returned by Strata>",
+  "documentId": "<document ID returned by StrataSpace>",
   "oldString": "<strong id=\"s03-retention-value\">84%</strong>",
   "newString": "<strong id=\"s03-retention-value\">87%</strong>",
   "replaceAll": false

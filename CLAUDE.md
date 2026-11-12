@@ -4,16 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A dual-host plugin (`strata`) for Claude Code and Codex that ships seven skills, a bundled `.mcp.json` that registers the Strata MCP server, and a set of bash smoke tests. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files plus their test runners.
+A dual-host plugin (`strata`) for Claude Code and Codex that ships seven skills, a bundled `.mcp.json` that registers the StrataSpace MCP server, and a set of bash smoke tests. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files plus their test runners.
 
 - `skills/strata-research/SKILL.md`: answer a question from the user's Spaces with citations, over the MCP server (read-only, no CLI).
 - `skills/strata-publish/SKILL.md`: push local content up. `create_document` for a single doc, `strata sync push` for a folder.
 - `skills/strata-review/SKILL.md`: leave anchored comments on a document via the MCP `create_comment` tool; never rewrites the body.
 - `skills/strata-spaces/SKILL.md`: operates the user's `strata` CLI to mount a Space as a local Markdown folder (macOS FSKit / Linux FUSE), with a static-snapshot fallback when a live mount is impossible.
-- `skills/strata-doctor/SKILL.md`: diagnose why Strata is not working — MCP connectivity (registered, signed in, write scope, tool groups) and, when the CLI is present, auth state, mount health, and the permission-denied (write-failure) diagnosis. Read-only: it routes to a fix, never remediates by side effect.
+- `skills/strata-doctor/SKILL.md`: diagnose why StrataSpace is not working — MCP connectivity (registered, signed in, write scope, tool groups) and, when the CLI is present, auth state, mount health, and the permission-denied (write-failure) diagnosis. Read-only: it routes to a fix, never remediates by side effect.
 - `skills/strata-blog/SKILL.md`: writes, converts, and styles blog posts through `blog:` frontmatter (cover, header image, wallpaper, metadata), checking `blogValidation`. Uses MCP without requiring the Strata CLI.
 - `skills/strata-presentation/SKILL.md`: creates and revises decks from a conversation, with grammar, theme, import, validation, and refresh references. Uses MCP without requiring the Strata CLI.
-- `.mcp.json`: registers the Strata MCP server, with the `comments` tool group enabled, on install.
+- `.mcp.json`: registers the StrataSpace MCP server, with the `comments` tool group enabled, on install.
 - `.claude-plugin/plugin.json` + `.codex-plugin/plugin.json`: the two host manifests. Versions stay in lockstep (release-please bumps both via extra-files; smoke.yml asserts equality). The marketplace that lists this plugin lives in its own repo, `strata-space/marketplace`.
 
 When editing skills, remember they are **executed by Claude at runtime**, not by a script. The SKILL.md body is prompt content + reference bash snippets that Claude reads and adapts. Treat changes to it like changes to a runbook, not like refactoring source code.
@@ -44,7 +44,7 @@ CI (`.github/workflows/smoke.yml`) runs `shellcheck` then the cross-platform sub
 
 These are load-bearing rules the SKILL.md files spell out; don't soften or remove them when editing.
 
-- **Explicit per-command consent.** Every privileged operation (`brew install`, `apt/dnf/pacman/zypper/apk`, `sudo usermod`, `diskutil unmount force`, `fusermount3 -uz`) must be shown verbatim and gated on `[y/N]` before execution. If declined, route to snapshot-fallback (`strata-spaces`) or stop. Never retry silently. Writes to Strata content (`strata-publish`, `strata-review`) are confirmed in conversation before the first write.
+- **Explicit per-command consent.** Every privileged operation (`brew install`, `apt/dnf/pacman/zypper/apk`, `sudo usermod`, `diskutil unmount force`, `fusermount3 -uz`) must be shown verbatim and gated on `[y/N]` before execution. If declined, route to snapshot-fallback (`strata-spaces`) or stop. Never retry silently. Writes to StrataSpace content (`strata-publish`, `strata-review`) are confirmed in conversation before the first write.
 - **SHA-256 verification.** The Linux CLI install path fetches the GitHub release asset, reads the matching `digest` from the release JSON, and refuses to extract on mismatch. Keep this check intact.
 - **Destructive-path refusal.** `strata-spaces` must reject `/`, `/usr`, `/var`, `/tmp`, `/etc`, `/bin`, `/sbin`, `/dev`, `/sys`, `/proc`, `$HOME`, `.`, and any path that already contains `*.md` content. `git-mount-gitignore.sh` asserts the refusal list.
 - **Git-tree safety.** When mounting inside a git work tree, `spaces/` must be added to `.gitignore` (or `.git/info/exclude`) before the mount is created. The skill must never `git add` or `git commit` the change — the user owns commits.

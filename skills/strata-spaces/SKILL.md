@@ -1,23 +1,23 @@
 ---
 name: strata-spaces
 description: >
-  Link or mount a Strata Space (strata.space) as a local folder of Markdown
+  Link or mount a Space from StrataSpace (strata.space) as a local folder of Markdown
   files. First-run install of the strata CLI, browser login, Space pick,
   Git-safe setup, live two-way folder link (`strata link` / `unlink`, the
   recommended cross-platform path, no kernel extension), an optional
   virtual-drive mount (`strata mount`, macOS FSKit / Linux FUSE), lifecycle
   (list, unlink, unmount, recover stuck sessions), and a static-snapshot
   fallback when neither is possible. Use for "link my Space", "keep a folder in
-  sync", "mount my Space", "open my Strata docs as files", "sync Strata
+  sync", "mount my Space", "open my StrataSpace docs as files", "sync StrataSpace
   locally", or any link/mount-lifecycle request.
 ---
 
-# Strata Spaces
+# Link a Space to a local folder
 
-You operate the `strata` CLI on the user's behalf to put a Strata Space (a
+You operate the `strata` CLI on the user's behalf to put a Space from StrataSpace (a
 collection of Markdown documents stored at strata.space) on disk as `.md` files:
 as a continuously synced folder, a live mounted volume, or a one-time snapshot.
-Edits and deletes on disk synchronise back to Strata; users can read and edit
+Edits and deletes on disk synchronise back to StrataSpace; users can read and edit
 with any editor.
 
 Every privileged command (package install, system-extension toggle, force
@@ -110,7 +110,7 @@ For `windows-or-other`: on native Windows the CLI ships as
 not yet code-signed — extract, keep `strata.exe` and `st-agent.exe` together,
 add the folder to `PATH`). Live links and snapshots work there; mounts do
 not. On anything else with no CLI build, no live or snapshot option exists;
-note the plugin already registers the Strata MCP server, so the user can
+note the plugin already registers the StrataSpace MCP server, so the user can
 read, search, and edit documents in conversation through the
 `strata-research`, `strata-publish`, and `strata-review` siblings.
 
@@ -308,8 +308,8 @@ strata status --json | jq -r --arg id "$space_id" '
 
 Tell the user what writable means in their next sentence:
 
-> The folder is now live. Edits sync back to Strata. Files you delete go to
-> Strata's trash (recoverable from the web app for 30 days). To unmount, ask
+> The folder is now live. Edits sync back to StrataSpace. Files you delete go to
+> StrataSpace's trash (recoverable from the web app for 30 days). To unmount, ask
 > me or run `strata unmount <space>`.
 
 On non-zero exit, show the CLI's stderr in a fenced block and offer two
@@ -384,20 +384,20 @@ The same safety rails as a mount apply, because it writes real files into a
 folder: reuse the **Mount path selection** destructive-path refusal and the
 **Git-tree** `.gitignore` handling above before creating the folder.
 
-`strata link` hands the folder to the **Strata agent** — one per-user
+`strata link` hands the folder to the **StrataSpace agent** — one per-user
 background service that supervises every linked folder and restarts at login
 (launchd on macOS, systemd on Linux, Task Scheduler on Windows). The first
 link installs the agent's login item, so get explicit consent first:
 
-> Plugin proposes: `strata link "$folder" --space "$space_id"` — the Strata
+> Plugin proposes: `strata link "$folder" --space "$space_id"` — the StrataSpace
 > background agent keeps the folder synced and restarts at login (the first
 > link installs the agent as a login item). Run it? [y/N]
 
 Tell the user what continuous sync means before the first run:
 
 > This keeps the folder and the Space in two-way sync: your local saves push to
-> Strata and remote edits land in the files within seconds. Deletes propagate to
-> Strata's trash (recoverable for 30 days). Stop and remove it with `strata
+> StrataSpace and remote edits land in the files within seconds. Deletes propagate to
+> StrataSpace's trash (recoverable for 30 days). Stop and remove it with `strata
 > unlink <space>`; `strata unlink <space> --pause` pauses it (re-running
 > `strata link` on the folder resumes). `strata agent status` shows the
 > agent that runs it all.
@@ -467,7 +467,7 @@ the file. If a sync session is interrupted or stuck, recover it by re-running
 
 The snapshot path below pulls; the inverse one-time upload is `strata sync push`.
 By default push is flat (new docs land at the Space root). Pass `--folders` to
-recreate the local directory tree as Strata folders and file new documents into
+recreate the local directory tree as StrataSpace folders and file new documents into
 them:
 
 ```bash
@@ -494,7 +494,7 @@ Explain the tradeoff in one short paragraph:
 
 > Live mounting is not available on this system. I can pull your Space's
 > documents as static Markdown files instead. You will not get live sync
-> (edits to the files will not push back to Strata), but you keep local
+> (edits to the files will not push back to StrataSpace), but you keep local
 > read and edit access for offline use. If you'd rather keep it in sync, I can
 > set up live folder sync instead — it works here without a mount.
 

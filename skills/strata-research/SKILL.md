@@ -1,23 +1,23 @@
 ---
 name: strata-research
 description: >
-  Answer a question from the user's Strata knowledge base (strata.space) with
-  citations. Searches their Spaces and documents over the Strata MCP server,
+  Answer a question from the user's StrataSpace knowledge base (strata.space) with
+  citations. Searches their Spaces and documents over the StrataSpace MCP server,
   reads the most relevant hits, follows document links for context, and
-  synthesises an answer that links back to each source. Use for "ask my Strata
+  synthesises an answer that links back to each source. Use for "ask my StrataSpace
   docs", "what do we know about X", "summarize what our Space says about Y",
-  "find the doc about Z", or any question answerable from the user's Strata
+  "find the doc about Z", or any question answerable from the user's StrataSpace
   content. No CLI install and no filesystem mount required.
 ---
 
-# Strata research
+# StrataSpace research
 
-Answer the user's question from their Strata content using the Strata MCP
+Answer the user's question from their StrataSpace content using the StrataSpace MCP
 tools that the plugin registers (`find`, `read_document`, `get_document_graph`).
 This skill is read-only: it never edits, comments on, or publishes anything.
 For those, use the `strata-publish` or `strata-review` siblings.
 
-The Strata MCP server is registered automatically by the plugin's `.mcp.json`.
+The StrataSpace MCP server is registered automatically by the plugin's `.mcp.json`.
 If its tools are not available, the MCP connection is not live: tell the user to
 confirm the plugin is installed and to reconnect their client (the bundled
 `.mcp.json` registers the server on install), rather than guessing.
@@ -35,7 +35,7 @@ fits the question, because narrow scopes return cleaner results:
   `scope = { "type": "document", "id": "doc_..." }` with `intent="related"` to
   pull neighbours.
 - Anything broader, or you are unsure: `scope = { "type": "all" }`.
-- The question is about Strata itself (how agents, prompts, MCP tools, Spaces
+- The question is about StrataSpace itself (how agents, prompts, MCP tools, Spaces
   work): `scope = { "type": "strataDocumentation" }`.
 
 ## Search, then broaden before reformulating
@@ -82,7 +82,7 @@ documents state from your own inference.
 
 ## Out of scope
 
-- Writing answers back into Strata: that is `strata-publish` (new doc) or
+- Writing answers back into StrataSpace: that is `strata-publish` (new doc) or
   `strata-review` (comments).
 - Editing or restructuring documents.
 - Anything requiring the `strata` CLI or a filesystem mount: this skill is

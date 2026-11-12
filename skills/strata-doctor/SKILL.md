@@ -1,21 +1,21 @@
 ---
 name: strata-doctor
 description: >
-  Diagnose why Strata is not working in Claude and map each failure to a
-  concrete next step. Probes the Strata MCP connection (registered, signed in,
+  Diagnose why StrataSpace is not working in Claude and map each failure to a
+  concrete next step. Probes the StrataSpace MCP connection (registered, signed in,
   write scope, tool groups), and — when the strata CLI is present — the
   background agent's health (running/stale/not installed), its auth state,
   mount health, live folder-link health (stuck/paused/degraded sync sessions,
   pending write journal, blocked supervised mounts), and the most recent
-  write failure (owner + request-access link). Use for "Strata isn't
+  write failure (owner + request-access link). Use for "StrataSpace isn't
   working in Claude", "why can't I see my docs", "my save failed", "my edits
-  aren't syncing", "sync is stuck/paused", "permission denied on a Strata file",
-  "is Strata connected", or "the Strata tools are missing". No CLI install
+  aren't syncing", "sync is stuck/paused", "permission denied on a StrataSpace file",
+  "is StrataSpace connected", or "the StrataSpace tools are missing". No CLI install
   required for the MCP half; the CLI half degrades gracefully when strata is not
   on PATH.
 ---
 
-# Strata doctor
+# StrataSpace doctor
 
 You are a diagnostician, not a surgeon. Every check below is read-only:
 a probe `find`, `command -v`, `strata status --json`, reading config. You never
@@ -36,14 +36,14 @@ Finish with the consolidated report so the user leaves with one clear next step.
 These are two different failures with two different fixes, so distinguish them
 by what you can observe:
 
-- **The Strata MCP tools are not in your toolkit at all** (no `find`,
+- **The StrataSpace MCP tools are not in your toolkit at all** (no `find`,
   `read_document`, etc.). The server is **not registered**. The plugin's
   `.mcp.json` is supposed to register it automatically on install, so tell the
   user to confirm the `strata` plugin is installed and enabled, and to restart
   Claude if they just installed it. Editing `.mcp.json` is out of scope here —
   point at it, do not modify it.
 - **The tools exist but a call fails.** The server is registered but
-  unreachable or not yet authorized. Run a minimal probe — call the Strata
+  unreachable or not yet authorized. Run a minimal probe — call the StrataSpace
   `find` tool with intent `list`, scope `spaces`, a small `limit` — and read
   the error. A network/5xx error means the endpoint is down; an auth error
   routes to the next check. (Use `list`, not `recent`: `recent` is plan-gated,
@@ -51,10 +51,10 @@ by what you can observe:
 
 ### Signed in?
 
-The first Strata MCP tool call in a session opens a browser for OAuth sign-in.
+The first StrataSpace MCP tool call in a session opens a browser for OAuth sign-in.
 If the probe returned an authentication error, the grant has not completed:
 
-> The Strata MCP server needs you to sign in. A browser window should open on
+> The StrataSpace MCP server needs you to sign in. A browser window should open on
 > the next tool call — complete the sign-in there, then ask me to retry.
 
 After the user confirms, re-run the probe `find`.
@@ -102,7 +102,7 @@ Do not install it here.
 
 ### Agent-era CLI? (version gate)
 
-Modern CLIs run all background sync under one per-user **Strata agent** (a
+Modern CLIs run all background sync under one per-user **StrataSpace agent** (a
 single login item supervising every linked folder and mount), and
 `strata status --json` carries a top-level `agent` block. Gate on it before
 using any agent-era advice below:
@@ -294,7 +294,7 @@ volume), leaving the volume mounted and its carrier `/dev/diskN` attached:
 
 ```bash
 [ "$(uname -s)" = Darwin ] && {
-  /sbin/mount | grep -i fskit || true                                  # Strata volumes still mounted
+  /sbin/mount | grep -i fskit || true                                  # StrataSpace volumes still mounted
   hdiutil info 2>/dev/null | grep -i 'strata/fskit/.*carrier' || true   # carriers still attached
 }
 ```

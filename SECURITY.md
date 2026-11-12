@@ -11,7 +11,7 @@ for security reports. We aim to acknowledge within 3 business days.
 This repository ships Claude Code skills, some of which run privileged
 operations on the user's machine (package installs, system-extension toggles,
 force unmounts, group membership changes) and some of which write to the
-user's Strata content over the MCP server. Reports we are particularly
+user's StrataSpace content over the MCP server. Reports we are particularly
 interested in:
 
 - A path by which the skill executes a privileged command **without** the
@@ -25,7 +25,7 @@ interested in:
 - A path that writes user data into a git work tree without first updating
   `.gitignore` or `.git/info/exclude`.
 - A path by which `strata-publish` or `strata-review` writes to the user's
-  Strata content without the documented in-conversation consent.
+  StrataSpace content without the documented in-conversation consent.
 
 ## Out of scope
 
