@@ -5,7 +5,6 @@ StrataSpace is a hosted remote MCP server. There is nothing to build or run loca
 - Transport: Streamable HTTP
 - URL: `https://api.strata.space/mcp`
 - Auth: OAuth 2.1 with dynamic client registration. The client opens a browser for sign-in on first use; no API key.
-- Optional header: `X-Strata-Tool-Groups: core,comments` selects tool groups.
 
 ## Cline
 
@@ -16,8 +15,7 @@ Add to `cline_mcp_settings.json`:
   "mcpServers": {
     "strataspace": {
       "type": "streamableHttp",
-      "url": "https://api.strata.space/mcp",
-      "headers": { "X-Strata-Tool-Groups": "core,comments" }
+      "url": "https://api.strata.space/mcp"
     }
   }
 }

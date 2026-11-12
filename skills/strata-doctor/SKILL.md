@@ -74,17 +74,17 @@ their absence says nothing about scope.
 
 ### Tool groups active?
 
-The comment and suggestion tools (group `comments`) and the agent tools
-(group `agents`) are gated behind the `X-Strata-Tool-Groups` header. The plugin
-sends `core,comments`. The MCP server echoes the **active** groups in its
-instructions string ("Active groups: …"). Compare:
+The server serves the `core` and `comments` groups by default; the plugin sends
+no group header. A client can narrow or widen that with an optional
+`X-Strata-Tool-Groups` header. Check whether `create_comment` and
+`list_comments` are in the toolkit:
 
-- If the server reports `core` only but the user expects review/comments to
-  work, the configured header is not reaching the server. Surface the mismatch
-  ("configured: core,comments — active: core") and point at the plugin's
-  `.mcp.json`; do not edit it.
-- If the active groups include `comments`, the review surface is available and
-  the problem is elsewhere (scope, or the document itself).
+- If they are missing but the user expects review/comments to work, the
+  client's MCP config most likely sets an `X-Strata-Tool-Groups` header
+  without `comments`. Surface it and tell the user to remove that header (or
+  add `comments` to it); do not edit the config yourself.
+- If they are present, the review surface is available and the problem is
+  elsewhere (scope, or the document itself).
 
 ## Layer 2 — CLI state (only when `strata` is on PATH)
 
