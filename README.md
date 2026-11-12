@@ -373,44 +373,13 @@ skills/
   strata-presentation/      # deck authoring skill and references (MCP)
   strata-spaces/SKILL.md     # mount + live-sync lifecycle (CLI)
   strata-doctor/SKILL.md     # diagnose connectivity, mounts, sync, write failures (MCP + CLI)
-tests/                       # VM smoke runners (bash)
 ```
 
-Run the smoke tests on a clean VM (each script no-ops on a wrong platform, exits
-non-zero on a failed assertion):
-
-```
-bash tests/macos-first-mount.sh           # macOS 15.4+
-bash tests/linux-debian-first-mount.sh    # Ubuntu / Debian
-bash tests/linux-fedora-first-mount.sh    # Fedora
-bash tests/linux-arch-first-mount.sh      # Arch
-bash tests/git-mount-gitignore.sh         # any platform
-bash tests/snapshot-fallback.sh           # any platform with strata CLI
-bash tests/unmount-lifecycle.sh           # any platform with strata CLI
-bash tests/permission-denied.sh           # any platform with strata CLI
-```
-
-The MCP skills (`strata-research`, `strata-review`) are conversation-driven
-orchestration over the MCP server; there is no host-side bash to smoke-test, so
-they have no test runner. CI runs the platform-agnostic tests on every push and
-PR; per-OS first-mount tests are reserved for release rehearsal.
-
-Presentation tests use the built-in Node.js test runner (Node.js 20+):
-
-```sh
-node --test tests/presentation/*.test.mjs
-```
-
-The import cases and documentation overview are committed snapshots, so CI
-needs neither the monorepo nor StrataSpace credentials. For release rehearsal against
-a freshly generated platform corpus, pass its manifest explicitly:
-
-```sh
-STRATA_DOCS_MANIFEST=/path/to/aidocs/packages/shared/src/generated/docs-manifest.json node --test tests/presentation/compatibility.test.mjs
-```
-
-See [the import rehearsal](tests/presentation/import.md) for fresh agent runs.
-The live documentation corpus remains the runtime authority for the skill.
+Tests live in [strata-space/strata-claude-plugin-tests](https://github.com/strata-space/strata-claude-plugin-tests):
+the VM smoke runners (bash) and the presentation skill checks (Node.js). The
+Claude plugin directory accepts only Markdown, text, JSON, YAML and images in
+this repo, so scripts stay out of it. Clone the tests repo next to this one
+and follow its README.
 
 ## License
 
