@@ -20,4 +20,16 @@ Read the current document section before repairing an anchored finding, since ed
 
 Recheck changed slides and their dependencies. Stop after three repair passes on a slide or when the same findings repeat. Report unresolved findings by headline, code and detail, and state which checks were not run. A stopped repair loop or an unavailable renderer is not a passing result.
 
-A result with `status: failed` and empty `checked` and `findings` lists means no slide was checked: report the validator as not run, never as a pass. Check the `presentation` map first (see [grammar.md](grammar.md)), since invalid settings leave nothing to validate. If the settings are valid and it still fails, render the `export_presentation` HTML of a `form: slides` deck in a browser instead and say the validator did not run. A whole-deck export is rejected, so for `form: whole-deck` report that no rendered check was available.
+A `status: failed` result means no slide was checked: report the validator as not run, never as a pass. A server with failure reasons adds a `reason`, set only when `status` is `failed`:
+
+| `reason` | Meaning and next step |
+| --- | --- |
+| `renderTimedOut` | A selected slide did not finish rendering and capturing in time. Check one slide per call, or simplify the slide's heaviest drawing; heavy WebGL slides at 1920 are the usual cause. |
+| `renderFailed` | The renderer reported an error for this deck. Report it with the slide selection. |
+| `rendererUnavailable` | No renderer can run the check. Fall back to the export check below. |
+| `conflict` | The document or another check changed what this call was checking. Run it again. |
+| `limitReached` | The capture allowance or the validation rate limit is used up. Report it and fall back to the export check. |
+| `invalidRequest` | The deck or the request cannot be checked as given. Check the `presentation` map and the selection. |
+| `internal` | Any other failure. Report it and fall back to the export check. |
+
+When `reason` is absent, the server predates it: `failed` comes with empty `checked` and `findings` lists. Check the `presentation` map first (see [grammar.md](grammar.md)), since invalid settings leave nothing to validate. If the settings are valid and it still fails, render the `export_presentation` HTML of a `form: slides` deck in a browser instead and say the validator did not run. A whole-deck export is rejected, so for `form: whole-deck` report that no rendered check was available.
