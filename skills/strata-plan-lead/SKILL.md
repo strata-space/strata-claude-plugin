@@ -30,24 +30,33 @@ the item from its own claim result.
 ## The run
 
 1. **Frontier.** `plan_status` with `planId` gives the ready items and the
-   next claim for each agent profile. Use `view: full` only when you need
-   every row.
+   next pick for each agent profile, one per profile. With several workers
+   of one profile, use `view: full`, or read again after each claim.
 2. **Dispatch.** Give each ready item to one worker: the plan id, the item id
    and `strata-plan-work`. The worker claims it with `claim_item` and holds
    its own claim. Never claim an item for a worker. Do not give two workers
    items that conflict.
 3. **Report.** After submit, each worker reports the item id, the fence, the
-   `rev`, the evidence id, the pull request and what it tested.
+   `rev` of the submit result, the evidence id, the pull request and what it
+   tested.
 4. **Review.** Review the pull request as your repository requires. When
    `plan_status` with `itemId` shows `viewerMayReview`, record the verdict
-   with `item_review`. Give the worker one fix round, then decide.
-5. **Merge** as your repository and the user allow.
+   with `item_review`. Give the worker one fix round, and review the fixed
+   head again before the merge.
+5. **Merge** the reviewed commit, as your repository and the user allow. An
+   item under review completes only on the merge of the commit that was
+   reviewed.
 6. **Complete.** The holder of the claim completes the item with its fence
-   after the merge:
+   after the merge, with the `rev` of a new `plan_status` read. If it answers
+   `evidenceRequired`, attach the pull request with `item_attach_evidence`
+   first, or try again after a short wait.
    - Workers share your agent identity: you may call `item_complete` with
-     the fence, `rev` and evidence id the worker reported.
+     the fence and evidence id the worker reported. If such a worker has
+     stopped, take over its claim with `claim_item`, which answers the same
+     claim.
    - Each worker has its own identity: tell the worker to complete. If that
-     worker has stopped, ask a person to complete or revoke the claim.
+     worker has stopped, ask a person to revoke the claim, then give the item
+     out again.
 7. **Next.** Read the frontier again and dispatch. Stop when nothing is
    ready and nothing is in flight.
 
@@ -61,7 +70,8 @@ A finding that belongs to a later item becomes a proposed edit of that item
 
 - The plan has no accepted items, or a proposal waits for acceptance.
 - `claim_next` or `plan_status` reports a waiting state you cannot clear:
-  paused, gated, blocked by dependencies, no matching profile.
+  paused, gated, blocked by dependencies, no matching profile, or
+  `graphInvalid`.
 - A worker reports an item blocked, wrong item text, or an open design
   decision.
 - A review finds the item cannot meet its acceptance criteria.
@@ -72,3 +82,7 @@ A finding that belongs to a later item becomes a proposed edit of that item
 - Accept a proposal. A person with manage access does that.
 - Deploy or release. A person does that.
 - Complete an item before its work has merged.
+
+Items that are not `code` (`decision`, `document`, `operations`) have no pull
+request and no merge: the worker attaches the evidence the kind names and
+completes when the work is done.

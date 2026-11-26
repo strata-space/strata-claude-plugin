@@ -48,8 +48,10 @@ To add to an existing plan, get its id from the user, read it with
    and a fresh idempotency key.
 3. Cite the source: put each passage an item comes from in that item's
    `excerpts`, with its text and heading path. Quote the document as it is
-   now, and only text that every reader of the document can see. A section
-   name in the body is not a citation.
+   now, and only text that every reader of the document can see. When the
+   plan has two or more sources, name the `docId` on each excerpt, or it
+   answers `sourceUnavailable`. A section name in the body is not a
+   citation.
 
 ## Start: ad hoc
 
@@ -66,21 +68,27 @@ The user describes the work and names no document.
 
 1. Draft milestones and every item. Each item has a body that says what to do
    and the traps, and acceptance criteria that a test or a command can check.
-2. Call `propose_plan_changes` with `dryRun` true. A dry run saves nothing.
-3. Fix each violation in the results and in `validation`.
-4. Send the call with `dryRun` false. Use new proposal keys if the payload
-   is not byte for byte the payload of the dry run.
-5. More than 25 items: write the whole draft as one `strata-plan-draft` code
-   block in a StrataSpace document, check it with `validate_plan_draft`, then
-   save it with `import_plan_draft` and the `draftHash` of the check. Repeat
-   the import with the same hash until `remaining` is 0. That route takes
-   items with no excerpt, and names an item that is already saved by its item
-   id, not by its proposal key.
+2. Count the items. More than 25: use the draft route below, not these
+   steps.
+3. Call `propose_plan_changes` with `dryRun` true. A dry run saves nothing.
+4. Fix each violation in the results and in `validation`.
+5. Send the call with `dryRun` false.
+
+Draft route, for more than 25 items: write the whole draft as one
+`strata-plan-draft` code block in a StrataSpace document, check it with
+`validate_plan_draft`, then save it with `import_plan_draft` and the
+`draftHash` of the check. Repeat the import with the same hash until
+`remaining` is 0. If an answer carries `stoppedBy`, stop and report it. That
+route takes items with no excerpt, and names an item that is already saved by
+its item id, not by its proposal key.
 
 ## Rules
 
-- Each new edit needs a new `proposalKey`. The same key with changed content
-  is refused with `idempotencyKeyReused`, dry runs included.
+- Each new edit needs a new `proposalKey`. A dry run saves no key, so the
+  live call may reuse the keys of the dry run. Once a proposal is saved, its
+  key with changed content is refused with `idempotencyKeyReused`, in a dry
+  run too. Proposals are saved one by one: after a live call, give a new key
+  to each saved proposal you change.
 - A pending add cannot be changed by a new proposal (`staleProposal`).
   Withdraw it with `withdraw_proposal` and propose it again, with each item
   that names it.

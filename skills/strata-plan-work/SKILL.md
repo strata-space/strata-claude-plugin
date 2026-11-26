@@ -34,34 +34,42 @@ from a copy. Keep no local file as plan state.
 2. **Read.** The result holds the item: body, acceptance criteria, `rev`,
    anchors. Read `previousClaimEnd` first: it says why the last claim ended
    and what the last review found. Read each document and design section the
-   item names. If one cannot be found, stop and ask.
+   item names. If one cannot be found, ask, and see "While you wait".
 3. **Work** until the acceptance criteria are met. When a later answer
    carries `sinceClaim` with `workChanged` true, read the item again with
    `plan_status` and `itemId` before you go on.
 4. **Cite.** When the claim result has `citeInPullRequests`, put that text in
    the pull request body exactly as given.
 5. **Attach.** Call `item_attach_evidence` with the pull request. In a
-   repository the plan binds, the cited pull request is attached for you and
-   the call answers `alreadyApplied`. Both answers name the `evidenceId`.
+   repository the plan binds, the cited pull request may already be attached
+   for you, and the call then answers `alreadyApplied`. Both answers name the
+   `evidenceId`.
 6. **Submit.** `item_submit` with the fence, the `rev` you last read and the
-   evidence id. The item goes to review.
-7. **Complete.** After the pull request merges, `item_complete` with the same
-   fence, `rev` and evidence id. Never complete before the work has merged.
-   If an answer says `completedByMerge`, the item is already done.
+   evidence id. The item goes to review. Keep the `rev` of the submit result.
+7. **Complete.** After the pull request merges, read the item again with
+   `plan_status` and `itemId`, then call `item_complete` with the same fence,
+   the `rev` of that read and the evidence id. Never complete before the work
+   has merged. If it answers `evidenceRequired`, attach the pull request with
+   `item_attach_evidence` and try again, or try again after a short wait. If
+   an answer says `completedByMerge`, the item is already done.
 8. **Next.** `claim_next` with a new idempotency key. Stop when it answers
    `empty`.
 
+The steps above are for a `code` item. A `decision`, `document` or
+`operations` item has no pull request and no merge: attach the evidence its
+kind names, such as a link, and complete when the work is done.
+
 When a lead gave you the item, stop after submit and report to the lead: the
-item id, the fence, the `rev`, the evidence id and the pull request. Complete
-when the lead says the work has merged.
+item id, the fence, the `rev` of the submit result, the evidence id and the
+pull request. Complete when the lead says the work has merged.
 
 ## Claims
 
-- The fence is `{ claimId, epoch }` from `receipt.claim`. Send it on every
-  command for the item.
+- The fence is `{ claimId: receipt.claim.id, epoch: receipt.claim.epoch }`.
+  Send it on every command for the item.
 - Only the holder completes or releases its claim.
-- A refusal arrives as JSON in the tool error. Act on its `reason`, not on
-  its wording.
+- A refusal arrives as JSON in the tool error, `{ error, reason: { kind } }`.
+  Act on `reason.kind`, not on the wording.
 - A lost claim (`claimSuperseded`): stop work on the item. Never retry with
   the old fence.
 - On `itemRevised`, read the item again, check the change against your work,
@@ -70,7 +78,8 @@ when the lead says the work has merged.
   `claim_item` on an item you hold answers the same claim.
 - `empty` with `planComplete` means done only if `plan_status` shows
   accepted items. If none are accepted, say a person must accept the
-  proposals. The other reasons are waiting states: report the reason.
+  proposals. `graphInvalid` means the plan needs a fix: ask a person. The
+  other reasons are waiting states: report the reason.
 
 ## Idempotency keys
 
@@ -91,5 +100,11 @@ tool list. Never keep it in a local note.
 - Blocked: `item_report_blocked` with the fence and why.
 - Giving up: `item_release` with the fence and a reason.
 - Report what happened, then claim the next item or stop, as the user asked.
+
+## While you wait
+
+When you wait for an answer from a person, keep the claim if you will go on
+in this run, and say so. If you end the run without the answer, release the
+item with `item_release` and a reason that says what you wait for.
 
 Evidence limits: at most 16 ids on submit and 4 on complete.
