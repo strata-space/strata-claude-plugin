@@ -26,3 +26,7 @@ Then sign in when Cline prompts. A free StrataSpace account is created on first 
 ## Verify
 
 Ask: "Use StrataSpace to find my documents." The `find` tool should return your Spaces and documents.
+
+## Plan tools (optional)
+
+The plan skills `strata-plan` (make a plan and write its items), `strata-plan-work` (take a plan item and finish it) and `strata-plan-lead` (run a plan with a team of agents) use the plan tools. These are in the `plans` tool group, which the server does not serve by default. Select it with an `X-Strata-Tool-Groups` header or the `groups` parameter of the URL, and list every group you want, for example `https://api.strata.space/mcp?groups=core,comments,plans`. The plan tools also need Plans to be available on your StrataSpace account, and a sign-in with write scope. Check: `plan_status` is in the tool list.

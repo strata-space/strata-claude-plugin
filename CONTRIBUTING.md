@@ -4,7 +4,7 @@ Thanks for helping improve the StrataSpace Claude plugin.
 
 ## What this repo ships
 
-Seven skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
+Ten skills under `skills/`, a plugin manifest, a bundled `.mcp.json` that
 registers the StrataSpace MCP server. There is no application code, no build
 step, and no package manager. Tests live in
 [strata-space/strata-claude-plugin-tests](https://github.com/strata-space/strata-claude-plugin-tests).

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A dual-host plugin (`strata`) for Claude Code and Codex that ships seven skills, a bundled `.mcp.json` that registers the StrataSpace MCP server. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files. Tests live in `strata-space/strata-claude-plugin-tests`.
+A dual-host plugin (`strata`) for Claude Code and Codex that ships ten skills, a bundled `.mcp.json` that registers the StrataSpace MCP server. There is no application code, no build step, and no package manager: the deliverables are the `SKILL.md` files. Tests live in `strata-space/strata-claude-plugin-tests`.
 
 **Never add scripts or programs here.** The Claude plugin directory accepts only Markdown, text, JSON, YAML and images (PNG, JPEG, GIF, WebP, ICO) from an unverified organization, and refuses the whole version for one other file, a `#!` line, or a package-manager config. Images must carry no long embedded text (metadata, comments).
 
@@ -15,7 +15,11 @@ A dual-host plugin (`strata`) for Claude Code and Codex that ships seven skills,
 - `skills/strata-doctor/SKILL.md`: diagnose why StrataSpace is not working — MCP connectivity (registered, signed in, write scope, tool groups) and, when the CLI is present, auth state, mount health, and the permission-denied (write-failure) diagnosis. Read-only: it routes to a fix, never remediates by side effect.
 - `skills/strata-blog/SKILL.md`: writes, converts, and styles blog posts through `blog:` frontmatter (cover, header image, wallpaper, metadata), checking `blogValidation`. Uses MCP without requiring the Strata CLI.
 - `skills/strata-presentation/SKILL.md`: creates and revises decks from a conversation, with grammar, theme, import, validation, and refresh references. Uses MCP without requiring the Strata CLI.
+- `skills/strata-plan/SKILL.md`: make a plan, ad hoc or from a StrataSpace document, and write its items as proposals. Never accepts. Needs the `plans` tool group. MCP only.
+- `skills/strata-plan-work/SKILL.md`: claim one plan item, do it, attach the pull request, submit, complete after merge, take the next. MCP only.
+- `skills/strata-plan-lead/SKILL.md`: run a plan with worker agents. The plan is the board: no local state files. Never accepts, deploys or releases. MCP only.
 - `.mcp.json`: registers the StrataSpace MCP server on install. It sends no headers; the server serves the `core` and `comments` tool groups by default.
+  The plan tools are in the `plans` group, outside that default: a customer selects it with the `X-Strata-Tool-Groups` header or the `groups` URL parameter, and Plans must be available on the account.
 - `.claude-plugin/plugin.json` + `.codex-plugin/plugin.json`: the two host manifests. Versions stay in lockstep (release-please bumps both via extra-files; smoke.yml asserts equality). The marketplace that lists this plugin lives in its own repo, `strata-space/marketplace`.
 
 When editing skills, remember they are **executed by Claude at runtime**, not by a script. The SKILL.md body is prompt content + reference bash snippets that Claude reads and adapts. Treat changes to it like changes to a runbook, not like refactoring source code.
@@ -39,6 +43,7 @@ These are load-bearing rules the SKILL.md files spell out; don't soften or remov
 - **Endpoints come from the CLI's auth state.** The only hardcoded URL is the MCP endpoint `https://api.strata.space/mcp` in `.mcp.json` (plus `mcp.json` for Cursor, `.codex-mcp.json` for Codex, and the README's other-clients snippet). This is the canonical, region-free production endpoint. When changing it, update every reference and bump the plugin version. Document links in skills use the app's workspace-chooser deep link `https://app.strata.space/workspaces?next=%2Fdocuments%2F<docId>` (MCP results carry a `documentId` but no URL or workspace slug; the chooser resolves it to `/w/<workspace>/documents/<docId>/<title-slug>`). Never construct `/w/<workspace>/…` links from a guessed workspace.
 - **MCP skills must not require the CLI.** `strata-research` and `strata-review` operate purely over the MCP server and must complete without `strata` on `PATH`. `strata-publish` needs the CLI only for folder sync; its single-document path is MCP-only. `strata-doctor`'s MCP-connectivity half (Layer 1) runs without the CLI; its Layer 2 (CLI auth, mount health, write-failure diagnosis) is skipped cleanly when `strata` is absent.
 - **Doctor diagnoses, never remediates.** `strata-doctor` is read-only: it probes (`find`, `command -v`, `strata status --json`, reading config) and routes to a fix, but never installs the CLI, never `strata login`s for the user, never force-unmounts, and never edits `.mcp.json`. Each fix is a user action or a hand-off to the owning skill (`strata-spaces` for install and stuck-mount recovery).
+- **Plan skills propose, never accept.** `strata-plan`, `strata-plan-work` and `strata-plan-lead` never accept a proposal, deploy or release, and never keep plan state in a local file: the plan is the board. Each confirms with the user before its first write.
 - **Snapshot-fallback triggers.** `strata-spaces` falls back to `strata sync pull` when: platform is `macos-too-old` (< 15.4), `wsl`, `container`, `unsupported` (Windows native), the user declined a CLI/`fuse3`/`usermod` consent, or distro detection returned an unknown ID.
 
 ## Tests

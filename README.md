@@ -16,7 +16,7 @@ box; the filesystem skills add an optional CLI.
 - [Install the plugin](#install-the-plugin)
 - [Install the Strata CLI (optional)](#install-the-strata-cli-optional)
 - [Requirements](#requirements)
-- [The seven skills](#the-seven-skills)
+- [The ten skills](#the-ten-skills)
 - [Getting documents onto disk: link vs mount vs snapshot](#getting-documents-onto-disk-link-vs-mount-vs-snapshot)
 - [Other MCP clients](#other-mcp-clients)
 - [Privacy and consent](#privacy-and-consent)
@@ -26,12 +26,12 @@ box; the filesystem skills add an optional CLI.
 
 ## What you get
 
-The plugin ships seven skills and a bundled `.mcp.json` that registers the
+The plugin ships ten skills and a bundled `.mcp.json` that registers the
 StrataSpace MCP server on install. Two halves:
 
 - **Conversation skills** use the MCP server without the Strata CLI. Search your Spaces, read
-  documents, publish a draft, leave review comments, write and style blog posts, and create presentations
-  from a conversation or an existing local deck file.
+  documents, publish a draft, leave review comments, write and style blog posts, create presentations
+  from a conversation or an existing local deck file, and make and work plans.
 - **Filesystem skills** drive the `strata` CLI to bring a Space onto disk as
   real `.md` files — as a live-linked folder, a virtual-drive mount, or a
   one-time snapshot — so any editor can open them.
@@ -87,7 +87,7 @@ Or, without the marketplace, install the plugin directly from its repo:
 ### Codex
 
 The same repository ships a Codex manifest (`.codex-plugin/plugin.json`), so
-Codex users get the bundled MCP server and the seven skills too. Add the
+Codex users get the bundled MCP server and the ten skills too. Add the
 marketplace source and enable the plugin (or install it from the Codex app's
 plugin directory):
 
@@ -170,10 +170,14 @@ strata status         # shows auth, mounts, and sync sessions
   either macOS 15.4+ (FSKit backend, read-only, needs a one-time System Settings
   permission) or Linux with kernel ≥ 4.18 and the `fuse3` userspace helper (FUSE
   backend, read/write).
+- **Plan skills** (`strata-plan`, `strata-plan-work`, `strata-plan-lead`):
+  Plans available on your StrataSpace account, the `plans` tool group selected
+  on the MCP connection (see [Other MCP clients](#other-mcp-clients)), and
+  write scope. No Strata CLI needed.
 - **Windows** is detected and routed to the in-conversation MCP skills; a native
   mount is out of scope.
 
-## The seven skills
+## The ten skills
 
 Skills activate from natural language — you do not call them by name. The
 example prompts below are illustrative.
@@ -255,6 +259,31 @@ skill — and never remediates by side effect.
 >
 > My edits aren't syncing / my save failed. Diagnose it.
 
+### `strata-plan`: make a plan (MCP, no CLI)
+
+Makes a plan ad hoc from your description or from a StrataSpace document, and
+writes its milestones and items as proposals with testable acceptance
+criteria. Items made from a document cite the passage they come from. A person
+with manage access accepts the proposals.
+
+> Turn the "Billing rewrite" design doc into a plan for the backend team.
+
+### `strata-plan-work`: take an item and finish it (MCP, no CLI)
+
+Claims the next item of a plan, works from the item text in the claim, cites
+the item in the pull request, submits it for review and completes it after the
+merge, then takes the next.
+
+> Work the next backend item of my plan.
+
+### `strata-plan-lead`: run a plan with a team of agents (MCP, no CLI)
+
+Reads which items are ready, gives each to one worker agent that claims it,
+reviews, completes after the merge, and turns findings for later items into
+proposed edits. Uses the plan as the board, with no local state.
+
+> Run my plan with three workers.
+
 ## Getting documents onto disk: link vs mount vs snapshot
 
 There are three ways to get a Space's documents into a local folder. The
@@ -313,9 +342,13 @@ yourself:
 }
 ```
 
-No headers are needed: the server serves the core and comment tools by default,
-so `strata-review` works as is (the comment group also exposes StrataSpace's
-suggestion tool, which `strata-review` deliberately does not use). On the first
+No headers are needed for most skills: the server serves the core and comment
+tools by default, so `strata-review` works as is (the comment group also exposes
+StrataSpace's suggestion tool, which `strata-review` deliberately does not use).
+The plan skills need the `plans` tool group, which is not in the default. Select
+it with an `X-Strata-Tool-Groups` header or the `groups` parameter of the MCP
+URL, and list every group you want, for example `core,comments,plans`. The plan
+tools appear only when Plans is available on your account. On the first
 tool call the server opens a
 browser for OAuth. That login is separate from the CLI's keychain token, but if
 you are already signed in to strata.space in your browser it completes in one
@@ -349,8 +382,12 @@ A few things you can check yourself:
 - **A tool call fails with an auth error.** The first call opens a browser for
   sign-in; complete it and retry. For the CLI half, run `strata login`.
 - **`strata-review` has no comment tool.** Re-authorize and accept the write
-  scope. If your MCP config sets an `X-Strata-Tool-Groups` header, remove it:
-  the server's default already includes the comment tools.
+  scope. If your MCP config sets an `X-Strata-Tool-Groups` header, remove it
+  or make sure it lists `comments`: the server's default already includes the
+  comment tools.
+- **The plan skills have no plan tools.** Plans must be available on your
+  account, and the MCP connection must select the `plans` tool group (see
+  [Other MCP clients](#other-mcp-clients)).
 - **A mount silently does nothing on macOS.** The FSKit module is installed but
   not approved — enable **Strata CLI** under System Settings → General → Login
   Items & Extensions → File System Extensions (use the **By Category** view).
@@ -373,6 +410,9 @@ skills/
   strata-presentation/      # deck authoring skill and references (MCP)
   strata-spaces/SKILL.md     # mount + live-sync lifecycle (CLI)
   strata-doctor/SKILL.md     # diagnose connectivity, mounts, sync, write failures (MCP + CLI)
+  strata-plan/SKILL.md       # make a plan and write its items (MCP)
+  strata-plan-work/SKILL.md  # take a plan item and finish it (MCP)
+  strata-plan-lead/SKILL.md  # run a plan with a team of agents (MCP)
 ```
 
 Tests live in [strata-space/strata-claude-plugin-tests](https://github.com/strata-space/strata-claude-plugin-tests):
