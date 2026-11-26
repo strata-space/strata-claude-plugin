@@ -109,8 +109,9 @@ and needs together, 8 `provides` and 8 `needs`.
 ## End
 
 Give the user the plan link,
-`https://app.strata.space/workspaces?next=%2Fdocuments%2F<documentId>` with
-the `documentId` of the plan from the `create_plan` result, and say that a
+`https://app.strata.space/workspaces?next=%2Fplans%2F<planId>`, with the plan
+`id` from the `create_plan` result. It opens the plan page in the user's
+workspace. Never link the plan's document. Say that a
 person with manage access must accept the proposals before any item can be
 claimed. Do not accept them. To work the items, use `strata-plan-work` or
 `strata-plan-lead`.
