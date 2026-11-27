@@ -23,7 +23,7 @@ the item from its own claim result.
 
 - If `plan_status` and `claim_item` are not in your tool list, tell the user
   they need Plans on their account, the `plans` tool group selected on the
-  MCP connection, and write scope. Stop.
+  MCP connection, and read and write scope. Stop.
 - Get the plan id from the user. Confirm how many workers to run and which
   agent profiles they take before the first claim.
 
@@ -38,11 +38,11 @@ the item from its own claim result.
    items that conflict.
 3. **Report.** After submit, each worker reports the item id, the fence, the
    `rev` of the submit result, the evidence id, the pull request and what it
-   tested.
+   tested. Keep these: a submitted item cannot be claimed again.
 4. **Review.** Review the pull request as your repository requires. When
-   `plan_status` with `itemId` shows `viewerMayReview`, record the verdict
-   with `item_review`. Give the worker one fix round, and review the fixed
-   head again before the merge.
+   `plan_status` with `itemId` shows `viewerMayReview` true, record the
+   verdict with `item_review`. A review binds the head commit of the pull
+   request, so review the fixed head again after any fix round.
 5. **Merge** the reviewed commit, as your repository and the user allow. An
    item under review completes only on the merge of the commit that was
    reviewed.
@@ -51,9 +51,11 @@ the item from its own claim result.
    `evidenceRequired`, attach the pull request with `item_attach_evidence`
    first, or try again after a short wait.
    - Workers share your agent identity: you may call `item_complete` with
-     the fence and evidence id the worker reported. If such a worker has
-     stopped, take over its claim with `claim_item`, which answers the same
-     claim.
+     the item id, the fence, the evidence id and the `rev` of a new
+     `plan_status` read. Take the item id, fence and evidence id from the
+     worker's report. If the worker stopped before it submitted, take over its
+     claim with `claim_item`, which answers the same claim. After submit,
+     `claim_item` is refused: complete with the reported values.
    - Each worker has its own identity: tell the worker to complete. If that
      worker has stopped, ask a person to revoke the claim, then give the item
      out again.
