@@ -104,9 +104,9 @@ a StrataSpace document, and check it with `validate_plan_draft`.
 
 1. Read `valid`, `rowProblems`, `rowConflicts` and `capacity` of the check.
    `valid` stays true with `rowConflicts`: a row whose proposal was saved
-   before with other content is not saved again. Correct it as the tool
-   description says: give the row a new `proposalKey`, or withdraw the saved
-   proposal.
+   before with other content is not saved again. Correct the saved proposal
+   first: withdraw it if you made it, or ask a person to revise it. Then give
+   the draft row a new `proposalKey`.
 2. Save with `import_plan_draft` and the `draftHash` of the check. Repeat the
    import with the same hash until `remaining` is 0.
 3. After every import read `conflicts` and `stoppedBy`. `remaining` can be 0
@@ -154,9 +154,10 @@ criteria of at most 500 characters, 16 `touches` of at most 256 characters,
 
 ## End
 
-Give the user the plan link: the host of the workspace the user works in (the
-same host as the StrataSpace MCP server they use), then
-`/workspaces?next=%2Fplans%2F<planId>`. Say which host you used. Take the
+Give the user the plan link: the web address where the user opens StrataSpace
+in a browser (for most users `https://app.strata.space`; not the address of
+the MCP server), then `/workspaces?next=%2Fplans%2F<planId>`. Say which
+address you used. Take the
 plan id from `plan.id` of the `create_plan` result, or from the id the user
 gave for an existing plan. The link opens the plan page in the user's
 workspace. Never link the plan's document. Say that a person with manage
