@@ -86,10 +86,10 @@ no group header. A client can narrow or widen that with an optional
 - If they are present, the review surface is available and the problem is
   elsewhere (scope, or the document itself).
 - If the user expects the plan skills to work, check for `plan_status`. If it
-  is missing, the connection does not select the `plans` group (it is not in
-  the default), or Plans is not available on their account. Tell them to add
-  `plans` to the `X-Strata-Tool-Groups` header or the `groups` URL parameter,
-  listing every group they want. Do not edit the config yourself.
+  is missing, Plans is not available on their account (the `plans` group is on by
+  default while Plans is on), or the connection names its groups without
+  `plans`. Tell them to add `plans` to the `X-Strata-Tool-Groups` header or
+  the `groups` URL parameter, listing every group they want. Do not edit the config yourself.
 
 ## Layer 2 — CLI state (only when `strata` is on PATH)
 

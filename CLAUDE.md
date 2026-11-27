@@ -19,7 +19,7 @@ A dual-host plugin (`strata`) for Claude Code and Codex that ships ten skills, a
 - `skills/strata-plan-work/SKILL.md`: claim one plan item, do it, attach the pull request, submit, complete after merge, take the next. MCP only.
 - `skills/strata-plan-lead/SKILL.md`: run a plan with worker agents. The plan is the board: no local state files. Never accepts, deploys or releases. MCP only.
 - `.mcp.json`: registers the StrataSpace MCP server on install. It sends no headers; the server serves the `core` and `comments` tool groups by default.
-  The plan tools are in the `plans` group, outside that default: a customer selects it with the `X-Strata-Tool-Groups` header or the `groups` URL parameter, and Plans must be available on the account.
+  The `plans` group is also on by default while Plans is on for the account. A customer who names groups with the `X-Strata-Tool-Groups` header or the `groups` URL parameter must list `plans`.
 - `.claude-plugin/plugin.json` + `.codex-plugin/plugin.json`: the two host manifests. Versions stay in lockstep (release-please bumps both via extra-files; smoke.yml asserts equality). The marketplace that lists this plugin lives in its own repo, `strata-space/marketplace`.
 
 When editing skills, remember they are **executed by Claude at runtime**, not by a script. The SKILL.md body is prompt content + reference bash snippets that Claude reads and adapts. Treat changes to it like changes to a runbook, not like refactoring source code.

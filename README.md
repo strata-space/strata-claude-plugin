@@ -171,9 +171,9 @@ strata status         # shows auth, mounts, and sync sessions
   permission) or Linux with kernel ≥ 4.18 and the `fuse3` userspace helper (FUSE
   backend, read/write).
 - **Plan skills** (`strata-plan`, `strata-plan-work`, `strata-plan-lead`):
-  Plans available on your StrataSpace account, the `plans` tool group selected
-  on the MCP connection (see [Other MCP clients](#other-mcp-clients)), and
-  write scope. No Strata CLI needed.
+  Plans available on your StrataSpace account (the `plans` tool group is on by
+  default while Plans is on; if you name your groups, list `plans`, see
+  [Other MCP clients](#other-mcp-clients)), and write scope. No Strata CLI needed.
 - **Windows** is detected and routed to the in-conversation MCP skills; a native
   mount is out of scope.
 
@@ -345,10 +345,11 @@ yourself:
 No headers are needed for most skills: the server serves the core and comment
 tools by default, so `strata-review` works as is (the comment group also exposes
 StrataSpace's suggestion tool, which `strata-review` deliberately does not use).
-The plan skills need the `plans` tool group, which is not in the default. Select
-it with an `X-Strata-Tool-Groups` header or the `groups` parameter of the MCP
-URL, and list every group you want, for example `core,comments,plans`. The plan
-tools appear only when Plans is available on your account. On the first
+The plan skills need the `plans` tool group. It is on by default while Plans is
+on for your account. If you name your groups with an `X-Strata-Tool-Groups`
+header or the `groups` parameter of the MCP URL, list `plans` too, for example
+`core,comments,plans`. The plan tools appear only when Plans is available on
+your account. On the first
 tool call the server opens a
 browser for OAuth. That login is separate from the CLI's keychain token, but if
 you are already signed in to strata.space in your browser it completes in one
@@ -386,7 +387,7 @@ A few things you can check yourself:
   or make sure it lists `comments`: the server's default already includes the
   comment tools.
 - **The plan skills have no plan tools.** Plans must be available on your
-  account, and the MCP connection must select the `plans` tool group (see
+  account, and, if your MCP connection names its tool groups, it must list `plans` (see
   [Other MCP clients](#other-mcp-clients)).
 - **A mount silently does nothing on macOS.** The FSKit module is installed but
   not approved — enable **Strata CLI** under System Settings → General → Login
