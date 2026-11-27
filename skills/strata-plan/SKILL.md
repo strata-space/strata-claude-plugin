@@ -66,8 +66,8 @@ To add to an existing plan, get its id from the user, read it with
    `excerpts`, with its text and heading path. Quote the document as it is
    now, and only text that every reader of the document can see. An excerpt
    with no `docId` cites the one source of the plan that is not purged. It
-   answers `sourceUnavailable` only when the plan has no such source or has
-   two or more: then name the `docId` on each excerpt. A section name in the
+   answers `sourceUnavailable` when the plan has no such source, has two or
+   more, or the source cannot be read: then name the `docId` on each excerpt. A section name in the
    body is not a citation.
 
 ## Start: ad hoc

@@ -54,8 +54,9 @@ from a copy. Keep no local file as plan state.
    `{ provider, repoId, fullName }`. In a repository the plan binds, the cited
    pull request may already be attached for you, and the call then answers
    `alreadyApplied`. Both answers name the `evidenceId`.
-6. **Submit.** `item_submit` with the fence, `rev` (from `result.item.rev` of
-   your last read) and `evidence: [evidenceId]`. The item goes to review. Keep
+6. **Submit.** `item_submit` with the fence, `rev` (the `item.rev` of the latest answer that
+   returned the item: `result.item.rev` for a command answer, `item.rev` for
+   `plan_status` with `itemId`) and `evidence: [evidenceId]`. The item goes to review. Keep
    the `rev` of the submit result, the fence and the evidence id: an item in
    review cannot be claimed again, and `plan_status` with `heldBy: me` no
    longer lists it.
@@ -64,7 +65,9 @@ from a copy. Keep no local file as plan state.
    the `rev` of that read and `evidence: [evidenceId]`. The `rev` can come from
    the latest answer that returned the item, such as the attach answer: read
    again only when another party could have changed the item. Never complete
-   before the work has merged. If it answers `evidenceRequired`, attach the pull request with
+   before the work has merged. A merge counts only into a repository the plan
+   binds and one of its target branches. A merge elsewhere does not complete
+   the item, and waiting cannot fix it: report it. If it answers `evidenceRequired`, attach the pull request with
    `item_attach_evidence` and try again, or try again after a short wait. If
    an answer says `completedByMerge`, the item is already done.
 8. **Next.** `claim_next` with a new idempotency key. Stop when it answers

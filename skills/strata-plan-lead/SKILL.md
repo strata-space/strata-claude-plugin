@@ -70,7 +70,8 @@ A finding that belongs to a later item becomes a proposed edit of that item
 
 ## Stop and ask a person
 
-- The plan has no accepted items, or a proposal waits for acceptance.
+- Nothing is ready or claimable and you hold no claim. Proposals that wait
+  for acceptance are not a reason to stop while an accepted item is ready.
 - `claim_next` or `plan_status` reports a waiting state you cannot clear:
   paused, gated, blocked by dependencies, no matching profile, or
   `graphInvalid`.
