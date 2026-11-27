@@ -32,7 +32,9 @@ from a copy. Keep no local file as plan state.
    items name, such as `backend`) and `idempotency: { key }`, or `claim_item`
    with `itemId` and `idempotency: { key }` for a named item. After a timeout,
    repeat the call with the same key, and start work only when the receipt
-   shows `liveness` `live`. Any other liveness means the claim is gone: stop.
+   shows `liveness` `live`. `submitted` means you submitted already: go to
+   Complete with the values you kept. Any other liveness means the claim is
+   gone: stop.
 2. **Read.** The result holds the item: body, acceptance criteria, `rev`,
    anchors. Read `previousClaimEnd` first: it says why the last claim ended
    and what the last review found. Read each document and design section the
