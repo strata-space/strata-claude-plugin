@@ -21,10 +21,15 @@ from a copy. Keep no local file as plan state.
 
 - If `claim_next` is not in your tool list, the plan tools are not on this
   connection. Tell the user they need Plans on their account, the `plans`
-  tool group selected on the MCP connection, and read and write scope. Stop.
+  tool group (on by default while Plans is on; a connection that names its
+  groups must list `plans`), and read and write scope. Stop.
 - Get the plan id from the user. Never guess it. An item id is optional.
 - Before the first claim, confirm the plan and the item or agent profile with
-  the user.
+  the user. A lead's or user's explicit request to work a named item counts as
+  that confirmation.
+- The plan's sources are in `plan_status` with `view: full`, in `plan.sources[]`
+  (the summary view shows only how many there are). The passages an item is cut
+  from are its anchors in the claim result.
 
 ## The loop
 
@@ -56,8 +61,10 @@ from a copy. Keep no local file as plan state.
    longer lists it.
 7. **Complete.** After the pull request merges, read the item again with
    `plan_status` and `itemId`, then call `item_complete` with the same fence,
-   the `rev` of that read and `evidence: [evidenceId]`. Never complete before the work
-   has merged. If it answers `evidenceRequired`, attach the pull request with
+   the `rev` of that read and `evidence: [evidenceId]`. The `rev` can come from
+   the latest answer that returned the item, such as the attach answer: read
+   again only when another party could have changed the item. Never complete
+   before the work has merged. If it answers `evidenceRequired`, attach the pull request with
    `item_attach_evidence` and try again, or try again after a short wait. If
    an answer says `completedByMerge`, the item is already done.
 8. **Next.** `claim_next` with a new idempotency key. Stop when it answers
@@ -65,13 +72,22 @@ from a copy. Keep no local file as plan state.
 
 The steps above are for a `code` item. A `decision`, `document` or
 `operations` item has no pull request and no merge: attach evidence that
-matches the kind, and complete when the work is done:
+matches the kind, and complete when the work is done. Completion needs the
+evidence of the item's kind, in addition to any evidence the item body asks
+for. When the work has no natural link, an `operations` item takes the link of
+the plan page, the web address where the user opens StrataSpace (for most users
+`https://app.strata.space`) followed by
+`/workspaces?next=%2Fplans%2F<planId>`:
 
 - `decision`: `{ kind: "decision", text }`
 - `document`: `{ kind: "documentRevision", docId, revision, note? }`
 - `operations`: `{ kind: "link", url, note? }`
 
-When a lead gave you the item, stop after submit and report to the lead: the
+An item with no review step (a non-code item, or a plan with its review policy
+off) has no submit: complete it. "Stop after submit" applies only when there
+is a submit.
+
+When a lead gave you a code item, stop after submit and report to the lead: the
 item id, the fence, the `rev` of the submit result, the evidence id and the
 pull request. Complete when the lead says the work has merged.
 
@@ -90,9 +106,9 @@ pull request. Complete when the lead says the work has merged.
   work. `claim_item` on an item you hold answers the same claim. An item you
   submitted is in review: it is not listed and cannot be claimed. Complete it
   with the fence, `rev` and evidence id you kept.
-- `empty` with `planComplete` means done only if `plan_status` shows
-  accepted items. If none are accepted, say a person must accept the
-  proposals. `graphInvalid` means the plan needs a fix: ask a person. The
+- `empty` with `planComplete` means done only if `counts.pendingAdds` of
+  `plan_status` is 0. Above 0, items wait for a person to accept them, so the
+  plan is not done: say so. `graphInvalid` means the plan needs a fix: ask a person. The
   other reasons are waiting states: report the reason.
 
 ## Idempotency keys

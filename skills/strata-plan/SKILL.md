@@ -90,6 +90,10 @@ Steps:
 
 1. Draft milestones and every item. Each item has a body that says what to do
    and the traps, and acceptance criteria that a test or a command can check.
+   For a non-code item, the criteria ask for the evidence its kind needs: an
+   `operations` item asks for a link, a `decision` item for the decision, a
+   `document` item for the document revision. Never ask for decision evidence
+   on an operations item.
 2. Count the items and the milestones. More than 25 items or more than 10
    milestone drafts: use the draft route below, not these steps.
 3. Call `propose_plan_changes` with `dryRun` true. A dry run saves nothing.
