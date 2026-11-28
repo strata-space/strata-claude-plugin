@@ -39,20 +39,17 @@ the item from its own claim result.
 3. **Report.** After submit, each worker reports the item id, the fence, the
    `rev` of the submit result, the evidence id, the pull request and what it
    tested. Keep these: a submitted item cannot be claimed again.
-4. **Review.** Review the pull request as your repository requires. When
-   `plan_status` with `itemId` shows `viewerMayReview` true, record the
-   verdict with `item_review`. A review binds the head commit of the pull
-   request, so review the fixed head again after any fix round.
-5. **Merge** the reviewed commit, as your repository and the user allow. An
-   item under review completes only on the merge of the commit that was
-   reviewed.
-6. **Complete.** The holder of the claim completes the item with its fence
-   after the merge, with the `rev` of a new `plan_status` read. If it answers
-   `evidenceRequired`, attach the pull request with `item_attach_evidence`
-   first, or try again after a short wait.
-   - Workers share your agent identity: you may call `item_complete` with
-     the item id, the fence, the evidence id and the `rev` of a new
-     `plan_status` read. Take the item id, fence and evidence id from the
+4. **Review.** Review the pull request as your repository requires. Plans
+   records no review: a fix round is only more work on the same pull request.
+5. **Merge** the pull request, as your repository and the user allow. Wait
+   until the merge shows on `origin`.
+6. **Complete.** The holder of the claim attaches the pull request again with
+   `state: "merged"`, the merge `sha` and the `base` branch, then completes the
+   item with its fence, the `rev` of a new `plan_status` read and the evidence
+   id of the merged attach.
+   - Workers share your agent identity: you may attach the merged state and
+     call `item_complete` with the item id, the fence, the evidence id and the
+     `rev` of a new `plan_status` read. Take the item id, fence and evidence id from the
      worker's report. If the worker stopped before it submitted, take over its
      claim with `claim_item`, which answers the same claim. After submit,
      `claim_item` is refused: complete with the reported values.
@@ -77,7 +74,7 @@ A finding that belongs to a later item becomes a proposed edit of that item
   `graphInvalid`.
 - A worker reports an item blocked, wrong item text, or an open design
   decision.
-- A review finds the item cannot meet its acceptance criteria.
+- Review finds the item cannot meet its acceptance criteria.
 - A claim must be revoked.
 
 ## Never

@@ -41,35 +41,31 @@ from a copy. Keep no local file as plan state.
    Complete with the values you kept. Any other liveness means the claim is
    gone: stop.
 2. **Read.** The result holds the item: body, acceptance criteria, `rev`,
-   anchors. Read `previousClaimEnd` first: it says why the last claim ended
-   and what the last review found. Read each document and design section the
+   anchors. Read `previousClaimEnd` first: it says why the last claim ended. Read each document and design section the
    item names. If one cannot be found, ask, and see "While you wait".
 3. **Work** until the acceptance criteria are met. When a later answer
    carries `sinceClaim` with `workChanged` true, read the item again with
    `plan_status` and `itemId` before you go on.
-4. **Cite.** When the claim result has `citeInPullRequests`, put that text in
-   the pull request body exactly as given.
-5. **Attach.** Call `item_attach_evidence` with the fence and `evidence`
-   `{ kind: "pullRequest", repo, number, url }`, where `repo` is
-   `{ provider, repoId, fullName }`. In a repository the plan binds, the cited
-   pull request may already be attached for you, and the call then answers
-   `alreadyApplied`. Both answers name the `evidenceId`.
-6. **Submit.** `item_submit` with the fence, `rev` (the `item.rev` of the latest answer that
-   returned the item: `result.item.rev` for a command answer, `item.rev` for
-   `plan_status` with `itemId`) and `evidence: [evidenceId]`. The item goes to review. Keep
-   the `rev` of the submit result, the fence and the evidence id: an item in
-   review cannot be claimed again, and `plan_status` with `heldBy: me` no
-   longer lists it.
-7. **Complete.** After the pull request merges, read the item again with
-   `plan_status` and `itemId`, then call `item_complete` with the same fence,
-   the `rev` of that read and `evidence: [evidenceId]`. The `rev` can come from
-   the latest answer that returned the item, such as the attach answer: read
-   again only when another party could have changed the item. Never complete
-   before the work has merged. A merge counts only into a repository the plan
-   binds and one of its target branches. A merge elsewhere does not complete
-   the item, and waiting cannot fix it: report it. If it answers `evidenceRequired`, attach the pull request with
-   `item_attach_evidence` and try again, or try again after a short wait. If
-   an answer says `completedByMerge`, the item is already done.
+4. **Attach.** Open the pull request, then call `item_attach_evidence` with
+   the fence and `evidence` `{ kind: "pullRequest", repo, number, url }`, where
+   `repo` is `{ provider, repoId, fullName }`. The answer names the
+   `evidenceId`.
+5. **Submit.** `item_submit` with the fence, `rev` (the `item.rev` of the
+   latest answer that returned the item: `result.item.rev` for a command
+   answer, `item.rev` for `plan_status` with `itemId`) and
+   `evidence: [evidenceId]`. Keep the `rev` of the submit result, the fence and
+   the evidence id: a submitted item cannot be claimed again, and `plan_status`
+   with `heldBy: me` no longer lists it.
+6. **Merge.** The merge follows the rules of your repository. Wait until it
+   shows on `origin`. Never complete before the work has merged.
+7. **Complete.** Attach the pull request again with `item_attach_evidence`:
+   `evidence` `{ kind: "pullRequest", repo, number, url, state: "merged",
+   sha, base }`, where `sha` is the merge commit and `base` is the branch it
+   merged into. Then read the item again with `plan_status` and `itemId`, and
+   call `item_complete` with the same fence, the `rev` of that read and the
+   evidence id of the merged attach. The `rev` can come from the latest answer
+   that returned the item, such as the attach answer: read again only when
+   another party could have changed the item.
 8. **Next.** `claim_next` with a new idempotency key. Stop when it answers
    `empty`.
 
@@ -86,13 +82,13 @@ the plan page, the web address where the user opens StrataSpace (for most users
 - `document`: `{ kind: "documentRevision", docId, revision, note? }`
 - `operations`: `{ kind: "link", url, note? }`
 
-An item with no review step (a non-code item, or a plan with its review policy
-off) has no submit: complete it. "Stop after submit" applies only when there
-is a submit.
+A non-code item has no submit: complete it. "Stop after submit" applies only
+to a code item.
 
 When a lead gave you a code item, stop after submit and report to the lead: the
 item id, the fence, the `rev` of the submit result, the evidence id and the
-pull request. Complete when the lead says the work has merged.
+pull request. Attach the merged state and complete when the lead says the work
+has merged.
 
 ## Claims
 
@@ -107,7 +103,7 @@ pull request. Complete when the lead says the work has merged.
   and resend with the new `rev`.
 - After a restart, `plan_status` with `heldBy: me` lists the items you still
   work. `claim_item` on an item you hold answers the same claim. An item you
-  submitted is in review: it is not listed and cannot be claimed. Complete it
+  submitted is not listed and cannot be claimed. Complete it
   with the fence, `rev` and evidence id you kept.
 - `empty` with `planComplete` means done only if `counts.pendingAdds` of
   `plan_status` is 0. Above 0, items wait for a person to accept them, so the
@@ -123,7 +119,7 @@ request is refused with `idempotencyKeyReused`.
 
 ## Findings for other items
 
-A review finding that belongs to a later item goes into the plan: propose an
+A finding that belongs to a later item goes into the plan: propose an
 edit of that item with `propose_plan_changes`, or post it in the plan
 channel (`planChannel` of the claim result) when `channel_post` is in your
 tool list. Never keep it in a local note.
