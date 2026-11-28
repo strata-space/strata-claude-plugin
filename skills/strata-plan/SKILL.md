@@ -38,8 +38,8 @@ plan, its source or description, where it goes) is the yes: go on without
 asking again. If you need to ask, ask for these, as the user did not say them:
 the plan title (at most 200 characters), the folder for the plan (`folderId`;
 without it the plan goes in the user's personal folder), the repositories the
-work lands in (at most 4, each with its connection, its repository and 1 to 8
-target branches) and the kinds of agent that do the items (at most 16, such
+work lands in (at most 4, each with its connection and its repository) and
+the kinds of agent that do the items (at most 16, such
 as `backend`, at most 64 characters each). Do not set `supersedes`: an agent
 cannot supersede a plan.
 

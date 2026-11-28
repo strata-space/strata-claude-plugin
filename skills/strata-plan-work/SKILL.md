@@ -48,8 +48,8 @@ from a copy. Keep no local file as plan state.
    `plan_status` and `itemId` before you go on.
 4. **Attach.** Open the pull request, then call `item_attach_evidence` with
    the fence and `evidence` `{ kind: "pullRequest", repo, number, url }`, where
-   `repo` is `{ provider, repoId, fullName }`. The answer names the
-   `evidenceId`.
+   `repo` is `{ provider, repoId, fullName }`. The pull request is open until
+   you report another state. The answer names the `evidenceId`.
 5. **Submit.** `item_submit` with the fence, `rev` (the `item.rev` of the
    latest answer that returned the item: `result.item.rev` for a command
    answer, `item.rev` for `plan_status` with `itemId`) and
@@ -58,14 +58,17 @@ from a copy. Keep no local file as plan state.
    with `heldBy: me` no longer lists it.
 6. **Merge.** The merge follows the rules of your repository. Wait until it
    shows on `origin`. Never complete before the work has merged.
-7. **Complete.** Attach the pull request again with `item_attach_evidence`:
-   `evidence` `{ kind: "pullRequest", repo, number, url, state: "merged",
-   sha, base }`, where `sha` is the merge commit and `base` is the branch it
-   merged into. Then read the item again with `plan_status` and `itemId`, and
-   call `item_complete` with the same fence, the `rev` of that read and the
-   evidence id of the merged attach. The `rev` can come from the latest answer
-   that returned the item, such as the attach answer: read again only when
-   another party could have changed the item.
+7. **Complete.** Attach the pull request again with `item_attach_evidence`,
+   with the same `repo` and `number`, `url` and
+   `state: { kind: "merged", sha, base }`, where `sha` is the merge commit and
+   `base` is the branch it merged into. The entry the item holds takes the new
+   state. Then read the item again with `plan_status` and `itemId`, and call
+   `item_complete` with the same fence, the `rev` of that read and the evidence
+   id of the pull request. The `rev` can come from the latest answer that
+   returned the item, such as the attach answer: read again only when another
+   party could have changed the item. If it answers `evidenceRequired`, the
+   item has no pull request that delivers it and shows merged: attach it with
+   the merged state and try again.
 8. **Next.** `claim_next` with a new idempotency key. Stop when it answers
    `empty`.
 

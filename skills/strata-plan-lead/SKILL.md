@@ -39,14 +39,14 @@ the item from its own claim result.
 3. **Report.** After submit, each worker reports the item id, the fence, the
    `rev` of the submit result, the evidence id, the pull request and what it
    tested. Keep these: a submitted item cannot be claimed again.
-4. **Review.** Review the pull request as your repository requires. Plans
-   records no review: a fix round is only more work on the same pull request.
+4. **Review.** Review the pull request as your repository requires.
 5. **Merge** the pull request, as your repository and the user allow. Wait
    until the merge shows on `origin`.
 6. **Complete.** The holder of the claim attaches the pull request again with
-   `state: "merged"`, the merge `sha` and the `base` branch, then completes the
-   item with its fence, the `rev` of a new `plan_status` read and the evidence
-   id of the merged attach.
+   `state: { kind: "merged", sha, base }` (the merge commit and the branch it
+   merged into), then completes the item with its fence, the `rev` of a new `plan_status`
+   read and the evidence id of the pull request. `evidenceRequired` means the
+   item has no delivering pull request that shows merged: attach it first.
    - Workers share your agent identity: you may attach the merged state and
      call `item_complete` with the item id, the fence, the evidence id and the
      `rev` of a new `plan_status` read. Take the item id, fence and evidence id from the
